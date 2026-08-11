@@ -1,0 +1,449 @@
+/* ===== 기본 ===== */
+:root {
+  --bg: #b2c7d9;
+  --surface: #ffffff;
+  --text: #191919;
+  --text-muted: #8e8e8e;
+  --bubble-partner: #ffffff;
+  --bubble-me: #fee500;
+  --accent: #3a7bd5;
+  --border: #e5e5e5;
+  --danger: #e74c3c;
+  --success: #27ae60;
+  --radius: 12px;
+  --font: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== index: 시나리오 목록 ===== */
+.app-header {
+  padding: 2rem 1.25rem 1.25rem;
+  background: linear-gradient(160deg, #3a7bd5 0%, #00d2ff 100%);
+  color: #fff;
+}
+
+.brand {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.tagline {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.scenario-list {
+  padding: 1rem 1.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.scenario-card {
+  display: block;
+  width: 100%;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.scenario-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(58, 123, 213, 0.12);
+}
+
+.scenario-card__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.scenario-card__subtitle {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ===== 채팅 UI (scenario.html용 뼈대) ===== */
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.chat-header__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.chat-header__back:hover {
+  background: #f0f0f0;
+}
+
+.scenario-prep {
+  flex: 1;
+  background: #f5f7fa;
+  overflow-y: auto;
+}
+
+.scenario-error {
+  padding: 2rem 1.25rem;
+  text-align: center;
+}
+
+.scenario-error p {
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+}
+
+.trigger-banner {
+  margin: 1rem 1rem 0;
+  padding: 1rem 1.1rem;
+  background: #fff3cd;
+  border-left: 4px solid #e6a800;
+  border-radius: 8px;
+}
+
+.trigger-banner__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #8a6d00;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.35rem;
+}
+
+.trigger-banner__text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  word-break: keep-all;
+}
+
+.chat-header__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #d0d0d0;
+  object-fit: cover;
+}
+
+.chat-header__name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.chat-header__role {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.chat-body {
+  flex: 1;
+  padding: 1rem;
+  background: var(--bg);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+}
+
+.msg--partner {
+  align-self: flex-start;
+}
+
+.msg--me {
+  align-self: flex-end;
+}
+
+.msg__bubble {
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  word-break: keep-all;
+}
+
+.msg--partner .msg__bubble {
+  background: var(--bubble-partner);
+  border-top-left-radius: 4px;
+}
+
+.msg--me .msg__bubble {
+  background: var(--bubble-me);
+  border-top-right-radius: 4px;
+}
+
+.msg__time {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+  padding: 0 0.25rem;
+}
+
+.msg--me .msg__time {
+  text-align: right;
+}
+
+/* 환자 상황 요약 카드 */
+.context-card {
+  margin: 0.5rem 0;
+  padding: 0.75rem 1rem;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.context-card__label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+/* 선택지 */
+.choices {
+  padding: 0.75rem 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.choice-btn {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: 0.9rem;
+  font-family: inherit;
+  line-height: 1.4;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.choice-btn:hover {
+  border-color: var(--accent);
+  background: #f0f7ff;
+}
+
+.choice-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 피드백 카드 */
+.feedback-card {
+  margin: 0.75rem 0;
+  padding: 1rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+
+.feedback-card--ok {
+  background: #eafaf1;
+  border-left: 4px solid var(--success);
+}
+
+.feedback-card--bad {
+  background: #fdecea;
+  border-left: 4px solid var(--danger);
+}
+
+.feedback-card__sbar {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sbar-badge {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: #eee;
+}
+
+.sbar-badge--hit {
+  background: #d4edda;
+  color: #155724;
+}
+
+.sbar-badge--miss {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* 차트 / 통화 UI 뼈대 */
+.chart-panel {
+  padding: 1rem;
+}
+
+.chart-panel__heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.chart-panel__hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.chart-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.chart-tab {
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.chart-tab--checked {
+  border-color: var(--accent);
+  background: #f0f7ff;
+}
+
+.chart-tab--open {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.chart-detail {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.chart-detail__title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+}
+
+.chart-detail__body {
+  font-size: 0.9rem;
+}
+
+.chart-dl__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.chart-dl__row:last-child {
+  border-bottom: none;
+}
+
+.chart-dl__row dt {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.chart-dl__row dd {
+  text-align: right;
+  font-weight: 500;
+}
+
+.chart-list {
+  padding-left: 1.1rem;
+}
+
+.chart-list li {
+  margin: 0.25rem 0;
+}
+
+.call-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  background: #2d2d2d;
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.btn-primary {
+  display: inline-block;
+  width: 100%;
+  padding: 0.85rem;
+  margin-top: 0.75rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+}

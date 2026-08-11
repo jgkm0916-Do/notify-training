@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>시나리오 — 노티 훈련</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="chat-header">
+      <a class="chat-header__back" href="index.html" aria-label="목록으로">←</a>
+      <div>
+        <div class="chat-header__name" id="scenarioTitle">시나리오</div>
+        <div class="chat-header__role">차트 확인 후 의사에게 전화하세요</div>
+      </div>
+    </header>
+
+    <main class="scenario-prep" id="scenarioMain">
+      <section id="triggerArea"></section>
+      <section class="chart-panel" id="chartArea"></section>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/chat-engine.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      initScenarioPage();
+    });
+  </script>
+</body>
+</html>
