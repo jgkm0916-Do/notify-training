@@ -1,7 +1,7 @@
 /**
  * 시나리오 데이터
- * - 6-2: chartData / requiredCategories / doctorQuestions
- * - 자유 텍스트 채점: requiredElements { key, sbarCategory, keywords, hint }
+ * - chartData: 환자 차트 6개 카테고리 (항상 전체 표시)
+ * - requiredElements: 자유 텍스트 노티 채점 { key, sbarCategory, keywords, hint }
  */
 const scenarios = [
   {
@@ -13,7 +13,7 @@ const scenarios = [
     trigger: "802호 김OO님 침상에서 낙상, 신규간호사인 당신이 발견",
 
     messages: [
-      { sender: "partner", text: "네, 무슨 일이세요?", time: "03:12" }
+      { sender: "partner", text: "네, 말씀하세요.", time: "03:12" }
     ],
 
     context: {
@@ -30,23 +30,6 @@ const scenarios = [
       Symptoms: "낙상 후 후두부 통증 호소, 의식 명료, 구토 없음",
       Treatment: "낙상 직후 활력징후 측정 완료, 냉찜질 적용"
     },
-
-    requiredCategories: ["VS", "Lab", "Meds", "Symptoms"],
-
-    doctorQuestions: [
-      {
-        category: "Meds",
-        question: "이 환자 항응고제 드시고 계신가요?",
-        ifChecked: { answerText: "네, 와파린 복용 중입니다.", ok: true },
-        ifNotChecked: { answerText: "확인 후 다시 전화드리겠습니다.", ok: false }
-      },
-      {
-        category: "Symptoms",
-        question: "의식 상태랑 두통 호소는 어때요?",
-        ifChecked: { answerText: "의식 명료하고 후두부 통증 호소하고 있습니다.", ok: true },
-        ifNotChecked: { answerText: "다시 확인해보겠습니다.", ok: false }
-      }
-    ],
 
     // 자유 텍스트 노티 채점용 필수 요소
     requiredElements: [

@@ -1,7 +1,7 @@
 /**
  * 채점 로직
  * - gradeNotifyText: 자유 텍스트 노티 ↔ requiredElements 키워드 매칭
- * - calculatePreparedness / calculateSBARSummary: 결과 화면용
+ * - calculateSBARSummary: 결과 화면용
  */
 
 /**
@@ -52,22 +52,6 @@ function gradeNotifyText(text, requiredElements) {
     total,
     ratio: total ? includedCount / total : 0,
     sbarScore
-  };
-}
-
-/**
- * 사전 차트 준비도
- * @param {object} scenario
- * @param {string[]} checkedCategories
- */
-function calculatePreparedness(scenario, checkedCategories) {
-  const required = scenario.requiredCategories || [];
-  const checked = required.filter((c) => checkedCategories.includes(c));
-  return {
-    ratio: required.length ? checked.length / required.length : 0,
-    missed: required.filter((c) => !checkedCategories.includes(c)),
-    checkedCount: checked.length,
-    requiredCount: required.length
   };
 }
 

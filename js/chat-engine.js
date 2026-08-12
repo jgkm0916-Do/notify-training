@@ -1,9 +1,8 @@
 /**
- * 대화 진행 로직 뼈대
+ * 대화 진행 로직
  * - 시나리오 목록 렌더
- * - 메시지 순차 출력
- * - 선택지 렌더 / 선택 처리
- * - (확장) 차트 확인 · 의사 질문 분기
+ * - 차트 전체 펼침
+ * - 메시지 출력
  */
 
 const CHART_LABELS = {
@@ -61,7 +60,7 @@ function initScenarioPage() {
 
   const session = startScenario(id);
   renderTrigger(scenario.trigger, document.getElementById("triggerArea"));
-  renderChartData(scenario.chartData, document.getElementById("chartArea"), session);
+  renderChartData(scenario.chartData, document.getElementById("chartArea"));
 
   return session;
 }
@@ -90,50 +89,28 @@ function renderTrigger(trigger, container) {
 }
 
 /**
- * chartData 6개 카테고리 렌더 (클릭 시 상세 펼침)
+ * chartData 6개 카테고리를 처음부터 모두 펼쳐 카드로 나열
  * @param {object} chartData
  * @param {HTMLElement} container
- * @param {object} [session] 확인 기록용 (선택)
  */
-function renderChartData(chartData, container, session) {
+function renderChartData(chartData, container) {
   if (!container || !chartData) return;
 
-  const categories = Object.keys(CHART_LABELS);
+  const cards = Object.keys(CHART_LABELS)
+    .filter((key) => key in chartData)
+    .map(
+      (key) => `
+      <article class="chart-card">
+        <h3 class="chart-card__title">${escapeHtml(CHART_LABELS[key])}</h3>
+        <div class="chart-card__body">${formatChartValue(chartData[key])}</div>
+      </article>`
+    )
+    .join("");
+
   container.innerHTML = `
     <h2 class="chart-panel__heading">환자 차트</h2>
-    <p class="chart-panel__hint">카테고리를 눌러 내용을 확인하세요.</p>
-    <div class="chart-tabs" id="chartTabs"></div>
-    <div class="chart-detail" id="chartDetail" hidden></div>
+    <div class="chart-cards">${cards}</div>
   `;
-
-  const tabsEl = container.querySelector("#chartTabs");
-  const detailEl = container.querySelector("#chartDetail");
-
-  categories.forEach((key) => {
-    if (!(key in chartData)) return;
-
-    const tab = document.createElement("button");
-    tab.type = "button";
-    tab.className = "chart-tab";
-    tab.dataset.category = key;
-    tab.textContent = CHART_LABELS[key];
-
-    tab.addEventListener("click", () => {
-      if (session) markCategoryChecked(session, key);
-      tab.classList.add("chart-tab--checked");
-
-      tabsEl.querySelectorAll(".chart-tab").forEach((t) => t.classList.remove("chart-tab--open"));
-      tab.classList.add("chart-tab--open");
-
-      detailEl.hidden = false;
-      detailEl.innerHTML = `
-        <div class="chart-detail__title">${escapeHtml(CHART_LABELS[key])}</div>
-        <div class="chart-detail__body">${formatChartValue(chartData[key])}</div>
-      `;
-    });
-
-    tabsEl.appendChild(tab);
-  });
 }
 
 /** chartData 값을 HTML로 포맷 */
@@ -172,15 +149,9 @@ function startScenario(scenarioId, options = {}) {
 
   const session = {
     scenario,
-    step: "chart", // trigger → chart → call → notify → feedback
-    checkedCategories: [],
-    selectedChoiceId: null,
+    step: "chart", // trigger → chart → notify → feedback
     ...options
   };
-
-  // TODO: Step 3 — doctorQuestions 분기 (ifChecked / ifNotChecked)
-  // TODO: Step 4 — playMessages → renderChoices
-  // TODO: Step 5 — 피드백 + SBAR 배지
 
   return session;
 }
@@ -281,29 +252,6 @@ function renderFeedback(choice, container) {
       </div>
     </div>
   `;
-}
-
-/**
- * 차트 카테고리 확인 기록 (세션 로컬)
- * @param {object} session
- * @param {string} category  VS | Lab | Meds | IO | Symptoms | Treatment
- */
-function markCategoryChecked(session, category) {
-  if (!session.checkedCategories.includes(category)) {
-    session.checkedCategories.push(category);
-  }
-  // TODO: state.checkChartCategory(session.scenario.id, category)
-  return session.checkedCategories;
-}
-
-/**
- * 의사 질문에 대한 답변 옵션 반환
- * @param {object} question  doctorQuestions 항목
- * @param {string[]} checkedCategories
- */
-function getDoctorAnswerOption(question, checkedCategories) {
-  const checked = checkedCategories.includes(question.category);
-  return checked ? question.ifChecked : question.ifNotChecked;
 }
 
 /* ===== helpers ===== */
