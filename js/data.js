@@ -1,6 +1,7 @@
 /**
  * 시나리오 데이터
- * 스키마: 노티훈련앱_구조설계.md §2 + §6-2
+ * - 6-2: chartData / requiredCategories / doctorQuestions
+ * - 자유 텍스트 채점: requiredElements { key, sbarCategory, keywords, hint }
  */
 const scenarios = [
   {
@@ -30,7 +31,6 @@ const scenarios = [
       Treatment: "낙상 직후 활력징후 측정 완료, 냉찜질 적용"
     },
 
-    // 이 시나리오에서 진짜 필요한 카테고리
     requiredCategories: ["VS", "Lab", "Meds", "Symptoms"],
 
     doctorQuestions: [
@@ -48,34 +48,45 @@ const scenarios = [
       }
     ],
 
-    choices: [
+    // 자유 텍스트 노티 채점용 필수 요소
+    requiredElements: [
       {
-        id: "c1",
-        text: "선생님, 802호 환자 낙상하셨어요.",
-        sbarScore: { S: 0, B: 0, A: 0, R: 0 },
-        feedback: "환자 식별 정보, 구체적 수치/증상, 배경, 요청사항이 모두 빠져 있습니다."
+        key: "환자식별",
+        sbarCategory: "S",
+        keywords: ["802", "김", "78"],
+        hint: "병실·환자명·나이를 포함하세요. (예: 802호 김OO 78세)"
       },
       {
-        id: "c2",
-        text: "802호 김OO님(78/F) 침상 낙상, 의식 명료·후두부 통증, PT/INR 1.4·와파린 복용 중입니다. 머리 CT 및 처치 부탁드립니다.",
-        sbarScore: { S: 1, B: 1, A: 1, R: 1 },
-        feedback: "환자 식별(S), 상황 배경(B), 평가(A), 요청(R)이 명확합니다. 적절한 노티입니다."
+        key: "현재상황",
+        sbarCategory: "S",
+        keywords: ["낙상", "넘어"],
+        hint: "현재 상황(침상 낙상)을 명확히 전달하세요."
       },
       {
-        id: "c3",
-        text: "802호 김OO님 낙상하셨고 BP 128/76, HR 88입니다. 어떻게 할까요?",
-        sbarScore: { S: 1, B: 0, A: 0, R: 0 },
-        feedback: "환자·V/S는 있으나 항응고제·증상 평가와 구체적 요청(R)이 부족합니다."
+        key: "항응고배경",
+        sbarCategory: "B",
+        keywords: ["와파린", "항응고", "INR", "1.4", "아스피린"],
+        hint: "항응고제 복용 또는 PT/INR 등 관련 배경을 포함하세요."
       },
       {
-        id: "c4",
-        text: "802호 환자분 낙상 후 머리 아프다고 하세요. 와파린 드시는 분이에요. CT 찍어주세요.",
-        sbarScore: { S: 0, B: 1, A: 0, R: 1 },
-        feedback: "투약·요청은 있으나 정확한 환자 식별과 의식/증상 평가가 불충분합니다."
+        key: "의식및증상",
+        sbarCategory: "A",
+        keywords: ["의식", "명료", "후두부", "두통", "통증", "구토"],
+        hint: "의식 상태와 두통/후두부 통증 등 평가 내용을 포함하세요."
+      },
+      {
+        key: "활력징후",
+        sbarCategory: "A",
+        keywords: ["128", "76", "BP", "혈압", "88", "HR", "심박"],
+        hint: "측정한 활력징후 수치(BP, HR 등)를 포함하세요."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["CT", "처방", "방문", "확인", "요청", "부탁", "지시"],
+        hint: "의사에게 원하는 검사·처치·방문을 구체적으로 요청하세요."
       }
-    ],
-
-    correctChoiceId: "c2"
+    ]
   }
 ];
 

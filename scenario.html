@@ -5,29 +5,333 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>시나리오 — 노티 훈련</title>
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* scenario 전용: 통화 / 자유입력 / 체크리스트 피드백 */
+    #prepView { display: block; }
+    #callView { display: none; flex-direction: column; flex: 1; min-height: 0; }
+
+    .app.is-calling #prepView { display: none; }
+    .app.is-calling #callView { display: flex; }
+    .app.is-calling .chat-header__role { display: none; }
+
+    .call-timer {
+      font-size: 0.8rem;
+      color: #2e7d32;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .call-chat {
+      flex: 1;
+      padding: 1rem;
+      background: var(--bg, #b2c7d9);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-height: 200px;
+    }
+
+    .notify-composer {
+      display: none;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: #fff;
+      border-top: 1px solid var(--border, #e5e5e5);
+      align-items: flex-end;
+    }
+
+    .notify-composer.is-visible {
+      display: flex;
+    }
+
+    .notify-composer textarea {
+      flex: 1;
+      min-height: 72px;
+      max-height: 140px;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--border, #e5e5e5);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      resize: vertical;
+    }
+
+    .notify-composer textarea:focus {
+      outline: 2px solid rgba(58, 123, 213, 0.35);
+      border-color: var(--accent, #3a7bd5);
+    }
+
+    .notify-send {
+      flex-shrink: 0;
+      padding: 0.7rem 1rem;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent, #3a7bd5);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .notify-send:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .feedback-checklist {
+      margin: 0.5rem 0;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 12px;
+      font-size: 0.9rem;
+    }
+
+    .feedback-checklist__summary {
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+    }
+
+    .feedback-checklist__list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .feedback-checklist__item {
+      padding: 0.55rem 0.65rem;
+      border-radius: 8px;
+      background: #f7f8fa;
+    }
+
+    .feedback-checklist__item--hit {
+      background: #eafaf1;
+    }
+
+    .feedback-checklist__item--miss {
+      background: #fdecea;
+    }
+
+    .feedback-checklist__row {
+      display: flex;
+      gap: 0.4rem;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .feedback-checklist__mark {
+      font-weight: 700;
+      width: 1.2em;
+    }
+
+    .feedback-checklist__cat {
+      font-size: 0.72rem;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      background: #e8eef7;
+      color: #2a5a9e;
+    }
+
+    .feedback-checklist__hint {
+      margin-top: 0.3rem;
+      font-size: 0.8rem;
+      color: #8a2a22;
+      padding-left: 1.5em;
+    }
+
+    .call-actions {
+      padding: 0 1rem 1rem;
+    }
+  </style>
 </head>
 <body>
-  <div class="app">
+  <div class="app" id="appRoot">
     <header class="chat-header">
       <a class="chat-header__back" href="index.html" aria-label="목록으로">←</a>
       <div>
         <div class="chat-header__name" id="scenarioTitle">시나리오</div>
-        <div class="chat-header__role">차트 확인 후 의사에게 전화하세요</div>
+        <div class="chat-header__role" id="scenarioRole">차트 확인 후 의사에게 전화하세요</div>
+        <div class="call-timer" id="callTimer" hidden>통화중 00:00</div>
       </div>
     </header>
 
-    <main class="scenario-prep" id="scenarioMain">
-      <section id="triggerArea"></section>
-      <section class="chart-panel" id="chartArea"></section>
+    <!-- Step 1~2: 상황 + 차트 -->
+    <main class="scenario-prep" id="prepView">
+      <div id="scenarioMain">
+        <section id="triggerArea"></section>
+        <section class="chart-panel" id="chartArea"></section>
+        <div class="call-actions">
+          <button type="button" class="btn-primary" id="callBtn">의사에게 전화하기</button>
+        </div>
+      </div>
     </main>
+
+    <!-- Step 3~5: 통화 + 자유 텍스트 노티 + 피드백 -->
+    <div id="callView">
+      <div class="call-chat" id="chatBody"></div>
+      <div id="feedbackSlot"></div>
+      <form class="notify-composer" id="notifyComposer" autocomplete="off">
+        <textarea
+          id="notifyInput"
+          name="notify"
+          placeholder="SBAR에 맞춰 노티 내용을 입력하세요…"
+          rows="3"
+        ></textarea>
+        <button type="submit" class="notify-send" id="notifySend">전송</button>
+      </form>
+    </div>
   </div>
 
   <script src="js/data.js"></script>
+  <script src="js/scoring.js"></script>
   <script src="js/chat-engine.js"></script>
   <script>
+    let session = null;
+    let callSeconds = 0;
+    let callTimerId = null;
+    let notifySubmitted = false;
+
     document.addEventListener("DOMContentLoaded", () => {
-      initScenarioPage();
+      session = initScenarioPage();
+      if (!session) return;
+
+      const callBtn = document.getElementById("callBtn");
+      if (callBtn) {
+        callBtn.addEventListener("click", startCall);
+      }
+
+      const form = document.getElementById("notifyComposer");
+      if (form) {
+        form.addEventListener("submit", onNotifySubmit);
+      }
     });
+
+    function startCall() {
+      if (!session) return;
+
+      session.step = "call";
+      document.getElementById("appRoot").classList.add("is-calling");
+
+      const partner = session.scenario.partnerName || "당직의";
+      const roleEl = document.getElementById("scenarioRole");
+      if (roleEl) roleEl.textContent = partner;
+
+      const timerEl = document.getElementById("callTimer");
+      if (timerEl) {
+        timerEl.hidden = false;
+        startCallTimer(timerEl);
+      }
+
+      const chatBody = document.getElementById("chatBody");
+      chatBody.innerHTML = "";
+
+      const messages = session.scenario.messages || [
+        { sender: "partner", text: "네, 무슨 일이세요?", time: nowHHMM() }
+      ];
+
+      playMessages(messages, chatBody, 500).then(() => {
+        session.step = "notify";
+        showNotifyComposer(true);
+      });
+    }
+
+    function startCallTimer(el) {
+      callSeconds = 0;
+      if (callTimerId) clearInterval(callTimerId);
+      callTimerId = setInterval(() => {
+        callSeconds += 1;
+        const mm = String(Math.floor(callSeconds / 60)).padStart(2, "0");
+        const ss = String(callSeconds % 60).padStart(2, "0");
+        el.textContent = `통화중 ${mm}:${ss}`;
+      }, 1000);
+    }
+
+    function showNotifyComposer(visible) {
+      const composer = document.getElementById("notifyComposer");
+      if (!composer) return;
+      composer.classList.toggle("is-visible", visible);
+      if (visible) {
+        document.getElementById("notifyInput")?.focus();
+      }
+    }
+
+    function onNotifySubmit(e) {
+      e.preventDefault();
+      if (!session || notifySubmitted) return;
+
+      const input = document.getElementById("notifyInput");
+      const text = (input?.value || "").trim();
+      if (!text) {
+        input?.focus();
+        return;
+      }
+
+      notifySubmitted = true;
+      session.step = "feedback";
+      showNotifyComposer(false);
+
+      const chatBody = document.getElementById("chatBody");
+      appendMessage(chatBody, {
+        sender: "me",
+        text,
+        time: nowHHMM()
+      });
+
+      const grade = gradeNotifyText(text, session.scenario.requiredElements || []);
+      session.lastGrade = grade;
+      session.notifyText = text;
+
+      renderNotifyFeedback(grade, document.getElementById("feedbackSlot"));
+
+      const sendBtn = document.getElementById("notifySend");
+      if (sendBtn) sendBtn.disabled = true;
+      if (input) input.disabled = true;
+    }
+
+    /**
+     * gradeNotifyText 결과 → 체크리스트 피드백 카드
+     * 상단: N/전체 항목 포함
+     * 항목별 ✓ / ✗ (+ miss 시 hint)
+     */
+    function renderNotifyFeedback(grade, container) {
+      if (!container || !grade) return;
+
+      const items = (grade.checklist || [])
+        .map((item) => {
+          const hit = item.included;
+          return `
+            <li class="feedback-checklist__item ${hit ? "feedback-checklist__item--hit" : "feedback-checklist__item--miss"}">
+              <div class="feedback-checklist__row">
+                <span class="feedback-checklist__mark">${hit ? "✓" : "✗"}</span>
+                <span class="feedback-checklist__cat">${escapeHtml(item.sbarCategory || "")}</span>
+                <span>${escapeHtml(item.key || "")}</span>
+              </div>
+              ${
+                hit
+                  ? ""
+                  : `<p class="feedback-checklist__hint">${escapeHtml(item.hint || "")}</p>`
+              }
+            </li>
+          `;
+        })
+        .join("");
+
+      container.innerHTML = `
+        <div class="feedback-checklist" style="margin: 0 1rem 1rem;">
+          <div class="feedback-checklist__summary">
+            ${grade.includedCount}/${grade.total} 항목 포함
+          </div>
+          <ul class="feedback-checklist__list">
+            ${items}
+          </ul>
+        </div>
+      `;
+
+      container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
   </script>
 </body>
 </html>
