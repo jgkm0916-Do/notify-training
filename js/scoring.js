@@ -9,14 +9,7 @@
  * keywords 중 하나라도 포함되면 해당 항목 hit
  *
  * @param {string} text
- * @param {Array<{key:string,sbarCategory:string,keywords:string[],hint:string}>} requiredElements
- * @returns {{
- *   checklist: Array<{key:string,sbarCategory:string,hint:string,included:boolean}>,
- *   includedCount: number,
- *   total: number,
- *   ratio: number,
- *   sbarScore: {S:number,B:number,A:number,R:number}
- * }}
+ * @param {Array<{key:string,sbarCategory:string,keywords:string[],hint:string,passHint?:string}>} requiredElements
  */
 function gradeNotifyText(text, requiredElements) {
   const normalized = String(text || "").toLowerCase();
@@ -24,13 +17,16 @@ function gradeNotifyText(text, requiredElements) {
 
   const checklist = elements.map((el) => {
     const keywords = el.keywords || [];
-    const included = keywords.some((kw) =>
+    const matchedKeywords = keywords.filter((kw) =>
       normalized.includes(String(kw).toLowerCase())
     );
+    const included = matchedKeywords.length > 0;
     return {
       key: el.key,
       sbarCategory: el.sbarCategory,
-      hint: el.hint,
+      hint: el.hint || "",
+      passHint: el.passHint || "",
+      matchedKeywords,
       included
     };
   });
@@ -57,7 +53,6 @@ function gradeNotifyText(text, requiredElements) {
 
 /**
  * 여러 시나리오 답변의 SBAR 합산
- * @param {Array<{sbarScore:{S:number,B:number,A:number,R:number}}>} answers
  */
 function calculateSBARSummary(answers) {
   const totals = { S: 0, B: 0, A: 0, R: 0 };

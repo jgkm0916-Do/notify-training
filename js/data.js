@@ -102,7 +102,7 @@ const scenarios = [
       { key: "흉통양상", sbarCategory: "S", keywords: ["흉통", "방사통", "NRS"], hint: "통증 양상과 강도가 빠지면 심각도 판단이 어렵습니다." },
       { key: "활력징후", sbarCategory: "A", keywords: ["혈압", "BP", "150", "심박", "HR"], hint: "구체적 수치가 없으면 상태 평가가 전달되지 않습니다." },
       { key: "심전도확인", sbarCategory: "A", keywords: ["ECG", "심전도"], hint: "흉통 시 ECG 확인 여부는 필수 보고 항목입니다." },
-      { key: "요청사항", sbarCategory: "R", keywords: ["처방", "요청", "봐주세요", "와주세요"], hint: "무엇을 원하는지 명확히 요청해야 합니다." }
+      { key: "요청사항", sbarCategory: "R", keywords: ["처방", "요청", "봐주세요", "와주세요", "투약", "NTG", "할까요", "확인", "지시", "부탁"], hint: "무엇을 원하는지 명확히 요청해야 합니다. (예: NTG 투약할까요?)" }
     ]
   },
 
