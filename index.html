@@ -7,14 +7,21 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div class="app">
-    <header class="app-header">
-      <h1 class="brand">노티 훈련</h1>
-      <p class="tagline">SBAR 기반 의사 노티 연습</p>
+  <div class="app app--kakao-home">
+    <header class="kakao-home-header">
+      <div class="kakao-home-header__top">
+        <h1 class="kakao-home-header__title">노티 훈련</h1>
+        <div class="kakao-home-header__actions" aria-hidden="true">
+          <span class="kakao-icon">⌕</span>
+          <span class="kakao-icon">＋</span>
+          <span class="kakao-icon">☰</span>
+        </div>
+      </div>
+      <p class="kakao-home-header__sub">당직의에게 SBAR 노티 연습</p>
     </header>
 
-    <main class="scenario-list" id="scenarioList">
-      <!-- 시나리오 카드는 data.js 기준으로 렌더링 -->
+    <main class="chat-room-list" id="scenarioList">
+      <!-- 시나리오 = 채팅방 행으로 렌더링 -->
     </main>
   </div>
 

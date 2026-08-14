@@ -14,32 +14,54 @@ const CHART_LABELS = {
   Treatment: "처치"
 };
 
-/** index.html — 시나리오 카드 목록 + 클릭 이동 */
+const AVATAR_COLORS = ["#4a90d9","#5dade2","#48c9b0","#58d68d","#f5b041","#af7ac5","#e59866"];
+
+/** index.html — 카톡형 채팅방 목록 */
 function renderScenarioList(containerId) {
   const el = document.getElementById(containerId);
   if (!el || typeof scenarios === "undefined") return;
 
   el.innerHTML = "";
 
-  scenarios.forEach((s) => {
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "scenario-card";
-    card.dataset.scenarioId = s.id;
-    const subtitle =
-      typeof getScenarioCardSubtitle === "function"
-        ? getScenarioCardSubtitle(s)
-        : s.subtitle || s.trigger || "";
-    card.innerHTML = `
-      <div class="scenario-card__title">${escapeHtml(s.title)}</div>
-      <div class="scenario-card__subtitle">${escapeHtml(subtitle)}</div>
-    `;
-    card.addEventListener("click", () => {
-      window.location.href = `scenario.html?id=${encodeURIComponent(s.id)}`;
+  scenarios.forEach((s, index) => {
+    const row = document.createElement("button");
+    row.type = "button";
+    row.className = "chat-room";
+    row.dataset.scenarioId = s.id;
+
+    const partnerLabel =
+      typeof getPartnerLabel === "function"
+        ? getPartnerLabel(s)
+        : (s.partnerName || "당직") + "의사";
+    const patientLine =
+      typeof getScenarioListPatientLine === "function"
+        ? getScenarioListPatientLine(s)
+        : s.title || "";
+    const situation =
+      typeof getScenarioListSituation === "function"
+        ? getScenarioListSituation(s)
+        : s.subtitle || "";
+    const initial = (s.partnerName || partnerLabel || "?").charAt(0);
+    const color = AVATAR_COLORS[index % AVATAR_COLORS.length];
+
+    row.innerHTML =
+      '<div class="chat-room__avatar" style="background:' + color + '">' + escapeHtml(initial) + '</div>' +
+      '<div class="chat-room__body">' +
+        '<div class="chat-room__top">' +
+          '<div class="chat-room__preview">' + escapeHtml(patientLine) + '</div>' +
+          '<div class="chat-room__situation">' + escapeHtml(situation) + '</div>' +
+        '</div>' +
+        '<div class="chat-room__name">' + escapeHtml(partnerLabel) + '</div>' +
+      '</div>' +
+      '<span class="chat-room__badge" aria-label="새 메시지">1</span>';
+
+    row.addEventListener("click", () => {
+      window.location.href = "scenario.html?id=" + encodeURIComponent(s.id);
     });
-    el.appendChild(card);
+    el.appendChild(row);
   });
 }
+
 
 /**
  * scenario.html — URL ?id= 로 시나리오 로드 후 trigger / chartData 렌더
@@ -63,7 +85,7 @@ function initScenarioPage() {
   if (titleEl) titleEl.textContent = scenario.title;
 
   const session = startScenario(id);
-  renderTrigger(scenario.trigger, document.getElementById("triggerArea"));
+  renderTrigger(scenario, document.getElementById("triggerArea"));
   renderChartData(scenario.chartData, document.getElementById("chartArea"), scenario);
 
   return session;
@@ -82,11 +104,13 @@ function showScenarioError(message) {
 }
 
 /** 상황 발생(trigger) 안내 */
-function renderTrigger(trigger, container) {
+function renderTrigger(scenario, container) {
   if (!container) return;
+  const trigger = typeof scenario === "string" ? scenario : scenario?.trigger;
+  const eventTime = typeof scenario === "object" ? scenario?.eventTime : "";
   container.innerHTML = `
     <div class="trigger-banner">
-      <p class="trigger-banner__label">상황 발생</p>
+      <p class="trigger-banner__label">상황 발생${eventTime ? ` · ${escapeHtml(eventTime)}` : ""}</p>
       <p class="trigger-banner__text">${escapeHtml(trigger || "")}</p>
     </div>
   `;
@@ -102,7 +126,7 @@ function renderChartData(chartData, container, scenario) {
   if (!container || !chartData) return;
 
   const patientLine = scenario?.patient
-    ? `<div class="patient-banner">${escapeHtml(formatPatientSummary(scenario.patient))}</div>`
+    ? `<div class="patient-banner">${escapeHtml(formatPatientSummary(scenario.patient, scenario.eventTime))}</div>`
     : "";
 
   const cards = Object.keys(CHART_LABELS)

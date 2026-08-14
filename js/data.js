@@ -11,6 +11,7 @@ const scenarios = [
     partnerName: "김민수",
     partnerRole: "의사",
     trigger: "802호 김OO님 침상에서 낙상, 신규간호사인 당신이 발견",
+    eventTime: "03:08",
 
     patient: {
       room: "802호",
@@ -47,6 +48,12 @@ const scenarios = [
         hint: "현재 상황(침상 낙상)을 명확히 전달하세요."
       },
       {
+        key: "발생시각",
+        sbarCategory: "S",
+        keywords: ["03:08", "3:08", "03시", "3시"],
+        hint: "낙상이 발생한 시각(03:08)을 포함하세요."
+      },
+      {
         key: "항응고배경",
         sbarCategory: "B",
         keywords: ["와파린", "항응고", "INR", "1.4", "아스피린"],
@@ -79,6 +86,7 @@ const scenarios = [
     partnerName: "박준호",
     partnerRole: "의사",
     trigger: "701호 박OO님(65세, M) 갑작스러운 흉통 호소, 좌측 방사통 동반",
+    eventTime: "14:20",
     patient: {
       room: "701호",
       name: "박OO",
@@ -87,7 +95,7 @@ const scenarios = [
       pod: null
     },
     messages: [
-      { sender: "partner", text: "네, 말씀하세요.", time: "03:12" }
+      { sender: "partner", text: "네, 말씀하세요.", time: "14:24" }
     ],
     chartData: {
       VS: { BP: "150/95", HR: "102", RR: "22", BT: "36.8", SpO2: "95%" },
@@ -100,6 +108,7 @@ const scenarios = [
     requiredElements: [
       { key: "환자식별", sbarCategory: "S", keywords: ["701호", "박OO", "박○○", "협심증"], hint: "병실·환자명과 진단명(협심증 의증)을 함께 말하세요." },
       { key: "흉통양상", sbarCategory: "S", keywords: ["흉통", "방사통", "NRS"], hint: "통증 양상과 강도가 빠지면 심각도 판단이 어렵습니다." },
+      { key: "발생시각", sbarCategory: "S", keywords: ["14:20", "2시 20", "14시"], hint: "흉통이 시작된 시각(14:20)을 포함하세요." },
       { key: "활력징후", sbarCategory: "A", keywords: ["혈압", "BP", "150", "심박", "HR"], hint: "구체적 수치가 없으면 상태 평가가 전달되지 않습니다." },
       { key: "심전도확인", sbarCategory: "A", keywords: ["ECG", "심전도"], hint: "흉통 시 ECG 확인 여부는 필수 보고 항목입니다." },
       { key: "요청사항", sbarCategory: "R", keywords: ["처방", "요청", "봐주세요", "와주세요", "투약", "NTG", "할까요", "확인", "지시", "부탁"], hint: "무엇을 원하는지 명확히 요청해야 합니다. (예: NTG 투약할까요?)" }
@@ -112,6 +121,7 @@ const scenarios = [
     partnerName: "이서연",
     partnerRole: "의사",
     trigger: "903호 이OO님(80세, COPD) 갑자기 호흡곤란 호소, SpO2 88%로 저하",
+    eventTime: "22:15",
     patient: {
       room: "903호",
       name: "이OO",
@@ -120,7 +130,7 @@ const scenarios = [
       pod: null
     },
     messages: [
-      { sender: "partner", text: "네, 말씀하세요.", time: "03:12" }
+      { sender: "partner", text: "네, 말씀하세요.", time: "22:18" }
     ],
     chartData: {
       VS: { BP: "130/80", HR: "118", RR: "30", BT: "37.0", SpO2: "88% (비강캐뉼라 2L 적용중)" },
@@ -132,6 +142,7 @@ const scenarios = [
     },
     requiredElements: [
       { key: "환자식별", sbarCategory: "S", keywords: ["903호", "이OO", "이○○", "COPD"], hint: "병실·환자명과 진단명(COPD)을 함께 말하세요." },
+      { key: "발생시각", sbarCategory: "S", keywords: ["22:15", "10시 15", "22시"], hint: "호흡곤란이 발생한 시각(22:15)을 포함하세요." },
       { key: "SpO2수치", sbarCategory: "S", keywords: ["88", "산소포화도", "SpO2"], hint: "구체적 산소포화도 수치가 핵심 정보입니다." },
       { key: "호흡수", sbarCategory: "A", keywords: ["호흡수", "RR", "30"], hint: "호흡수 변화는 상태 평가에 필수입니다." },
       { key: "산소요법현황", sbarCategory: "B", keywords: ["산소", "리터", "L", "캐뉼라"], hint: "현재 적용 중인 산소요법 정보가 빠지면 의사가 조치를 판단하기 어렵습니다." },
@@ -145,6 +156,7 @@ const scenarios = [
     partnerName: "최유진",
     partnerRole: "의사",
     trigger: "605호 최OO님(55세) 발열 및 오한 호소, 최근 요로감염 병력",
+    eventTime: "06:40",
     patient: {
       room: "605호",
       name: "최OO",
@@ -153,7 +165,7 @@ const scenarios = [
       pod: null
     },
     messages: [
-      { sender: "partner", text: "네, 말씀하세요.", time: "03:12" }
+      { sender: "partner", text: "네, 말씀하세요.", time: "06:45" }
     ],
     chartData: {
       VS: { BP: "100/60", HR: "110", RR: "24", BT: "39.2", SpO2: "96%" },
@@ -165,6 +177,7 @@ const scenarios = [
     },
     requiredElements: [
       { key: "환자식별", sbarCategory: "S", keywords: ["605호", "최OO", "최○○", "요로감염", "UTI"], hint: "병실·환자명과 진단명(요로감염)을 함께 말하세요." },
+      { key: "발생시각", sbarCategory: "S", keywords: ["06:40", "6:40", "6시 40", "06시"], hint: "발열을 확인한 시각(06:40)을 포함하세요." },
       { key: "체온수치", sbarCategory: "S", keywords: ["39.2", "발열", "고열"], hint: "구체적 체온 수치가 빠지면 심각도가 전달되지 않습니다." },
       { key: "감염징후", sbarCategory: "B", keywords: ["WBC", "CRP", "오한"], hint: "감염 관련 검사 수치나 증상이 배경(B) 정보로 필요합니다." },
       { key: "활력징후변화", sbarCategory: "A", keywords: ["혈압", "BP", "100", "저혈압", "HR"], hint: "패혈증 의심 시 혈압 저하 여부가 중요한 평가 요소입니다." },
@@ -178,6 +191,7 @@ const scenarios = [
     partnerName: "정하윤",
     partnerRole: "의사",
     trigger: "502호 정OO님(70세, 당뇨) 식은땀 및 의식저하, 혈당 45mg/dL 측정",
+    eventTime: "07:10",
     patient: {
       room: "502호",
       name: "정OO",
@@ -186,7 +200,7 @@ const scenarios = [
       pod: null
     },
     messages: [
-      { sender: "partner", text: "네, 말씀하세요.", time: "03:12" }
+      { sender: "partner", text: "네, 말씀하세요.", time: "07:13" }
     ],
     chartData: {
       VS: { BP: "110/70", HR: "95", RR: "18", BT: "36.5", SpO2: "98%" },
@@ -198,6 +212,7 @@ const scenarios = [
     },
     requiredElements: [
       { key: "환자식별", sbarCategory: "S", keywords: ["502호", "정OO", "정○○", "당뇨", "당뇨병"], hint: "병실·환자명과 진단명(당뇨)을 함께 말하세요." },
+      { key: "발생시각", sbarCategory: "S", keywords: ["07:10", "7:10", "7시 10", "07시"], hint: "저혈당을 확인한 시각(07:10)을 포함하세요." },
       { key: "혈당수치", sbarCategory: "S", keywords: ["45", "혈당", "저혈당"], hint: "구체적 혈당 수치가 핵심 정보입니다." },
       { key: "의식상태", sbarCategory: "A", keywords: ["의식", "저하", "졸림", "호명"], hint: "의식 수준 변화는 저혈당 응급도 판단에 필수입니다." },
       { key: "증상", sbarCategory: "A", keywords: ["식은땀", "떨림"], hint: "동반 증상이 상태 평가에 포함되어야 합니다." },
@@ -211,6 +226,7 @@ const scenarios = [
     partnerName: "한지우",
     partnerRole: "의사",
     trigger: "1005호 한OO님 수혈 시작 15분 후 오한 및 두드러기 발생",
+    eventTime: "16:45",
     patient: {
       room: "1005호",
       name: "한OO",
@@ -219,7 +235,7 @@ const scenarios = [
       pod: "POD#2"
     },
     messages: [
-      { sender: "partner", text: "네, 말씀하세요.", time: "03:12" }
+      { sender: "partner", text: "네, 말씀하세요.", time: "16:47" }
     ],
     chartData: {
       VS: { BP: "105/70 (수혈 전 120/80)", HR: "105", RR: "22", BT: "38.0 (수혈 전 36.8)", SpO2: "96%" },
@@ -231,6 +247,7 @@ const scenarios = [
     },
     requiredElements: [
       { key: "환자식별", sbarCategory: "S", keywords: ["1005호", "한OO", "한○○", "위암", "POD"], hint: "병실·환자명·진단명·수술 후 경과일(POD#2)을 함께 말하세요." },
+      { key: "발생시각", sbarCategory: "S", keywords: ["16:45", "4시 45", "16시", "15분"], hint: "증상 발생 시각(16:45) 또는 수혈 시작 후 경과 시간을 포함하세요." },
       { key: "수혈반응증상", sbarCategory: "S", keywords: ["오한", "두드러기", "발진", "가려움"], hint: "수혈 반응의 구체적 증상이 핵심 정보입니다." },
       { key: "활력징후변화", sbarCategory: "A", keywords: ["체온", "38.0", "혈압", "BP"], hint: "수혈 전후 활력징후 변화가 평가(A)에 필요합니다." },
       { key: "조치사항", sbarCategory: "B", keywords: ["수혈", "중단"], hint: "이미 취한 조치(수혈 중단)를 알려야 의사가 다음 판단을 할 수 있습니다." },
@@ -257,16 +274,17 @@ function getPartnerLabel(scenario) {
 }
 
 /**
- * 환자 한 줄 요약 (호실·이름·진단·POD)
+ * 환자 한 줄 요약 (호실·이름·진단·POD·발생시각)
  */
-function formatPatientSummary(patient) {
+function formatPatientSummary(patient, eventTime) {
   if (!patient) return "";
   const who = [patient.room, patient.name, patient.ageSex ? `(${patient.ageSex})` : null]
     .filter(Boolean)
     .join(" ");
   const extras = [
     patient.diagnosis ? `Dx. ${patient.diagnosis}` : null,
-    patient.pod || null
+    patient.pod || null,
+    eventTime ? `발생 ${eventTime}` : null
   ].filter(Boolean);
   return [who, ...extras].filter(Boolean).join(" · ");
 }
@@ -275,11 +293,32 @@ function formatPatientSummary(patient) {
  * 목록 카드용 짧은 부제 — trigger 앞부분(환자 위치+상황)
  */
 function getScenarioCardSubtitle(scenario) {
-  const trigger = (scenario && scenario.trigger) || "";
-  if (!trigger) return scenario.subtitle || "";
+  return getScenarioListSituation(scenario);
+}
 
-  const commaIdx = trigger.indexOf(",");
-  if (commaIdx > 8) return trigger.slice(0, commaIdx).trim();
-  if (trigger.length > 36) return `${trigger.slice(0, 36).trim()}…`;
-  return trigger;
+/** 목록 왼쪽: 호실 + 이름 + 나이 (일률) */
+function getScenarioListPatientLine(scenario) {
+  const p = (scenario && scenario.patient) || {};
+  const age = String(p.ageSex || "").split("/")[0].trim();
+  const rawName = p.name || "";
+  const name = rawName ? (rawName.endsWith("님") ? rawName : rawName + "님") : "";
+  return [p.room, name, age ? "(" + age + ")" : ""].filter(Boolean).join(" ");
+}
+
+/** 목록 오른쪽: 상황만 짧게 */
+function getScenarioListSituation(scenario) {
+  if (!scenario) return "";
+  let sit = String(scenario.trigger || "");
+  const p = scenario.patient || {};
+  if (p.room) sit = sit.split(p.room).join("");
+  if (p.name) sit = sit.split(p.name).join("");
+  sit = sit.replace(/님/g, "");
+  // (65세, M) / (80세, COPD) / (70세, 당뇨) 형태 제거
+  sit = sit.replace(/\(\d+세[^)]*\)/g, "");
+  sit = sit.replace(/^\s*,?\s*/, "");
+  const commaIdx = sit.indexOf(",");
+  if (commaIdx > 0) sit = sit.slice(0, commaIdx);
+  sit = sit.trim().replace(/^\s+/, "");
+  if (sit) return sit;
+  return String(scenario.title || "").replace(/\s*노티$/, "").trim();
 }
