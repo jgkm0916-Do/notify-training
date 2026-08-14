@@ -205,6 +205,17 @@ body {
   align-self: flex-end;
 }
 
+.msg__name {
+  font-size: 0.72rem;
+  color: #555;
+  margin-bottom: 0.2rem;
+  padding: 0 0.15rem;
+}
+
+.msg--me .msg__name {
+  text-align: right;
+}
+
 .msg__bubble {
   padding: 0.6rem 0.85rem;
   border-radius: var(--radius);
@@ -332,7 +343,19 @@ body {
 .chart-panel__heading {
   font-size: 1.05rem;
   font-weight: 700;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.patient-banner {
+  margin-bottom: 0.65rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.4;
+  word-break: keep-all;
 }
 
 .chart-cards {

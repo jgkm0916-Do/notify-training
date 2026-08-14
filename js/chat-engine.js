@@ -26,9 +26,13 @@ function renderScenarioList(containerId) {
     card.type = "button";
     card.className = "scenario-card";
     card.dataset.scenarioId = s.id;
+    const subtitle =
+      typeof getScenarioCardSubtitle === "function"
+        ? getScenarioCardSubtitle(s)
+        : s.subtitle || s.trigger || "";
     card.innerHTML = `
       <div class="scenario-card__title">${escapeHtml(s.title)}</div>
-      <div class="scenario-card__subtitle">${escapeHtml(s.subtitle || s.trigger || "")}</div>
+      <div class="scenario-card__subtitle">${escapeHtml(subtitle)}</div>
     `;
     card.addEventListener("click", () => {
       window.location.href = `scenario.html?id=${encodeURIComponent(s.id)}`;
@@ -60,7 +64,7 @@ function initScenarioPage() {
 
   const session = startScenario(id);
   renderTrigger(scenario.trigger, document.getElementById("triggerArea"));
-  renderChartData(scenario.chartData, document.getElementById("chartArea"));
+  renderChartData(scenario.chartData, document.getElementById("chartArea"), scenario);
 
   return session;
 }
@@ -92,9 +96,14 @@ function renderTrigger(trigger, container) {
  * chartData 6개 카테고리를 처음부터 모두 펼쳐 카드로 나열
  * @param {object} chartData
  * @param {HTMLElement} container
+ * @param {object} [scenario] 환자 식별(진단·POD) 표시용
  */
-function renderChartData(chartData, container) {
+function renderChartData(chartData, container, scenario) {
   if (!container || !chartData) return;
+
+  const patientLine = scenario?.patient
+    ? `<div class="patient-banner">${escapeHtml(formatPatientSummary(scenario.patient))}</div>`
+    : "";
 
   const cards = Object.keys(CHART_LABELS)
     .filter((key) => key in chartData)
@@ -109,6 +118,7 @@ function renderChartData(chartData, container) {
 
   container.innerHTML = `
     <h2 class="chart-panel__heading">환자 차트</h2>
+    ${patientLine}
     <div class="chart-cards">${cards}</div>
   `;
 }
@@ -170,12 +180,17 @@ async function playMessages(messages, container, delayMs = 600) {
 
 /**
  * 말풍선 DOM 추가
+ * @param {HTMLElement} container
+ * @param {{sender:string,text:string,time?:string,name?:string}} msg
+ * @param {{partnerLabel?:string}} [options]
  */
-function appendMessage(container, msg) {
+function appendMessage(container, msg, options = {}) {
   const isMe = msg.sender === "me";
+  const nameLabel = isMe ? "나" : msg.name || options.partnerLabel || "의사";
   const wrap = document.createElement("div");
   wrap.className = `msg ${isMe ? "msg--me" : "msg--partner"}`;
   wrap.innerHTML = `
+    <div class="msg__name">${escapeHtml(nameLabel)}</div>
     <div class="msg__bubble">${escapeHtml(msg.text)}</div>
     ${msg.time ? `<div class="msg__time">${escapeHtml(msg.time)}</div>` : ""}
   `;

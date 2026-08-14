@@ -57,12 +57,45 @@
       display: none;
     }
 
+    .kakao-bar {
+      background: #fee500;
+      color: #191919;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.7rem 0.75rem;
+      letter-spacing: -0.01em;
+    }
+
     .call-chat {
       padding: 1rem;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.65rem;
       min-height: 120px;
+    }
+
+    .msg__name {
+      font-size: 0.72rem;
+      color: #555;
+      margin-bottom: 0.2rem;
+      padding: 0 0.15rem;
+    }
+
+    .msg--me .msg__name {
+      text-align: right;
+    }
+
+    .patient-banner {
+      margin-bottom: 0.65rem;
+      padding: 0.65rem 0.85rem;
+      background: #fff;
+      border: 1px solid var(--border, #e5e5e5);
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.4;
+      word-break: keep-all;
     }
 
     .notify-composer {
@@ -179,7 +212,7 @@
       <a class="chat-header__back" href="index.html" aria-label="목록으로">←</a>
       <div>
         <div class="chat-header__name" id="scenarioTitle">시나리오</div>
-        <div class="chat-header__role" id="scenarioRole">차트를 확인한 뒤 의사에게 전화하세요</div>
+        <div class="chat-header__role" id="scenarioRole">차트를 확인한 뒤 의사에게 노티하세요</div>
       </div>
     </header>
 
@@ -188,10 +221,11 @@
       <section class="chart-panel" id="chartArea"></section>
 
       <div class="call-actions" id="callActions">
-        <button type="button" class="btn-primary" id="callBtn">의사에게 전화하기</button>
+        <button type="button" class="btn-primary" id="callBtn">의사에게 노티하기</button>
       </div>
 
       <section class="call-section" id="callSection" hidden>
+        <div class="kakao-bar" id="kakaoBar">의사</div>
         <div class="call-chat" id="chatBody"></div>
         <form class="notify-composer" id="notifyComposer" autocomplete="off">
           <textarea
@@ -243,14 +277,22 @@
       }
       if (callActions) callActions.hidden = true;
 
+      const partnerLabel = getPartnerLabel(session.scenario);
+      const kakaoBar = document.getElementById("kakaoBar");
+      if (kakaoBar) kakaoBar.textContent = partnerLabel;
+
       const callSection = document.getElementById("callSection");
       const chatBody = document.getElementById("chatBody");
       chatBody.innerHTML = "";
-      appendMessage(chatBody, {
-        sender: "partner",
-        text: "네, 말씀하세요.",
-        time: nowHHMM()
-      });
+      appendMessage(
+        chatBody,
+        {
+          sender: "partner",
+          text: "네, 말씀하세요.",
+          time: nowHHMM()
+        },
+        { partnerLabel }
+      );
 
       callSection.hidden = false;
       callSection.scrollIntoView({ behavior: "smooth", block: "start" });
