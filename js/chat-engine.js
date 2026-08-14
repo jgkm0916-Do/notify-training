@@ -113,26 +113,23 @@ function renderChartData(chartData, container) {
   `;
 }
 
-/** chartData 값을 HTML로 포맷 */
+/** chartData 값을 한눈에 들어오는 한 줄 요약으로 포맷 */
 function formatChartValue(value) {
   if (value == null) return "";
 
   if (Array.isArray(value)) {
-    return `<ul class="chart-list">${value
-      .map((item) => `<li>${escapeHtml(String(item))}</li>`)
-      .join("")}</ul>`;
+    return `<p class="chart-card__text">${escapeHtml(value.join(", "))}</p>`;
   }
 
   if (typeof value === "object") {
-    return `<dl class="chart-dl">${Object.entries(value)
-      .map(
-        ([k, v]) =>
-          `<div class="chart-dl__row"><dt>${escapeHtml(k)}</dt><dd>${escapeHtml(String(v))}</dd></div>`
-      )
-      .join("")}</dl>`;
+    const parts = Object.entries(value).map(([k, v]) => {
+      const label = String(k).replace(/^최근\s*/, "");
+      return `${label} ${v}`;
+    });
+    return `<p class="chart-card__text">${escapeHtml(parts.join(" · "))}</p>`;
   }
 
-  return `<p>${escapeHtml(String(value))}</p>`;
+  return `<p class="chart-card__text">${escapeHtml(String(value))}</p>`;
 }
 
 /**
