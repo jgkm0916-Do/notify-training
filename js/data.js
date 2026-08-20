@@ -71,7 +71,7 @@ const scenarios = [
         sbarCategory: "A",
         keywords: ["후두부", "부종", "열상", "압통", "출혈", "혈종", "찰과상"],
         hint: "부딪힌 부위(두부) 상태",
-        followUpQuestion: "부딪히신 후두부 상태는 어떠세요? 부종이나 열상, 압통 있나요?"
+        followUpQuestion: "부딪힌 부위 상태는 어떠세요? 부종이나 열상, 압통 있나요?"
       },
       {
         key: "신경학적증상",
