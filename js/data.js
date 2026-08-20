@@ -10,7 +10,7 @@ const scenarios = [
     subtitle: "야간 근무 중 침상 낙상 발견",
     partnerName: "김민수",
     partnerRole: "의사",
-    trigger: "802호 김OO님 침상에서 낙상, 신규간호사인 당신이 발견",
+    trigger: "802호 김OO님 침상에서 낙상, 침상 난간에 후두부를 부딪힘. 신규간호사인 당신이 발견",
     eventTime: "03:08",
 
     patient: {
@@ -30,7 +30,7 @@ const scenarios = [
       Lab: { "최근 CBC": "정상범위", "최근 PT/INR": "1.4 (항응고제 복용중)" },
       Meds: ["와파린 5mg qd", "아스피린 100mg qd"],
       IO: { intake: "1200ml", output: "900ml" },
-      Symptoms: "낙상 후 후두부 통증 호소, 의식 명료, 구토 없음",
+      Symptoms: "낙상 후 후두부 통증 호소, 촉진 시 압통(+) 경미한 부종 있음 열상 없음, 의식 명료, 구토 없음",
       Treatment: "낙상 직후 활력징후 측정 완료, 냉찜질 적용"
     },
 
@@ -60,10 +60,25 @@ const scenarios = [
         hint: "항응고제 복용 또는 PT/INR 등 관련 배경을 포함하세요."
       },
       {
-        key: "의식및증상",
+        key: "의식상태",
         sbarCategory: "A",
-        keywords: ["의식", "명료", "후두부", "두통", "통증", "구토"],
-        hint: "의식 상태와 두통/후두부 통증 등 평가 내용을 포함하세요."
+        keywords: ["의식", "명료", "기면", "혼미", "반혼수", "혼수"],
+        hint: "의식 수준 평가",
+        followUpQuestion: "의식 상태는 어떠세요?"
+      },
+      {
+        key: "두부손상상태",
+        sbarCategory: "A",
+        keywords: ["후두부", "부종", "열상", "압통", "출혈", "혈종", "찰과상"],
+        hint: "부딪힌 부위(두부) 상태",
+        followUpQuestion: "부딪히신 후두부 상태는 어떠세요? 부종이나 열상, 압통 있나요?"
+      },
+      {
+        key: "신경학적증상",
+        sbarCategory: "A",
+        keywords: ["구토", "오심", "어지러움", "두통"],
+        hint: "구토·어지러움 등 동반 증상",
+        followUpQuestion: "구토나 어지러움 같은 증상은 없으세요?"
       },
       {
         key: "활력징후",
