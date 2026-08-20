@@ -36,10 +36,18 @@ const scenarios = [
 
     requiredElements: [
       {
-        key: "환자식별",
+        key: "병실확인",
         sbarCategory: "S",
-        keywords: ["802", "김", "심방세동"],
-        hint: "병실·환자명과 진단명(심방세동)을 함께 포함하세요."
+        keywords: ["802"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?"
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["김", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?"
       },
       {
         key: "현재상황",
@@ -121,11 +129,12 @@ const scenarios = [
       Treatment: "ECG 모니터링 중, NTG 설하정 투여 전"
     },
     requiredElements: [
-      { key: "환자식별", sbarCategory: "S", keywords: ["701호", "박OO", "박○○", "협심증"], hint: "병실·환자명과 진단명(협심증 의증)을 함께 말하세요." },
+      { key: "병실확인", sbarCategory: "S", keywords: ["701"], hint: "병실 번호", followUpQuestion: "몇 호실이세요?" },
+      { key: "환자성명확인", sbarCategory: "S", keywords: ["박", "성함"], hint: "환자 성명", followUpQuestion: "환자분 성함이 어떻게 되세요?" },
       { key: "흉통양상", sbarCategory: "S", keywords: ["흉통", "방사통", "NRS"], hint: "통증 양상과 강도가 빠지면 심각도 판단이 어렵습니다." },
       { key: "발생시각", sbarCategory: "S", keywords: ["14:20", "2시 20", "14시"], hint: "흉통이 시작된 시각(14:20)을 포함하세요." },
       { key: "활력징후", sbarCategory: "A", keywords: ["혈압", "BP", "150", "심박", "HR"], hint: "구체적 수치가 없으면 상태 평가가 전달되지 않습니다." },
-      { key: "심전도확인", sbarCategory: "A", keywords: ["ECG", "심전도"], hint: "흉통 시 ECG 확인 여부는 필수 보고 항목입니다." },
+      { key: "심전도확인", sbarCategory: "A", keywords: ["12리드", "12-lead", "촬영", "찍었", "전송", "보내드", "보여드", "사진", "정상동", "ST"], hint: "흉통 시 ECG 확인 여부는 필수 보고 항목입니다.", followUpQuestion: "12리드 ECG는 찍으셨어요? 사진 보내주시거나 보여주실 수 있어요?" },
       { key: "요청사항", sbarCategory: "R", keywords: ["처방", "요청", "봐주세요", "와주세요", "투약", "NTG", "할까요", "확인", "지시", "부탁"], hint: "무엇을 원하는지 명확히 요청해야 합니다. (예: NTG 투약할까요?)" }
     ]
   },
@@ -156,7 +165,8 @@ const scenarios = [
       Treatment: "산소 2L → 4L 상향 적용, 기도흡인 시행"
     },
     requiredElements: [
-      { key: "환자식별", sbarCategory: "S", keywords: ["903호", "이OO", "이○○", "COPD"], hint: "병실·환자명과 진단명(COPD)을 함께 말하세요." },
+      { key: "병실확인", sbarCategory: "S", keywords: ["903"], hint: "병실 번호", followUpQuestion: "몇 호실이세요?" },
+      { key: "환자성명확인", sbarCategory: "S", keywords: ["이", "성함"], hint: "환자 성명", followUpQuestion: "환자분 성함이 어떻게 되세요?" },
       { key: "발생시각", sbarCategory: "S", keywords: ["22:15", "10시 15", "22시"], hint: "호흡곤란이 발생한 시각(22:15)을 포함하세요." },
       { key: "SpO2수치", sbarCategory: "S", keywords: ["88", "산소포화도", "SpO2"], hint: "구체적 산소포화도 수치가 핵심 정보입니다." },
       { key: "호흡수", sbarCategory: "A", keywords: ["호흡수", "RR", "30"], hint: "호흡수 변화는 상태 평가에 필수입니다." },
@@ -191,7 +201,8 @@ const scenarios = [
       Treatment: "혈액배양 검사 오더 대기중"
     },
     requiredElements: [
-      { key: "환자식별", sbarCategory: "S", keywords: ["605호", "최OO", "최○○", "요로감염", "UTI"], hint: "병실·환자명과 진단명(요로감염)을 함께 말하세요." },
+      { key: "병실확인", sbarCategory: "S", keywords: ["605"], hint: "병실 번호", followUpQuestion: "몇 호실이세요?" },
+      { key: "환자성명확인", sbarCategory: "S", keywords: ["최", "성함"], hint: "환자 성명", followUpQuestion: "환자분 성함이 어떻게 되세요?" },
       { key: "발생시각", sbarCategory: "S", keywords: ["06:40", "6:40", "6시 40", "06시"], hint: "발열을 확인한 시각(06:40)을 포함하세요." },
       { key: "체온수치", sbarCategory: "S", keywords: ["39.2", "발열", "고열"], hint: "구체적 체온 수치가 빠지면 심각도가 전달되지 않습니다." },
       { key: "감염징후", sbarCategory: "B", keywords: ["WBC", "CRP", "오한"], hint: "감염 관련 검사 수치나 증상이 배경(B) 정보로 필요합니다." },
@@ -226,7 +237,8 @@ const scenarios = [
       Treatment: "50% 포도당 투여 준비중"
     },
     requiredElements: [
-      { key: "환자식별", sbarCategory: "S", keywords: ["502호", "정OO", "정○○", "당뇨", "당뇨병"], hint: "병실·환자명과 진단명(당뇨)을 함께 말하세요." },
+      { key: "병실확인", sbarCategory: "S", keywords: ["502"], hint: "병실 번호", followUpQuestion: "몇 호실이세요?" },
+      { key: "환자성명확인", sbarCategory: "S", keywords: ["정", "성함"], hint: "환자 성명", followUpQuestion: "환자분 성함이 어떻게 되세요?" },
       { key: "발생시각", sbarCategory: "S", keywords: ["07:10", "7:10", "7시 10", "07시"], hint: "저혈당을 확인한 시각(07:10)을 포함하세요." },
       { key: "혈당수치", sbarCategory: "S", keywords: ["45", "혈당", "저혈당"], hint: "구체적 혈당 수치가 핵심 정보입니다." },
       { key: "의식상태", sbarCategory: "A", keywords: ["의식", "저하", "졸림", "호명"], hint: "의식 수준 변화는 저혈당 응급도 판단에 필수입니다." },
@@ -261,11 +273,12 @@ const scenarios = [
       Treatment: "수혈 즉시 중단, 생리식염수로 라인 유지중"
     },
     requiredElements: [
-      { key: "환자식별", sbarCategory: "S", keywords: ["1005호", "한OO", "한○○", "위암", "POD"], hint: "병실·환자명·진단명·수술 후 경과일(POD#2)을 함께 말하세요." },
+      { key: "병실확인", sbarCategory: "S", keywords: ["1005"], hint: "병실 번호", followUpQuestion: "몇 호실이세요?" },
+      { key: "환자성명확인", sbarCategory: "S", keywords: ["한", "성함"], hint: "환자 성명", followUpQuestion: "환자분 성함이 어떻게 되세요?" },
       { key: "발생시각", sbarCategory: "S", keywords: ["16:45", "4시 45", "16시", "15분"], hint: "증상 발생 시각(16:45) 또는 수혈 시작 후 경과 시간을 포함하세요." },
       { key: "수혈반응증상", sbarCategory: "S", keywords: ["오한", "두드러기", "발진", "가려움"], hint: "수혈 반응의 구체적 증상이 핵심 정보입니다." },
       { key: "활력징후변화", sbarCategory: "A", keywords: ["체온", "38.0", "혈압", "BP"], hint: "수혈 전후 활력징후 변화가 평가(A)에 필요합니다." },
-      { key: "조치사항", sbarCategory: "B", keywords: ["수혈", "중단"], hint: "이미 취한 조치(수혈 중단)를 알려야 의사가 다음 판단을 할 수 있습니다." },
+      { key: "조치사항", sbarCategory: "B", keywords: ["중단", "중지", "멈춤", "스탑", "라인 잠금", "클램프"], hint: "수혈 즉시 중단 여부", followUpQuestion: "수혈은 중단하셨어요?" },
       { key: "요청사항", sbarCategory: "R", keywords: ["처방", "요청", "봐주세요"], hint: "다음 조치를 명확히 요청해야 합니다." }
     ]
   }
