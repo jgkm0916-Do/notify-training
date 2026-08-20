@@ -290,6 +290,122 @@ function renderFeedback(choice, container) {
   `;
 }
 
+/* ===== 노티 대화형 후속 질문 ===== */
+
+function initNotifyConversation(session) {
+  session.notifyTexts = [];
+  session.followUpCount = 0;
+  session.askedKeys = [];
+  session.notifyFinished = false;
+}
+
+/**
+ * 사용자 메시지 전송 → 누락 시 의사 후속 질문(최대 3회) → 최종 평가
+ */
+function handleNotifySubmit(session, text, chatBody, feedbackSlot, partnerLabel) {
+  if (!session || session.notifyFinished || !text?.trim()) return { done: false };
+
+  const message = text.trim();
+  session.notifyTexts.push(message);
+
+  appendMessage(chatBody, { sender: "me", text: message, time: nowHHMM() });
+
+  const combined = session.notifyTexts.join(" ");
+  const elements = session.scenario.requiredElements || [];
+  const grade = gradeNotifyText(combined, elements);
+  session.lastGrade = grade;
+  session.notifyText = combined;
+
+  const missed = getMissedForFollowUp(grade, session.askedKeys);
+
+  if (session.followUpCount < MAX_NOTIFY_FOLLOWUPS && missed.length > 0) {
+    const target = missed[0];
+    const sourceEl = elements.find((e) => e.key === target.key) || target;
+    session.askedKeys.push(target.key);
+    session.followUpCount += 1;
+
+    const question = buildFollowUpQuestion(sourceEl);
+    window.setTimeout(() => {
+      appendMessage(
+        chatBody,
+        { sender: "partner", text: question, time: nowHHMM() },
+        { partnerLabel }
+      );
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }, 450);
+
+    return { done: false, followUp: true, question };
+  }
+
+  finishNotifyConversation(session, grade, chatBody, feedbackSlot, partnerLabel);
+  return { done: true };
+}
+
+function finishNotifyConversation(session, grade, chatBody, feedbackSlot, partnerLabel) {
+  session.notifyFinished = true;
+  session.step = "feedback";
+
+  appendMessage(
+    chatBody,
+    { sender: "partner", text: "알겠습니다. 확인했습니다.", time: nowHHMM() },
+    { partnerLabel }
+  );
+
+  renderNotifyFeedback(grade, feedbackSlot, {
+    title: "최종 평가",
+    lead: `총 ${session.notifyTexts.length}번의 메시지를 바탕으로 평가했습니다.`
+  });
+
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function renderNotifyFeedback(grade, container, options = {}) {
+  if (!container || !grade) return;
+
+  const title = options.title || `${grade.includedCount}/${grade.total} 항목 포함`;
+  const lead = options.lead || "보낸 노티를 항목별로 살펴본 결과입니다.";
+
+  const hitItems = (grade.checklist || []).filter((i) => i.included);
+  const missItems = (grade.checklist || []).filter((i) => !i.included);
+
+  const renderItem = (item) => {
+    const hit = item.included;
+    const label = hit ? "맞음" : "보완 필요";
+    return `
+      <li class="feedback-checklist__item ${hit ? "feedback-checklist__item--hit" : "feedback-checklist__item--miss"}">
+        <div class="feedback-checklist__row">
+          <span class="feedback-checklist__mark">${hit ? "✓" : "✗"}</span>
+          <span class="feedback-checklist__cat">${escapeHtml(item.sbarCategory || "")}</span>
+          <span class="feedback-checklist__key">${escapeHtml(item.key || "")}</span>
+          <span class="feedback-checklist__status">${label}</span>
+        </div>
+        <p class="feedback-checklist__explain">${escapeHtml(explainChecklistItem(item))}</p>
+      </li>
+    `;
+  };
+
+  container.innerHTML = `
+    <div class="feedback-checklist">
+      <div class="feedback-checklist__summary">${escapeHtml(title)}</div>
+      <p class="feedback-checklist__lead">${escapeHtml(lead)}</p>
+      ${
+        hitItems.length
+          ? `<h3 class="feedback-checklist__section">맞은 항목</h3>
+             <ul class="feedback-checklist__list">${hitItems.map(renderItem).join("")}</ul>`
+          : ""
+      }
+      ${
+        missItems.length
+          ? `<h3 class="feedback-checklist__section">빠진·보완할 항목</h3>
+             <ul class="feedback-checklist__list">${missItems.map(renderItem).join("")}</ul>`
+          : `<p class="feedback-checklist__all-ok">필수 항목을 모두 포함했습니다.</p>`
+      }
+    </div>
+  `;
+
+  container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 /* ===== helpers ===== */
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
