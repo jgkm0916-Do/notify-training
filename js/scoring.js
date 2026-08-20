@@ -79,11 +79,45 @@ function gradeNotifyText(text, requiredElements) {
 }
 
 /**
- * 아직 묻지 않은 누락 항목
+ * 아직 묻지 않은 누락 항목 (R 권고사항은 되묻기 제외)
  */
 function getMissedForFollowUp(grade, askedKeys) {
   const asked = askedKeys || [];
-  return (grade?.checklist || []).filter((c) => !c.included && !asked.includes(c.key));
+  return (grade?.checklist || []).filter(
+    (c) => !c.included && !asked.includes(c.key) && c.sbarCategory !== "R"
+  );
+}
+
+/**
+ * S/B/A 되묻기 종료 후 의사 마무리 대사
+ */
+function buildDoctorClosingMessage(grade, elements) {
+  const rItem = (grade?.checklist || []).find((c) => c.sbarCategory === "R");
+
+  if (rItem?.included) {
+    const matched = rItem.matchedKeywords || [];
+    if (matched.length >= 2) {
+      return `네, ${matched.slice(0, 2).join("·")} 요청 확인했습니다. 그렇게 진행하겠습니다.`;
+    }
+    if (matched.length === 1) {
+      return `네, ${matched[0]} 관련해서 확인했습니다. 진행하겠습니다.`;
+    }
+    return "네, 말씀하신 요청 확인했습니다. 진행하겠습니다.";
+  }
+
+  return "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요.";
+}
+
+/**
+ * 최종 피드백 — R 누락 안내 문구
+ */
+function getRecommendationMissNotice(grade, elements) {
+  const rItem = (grade?.checklist || []).find((c) => c.sbarCategory === "R");
+  if (!rItem || rItem.included) return null;
+
+  const rEl = (elements || []).find((e) => e.sbarCategory === "R");
+  const example = rEl?.hint || "구체적인 검사·처치 요청을 포함하세요.";
+  return `권고사항(R)이 누락되었습니다 - 예시: ${example}`;
 }
 
 /**

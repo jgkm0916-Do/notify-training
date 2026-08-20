@@ -345,15 +345,19 @@ function finishNotifyConversation(session, grade, chatBody, feedbackSlot, partne
   session.notifyFinished = true;
   session.step = "feedback";
 
+  const elements = session.scenario.requiredElements || [];
+  const closingText = buildDoctorClosingMessage(grade, elements);
+
   appendMessage(
     chatBody,
-    { sender: "partner", text: "알겠습니다. 확인했습니다.", time: nowHHMM() },
+    { sender: "partner", text: closingText, time: nowHHMM() },
     { partnerLabel }
   );
 
   renderNotifyFeedback(grade, feedbackSlot, {
     title: "최종 평가",
-    lead: `총 ${session.notifyTexts.length}번의 메시지를 바탕으로 평가했습니다.`
+    lead: `총 ${session.notifyTexts.length}번의 메시지를 바탕으로 평가했습니다.`,
+    elements
   });
 
   chatBody.scrollTop = chatBody.scrollHeight;
@@ -361,6 +365,9 @@ function finishNotifyConversation(session, grade, chatBody, feedbackSlot, partne
 
 function renderNotifyFeedback(grade, container, options = {}) {
   if (!container || !grade) return;
+
+  const elements = options.elements || [];
+  const rMissNotice = getRecommendationMissNotice(grade, elements);
 
   const title = options.title || `${grade.includedCount}/${grade.total} 항목 포함`;
   const lead = options.lead || "보낸 노티를 항목별로 살펴본 결과입니다.";
@@ -388,6 +395,11 @@ function renderNotifyFeedback(grade, container, options = {}) {
     <div class="feedback-checklist">
       <div class="feedback-checklist__summary">${escapeHtml(title)}</div>
       <p class="feedback-checklist__lead">${escapeHtml(lead)}</p>
+      ${
+        rMissNotice
+          ? `<p class="feedback-checklist__r-notice">${escapeHtml(rMissNotice)}</p>`
+          : ""
+      }
       ${
         hitItems.length
           ? `<h3 class="feedback-checklist__section">맞은 항목</h3>
