@@ -377,7 +377,7 @@ const scenarios = [
     level: 2,
     levelLabel: "중급",
     trigger: "502호 정OO님(70세, 당뇨) 식은땀 및 의식저하, 혈당 45mg/dL 측정",
-    eventTime: "07:10",
+    eventTime: "08:00",
     patient: {
       room: "502호",
       name: "정OO",
@@ -386,14 +386,14 @@ const scenarios = [
       pod: null
     },
     messages: [
-      { sender: "partner", text: "네, 말씀하세요.", time: "07:13" }
+      { sender: "partner", text: "네, 말씀하세요.", time: "08:03" }
     ],
     chartData: {
       VS: { BP: "110/70", HR: "95", RR: "18", BT: "36.5", SpO2: "98%" },
-      Lab: "07:10 측정 - 혈당 45mg/dL",
-      Meds: ["인슐린 투여중 (아침 10U 투여함)"],
-      IO: { intake: "300ml", output: "250ml" },
-      Symptoms: "식은땀, 손떨림, 의식 저하(졸림, 호명 반응 저하)",
+      Lab: "08:00 측정 - 혈당 45mg/dL",
+      Meds: ["아침 07:00 Apidra(애피드라) 10U 투약함"],
+      IO: { intake: "300ml", output: "250ml", 아침식사: "1/2만 섭취" },
+      Symptoms: "식은땀, 손떨림, 의식 저하(졸림, 호명 반응 저하), 아침식사 1/2만 섭취",
       Treatment: "50% 포도당 투여 준비중"
     },
     requiredElements: [
@@ -416,8 +416,8 @@ const scenarios = [
       {
         key: "발생시각",
         sbarCategory: "S",
-        keywords: ["07:10", "7:10", "7시 10", "07시"],
-        hint: "저혈당을 확인한 시각(07:10)을 포함하세요.",
+        keywords: ["08:00", "8:00", "8시", "08시"],
+        hint: "저혈당을 확인한 시각(08:00)을 포함하세요.",
         rationale: "확인 시각이 있어야 저혈당 경과와 재측정·처치 시점을 판단할 수 있습니다."
       },
       {
