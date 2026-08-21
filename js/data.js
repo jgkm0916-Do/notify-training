@@ -12,6 +12,7 @@ const scenarios = [
     partnerRole: "의사",
     level: 1,
     levelLabel: "초급",
+    closingLineNoR: "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요.",
     trigger: "802호 김OO님 침상에서 낙상, 침상 난간에 후두부를 부딪힘. 신규간호사인 당신이 발견",
     eventTime: "03:08",
 
@@ -122,6 +123,7 @@ const scenarios = [
     partnerRole: "의사",
     level: 2,
     levelLabel: "중급",
+    closingLineNoR: "알겠습니다. 지금 바로 가서 확인해볼게요.",
     trigger: "701호 박OO님(65세, M) 갑작스러운 흉통 호소, 좌측 방사통 동반",
     eventTime: "14:20",
     patient: {
@@ -206,6 +208,7 @@ const scenarios = [
     partnerRole: "의사",
     level: 3,
     levelLabel: "고급",
+    closingLineNoR: "알겠습니다. 바로 가겠습니다.",
     trigger: "903호 이OO님(80세, COPD) 갑자기 호흡곤란 호소, SpO2 88%로 저하",
     eventTime: "22:15",
     patient: {
@@ -288,6 +291,7 @@ const scenarios = [
     partnerRole: "의사",
     level: 1,
     levelLabel: "초급",
+    closingLineNoR: "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요.",
     trigger: "605호 최OO님(55세) 발열 및 오한 호소, 최근 요로감염 병력",
     eventTime: "06:40",
     patient: {
@@ -376,6 +380,7 @@ const scenarios = [
     partnerRole: "의사",
     level: 2,
     levelLabel: "중급",
+    closingLineNoR: "지금 바로 가겠습니다. 그 사이 프로토콜대로 처치 부탁드려요.",
     trigger: "502호 정OO님(70세, 당뇨) 식은땀 및 의식저하, 혈당 45mg/dL 측정",
     eventTime: "08:00",
     patient: {
@@ -461,9 +466,10 @@ const scenarios = [
       {
         key: "요청사항",
         sbarCategory: "R",
-        keywords: ["포도당", "처방", "요청"],
-        hint: "필요한 처치를 명확히 요청해야 합니다.",
-        rationale: "포도당 투여 등 구체 요청이 있어야 즉시 처치로 이어질 수 있습니다."
+        keywords: ["방문", "봐주세요", "와주세요", "확인 부탁", "처방", "지시"],
+        hint: "방문·긴급도 전달 등 구체적 요청을 포함하세요.",
+        followUpQuestion: "선생님, 의식 저하가 있어서 바로 봐주실 수 있을까요?",
+        rationale: "의식 변화를 동반한 저혈당은 응급 상황입니다. 구체적인 처치를 지정하기보다, 즉시 방문이 필요하다는 긴급도를 명확히 전달하는 것이 우선입니다."
       }
     ]
   },
@@ -475,6 +481,7 @@ const scenarios = [
     partnerRole: "의사",
     level: 3,
     levelLabel: "고급",
+    closingLineNoR: "알겠습니다. 바로 가겠습니다.",
     trigger: "1005호 한OO님 수혈 시작 15분 후 오한 및 두드러기 발생",
     eventTime: "16:45",
     patient: {

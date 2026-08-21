@@ -374,7 +374,7 @@ function finishNotifyConversation(session, grade, chatBody, feedbackSlot, partne
   session.step = "feedback";
 
   const elements = session.scenario.requiredElements || [];
-  const closingText = buildDoctorClosingMessage(grade, elements);
+  const closingText = buildDoctorClosingMessage(grade, elements, session.scenario);
 
   appendMessage(
     chatBody,

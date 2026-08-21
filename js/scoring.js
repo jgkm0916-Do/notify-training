@@ -115,8 +115,9 @@ function getMissedForFollowUp(grade, askedKeys) {
 
 /**
  * S/B/A 되묻기 종료 후 의사 마무리 대사
+ * R 포함 시: 요청에 대한 응답 / R 누락 시: scenario.closingLineNoR
  */
-function buildDoctorClosingMessage(grade, elements) {
+function buildDoctorClosingMessage(grade, elements, scenario) {
   const rItem = (grade?.checklist || []).find((c) => c.sbarCategory === "R");
 
   if (rItem?.included) {
@@ -130,7 +131,10 @@ function buildDoctorClosingMessage(grade, elements) {
     return "네, 말씀하신 요청 확인했습니다. 진행하겠습니다.";
   }
 
-  return "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요.";
+  return (
+    scenario?.closingLineNoR ||
+    "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요."
+  );
 }
 
 /**
