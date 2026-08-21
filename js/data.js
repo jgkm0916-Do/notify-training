@@ -29,7 +29,7 @@ const scenarios = [
 
     chartData: {
       VS: { BP: "128/76", HR: "88", RR: "18", BT: "36.7", SpO2: "97%" },
-      Lab: { "최근 CBC": "정상범위", "최근 PT/INR": "1.4 (항응고제 복용중)" },
+      Lab: "어제 16:20 시행 - CBC 정상범위, PT/INR 1.4 (항응고제 복용중)",
       Meds: ["와파린 5mg qd", "아스피린 100mg qd"],
       IO: { intake: "1200ml", output: "900ml" },
       Symptoms: "낙상 후 후두부 통증 호소, 촉진 시 압통(+) 경미한 부종 있음 열상 없음, 의식 명료, 구토 없음",
@@ -136,7 +136,7 @@ const scenarios = [
     ],
     chartData: {
       VS: { BP: "150/95", HR: "102", RR: "22", BT: "36.8", SpO2: "95%" },
-      Lab: { Troponin: "결과 대기중", 과거력: "고혈압, 당뇨" },
+      Lab: "오늘 14:25 채혈 - Troponin 결과 대기중 · 과거력: 고혈압, 당뇨",
       Meds: ["아스피린 100mg qd", "메트포르민 500mg bid"],
       IO: { intake: "800ml", output: "700ml" },
       Symptoms: "흉통 NRS 7/10, 좌측 어깨 방사통, 식은땀, 호흡곤란 동반",
@@ -219,7 +219,7 @@ const scenarios = [
     ],
     chartData: {
       VS: { BP: "130/80", HR: "118", RR: "30", BT: "37.0", SpO2: "88% (비강캐뉼라 2L 적용중)" },
-      Lab: { ABGA: "미시행", 과거력: "COPD 10년" },
+      Lab: "22:15 시점 ABGA 미시행 · 과거력: COPD 10년",
       Meds: ["기관지확장제 흡입기 qid"],
       IO: { intake: "1000ml", output: "950ml" },
       Symptoms: "호흡곤란, 좌위호흡, 청색증 의심",
@@ -389,7 +389,7 @@ const scenarios = [
     ],
     chartData: {
       VS: { BP: "110/70", HR: "95", RR: "18", BT: "36.5", SpO2: "98%" },
-      Lab: { 혈당: "45mg/dL (방금 측정)" },
+      Lab: "07:10 측정 - 혈당 45mg/dL",
       Meds: ["인슐린 투여중 (아침 10U 투여함)"],
       IO: { intake: "300ml", output: "250ml" },
       Symptoms: "식은땀, 손떨림, 의식 저하(졸림, 호명 반응 저하)",
@@ -471,7 +471,7 @@ const scenarios = [
     ],
     chartData: {
       VS: { BP: "105/70 (수혈 전 120/80)", HR: "105", RR: "22", BT: "38.0 (수혈 전 36.8)", SpO2: "96%" },
-      Lab: { "수혈 전 Hb": "6.8 g/dL" },
+      Lab: "오늘 15:30 수혈 전 시행 - Hb 6.8 g/dL",
       Meds: ["PRBC 1 pint 수혈중"],
       IO: { intake: "정상", output: "정상" },
       Symptoms: "오한, 두드러기, 가려움증, 요통 호소",

@@ -7,7 +7,7 @@
 
 const CHART_LABELS = {
   VS: "V/S",
-  Lab: "최근 Lab",
+  Lab: "Lab",
   Meds: "투약",
   IO: "I/O",
   Symptoms: "증상",
