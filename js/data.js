@@ -301,7 +301,7 @@ const scenarios = [
     ],
     chartData: {
       VS: { BP: "100/60", HR: "110", RR: "24", BT: "39.2", SpO2: "96%" },
-      Lab: { WBC: "15,000", CRP: "12 mg/dL" },
+      Lab: "어제 09:00 시행 - WBC 12,300 (상승), CRP 8.2 (상승)",
       Meds: ["항생제 투여중 아님"],
       IO: { intake: "600ml", output: "200ml (8시간)" },
       Symptoms: "오한, 전신쇠약, 배뇨통",
@@ -332,25 +332,31 @@ const scenarios = [
         rationale: "확인 시각이 있어야 발열 경과와 재측정·처치 시점을 판단할 수 있습니다."
       },
       {
-        key: "체온수치",
-        sbarCategory: "S",
-        keywords: ["39.2", "발열", "고열"],
-        hint: "구체적 체온 수치가 빠지면 심각도가 전달되지 않습니다.",
-        rationale: "구체 체온은 발열 심각도와 패혈증 의심 강도를 전달하는 핵심 수치입니다."
+        key: "활력징후",
+        sbarCategory: "A",
+        keywordGroups: [
+          ["BT", "체온", "39.2"],
+          ["BP", "혈압", "HR", "맥박"]
+        ],
+        hint: "체온 포함 전체 활력징후",
+        followUpQuestion: "체온이랑 혈압, 맥박은 어떠세요?",
+        rationale: "고체온 시 빈맥 동반 여부가 패혈증 초기 징후일 수 있어, 체온만 보고하면 전신 상태 판단이 늦어질 수 있습니다."
       },
       {
         key: "감염징후",
         sbarCategory: "B",
         keywords: ["WBC", "CRP", "오한"],
         hint: "감염 관련 검사 수치나 증상이 배경(B) 정보로 필요합니다.",
+        followUpQuestion: "최근 WBC, CRP 확인하신 적 있으세요? 언제 결과고 수치가 어땠어요?",
         rationale: "WBC·CRP·오한은 감염 진행 배경을 보여 주어 항생제·배양 판단을 돕습니다."
       },
       {
-        key: "활력징후변화",
-        sbarCategory: "A",
-        keywords: ["혈압", "BP", "100", "저혈압", "HR"],
-        hint: "패혈증 의심 시 혈압 저하 여부가 중요한 평가 요소입니다.",
-        rationale: "혈압 저하·빈맥은 패혈성 쇼크 가능성을 알려 즉각 처치 필요성을 높입니다."
+        key: "항생제투약여부",
+        sbarCategory: "B",
+        keywords: ["항생제", "미투여", "투약 중"],
+        hint: "현재 항생제 투약 여부",
+        followUpQuestion: "현재 항생제 투약 중이신가요?",
+        rationale: "항생제 투여 여부에 따라 원인균 커버 범위나 배양검사 타이밍 판단이 달라집니다."
       },
       {
         key: "요청사항",

@@ -43,18 +43,35 @@ const FOLLOW_UP_QUESTIONS = {
  * keywords 중 하나라도 포함되면 해당 항목 hit
  *
  * @param {string} text
- * @param {Array<{key:string,sbarCategory:string,keywords:string[],hint:string,passHint?:string,rationale?:string}>} requiredElements
+ * @param {Array<{key:string,sbarCategory:string,keywords?:string[],keywordGroups?:string[][],hint:string,passHint?:string,rationale?:string}>} requiredElements
  */
 function gradeNotifyText(text, requiredElements) {
   const normalized = String(text || "").toLowerCase();
   const elements = Array.isArray(requiredElements) ? requiredElements : [];
 
   const checklist = elements.map((el) => {
-    const keywords = el.keywords || [];
-    const matchedKeywords = keywords.filter((kw) =>
-      normalized.includes(String(kw).toLowerCase())
-    );
-    const included = matchedKeywords.length > 0;
+    let matchedKeywords = [];
+    let included = false;
+
+    if (Array.isArray(el.keywordGroups) && el.keywordGroups.length > 0) {
+      // 각 그룹에서 최소 1개씩 매칭되어야 통과
+      const groupHits = el.keywordGroups.map((group) => {
+        const list = Array.isArray(group) ? group : [];
+        return list.filter((kw) =>
+          normalized.includes(String(kw).toLowerCase())
+        );
+      });
+      included = groupHits.every((hits) => hits.length > 0);
+      matchedKeywords = groupHits.flat();
+    } else {
+      // 기존: keywords 중 하나만 있어도 통과
+      const keywords = el.keywords || [];
+      matchedKeywords = keywords.filter((kw) =>
+        normalized.includes(String(kw).toLowerCase())
+      );
+      included = matchedKeywords.length > 0;
+    }
+
     return {
       key: el.key,
       sbarCategory: el.sbarCategory,
