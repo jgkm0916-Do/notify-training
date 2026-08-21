@@ -10,6 +10,8 @@ const scenarios = [
     subtitle: "야간 근무 중 침상 낙상 발견",
     partnerName: "김민수",
     partnerRole: "의사",
+    level: 1,
+    levelLabel: "초급",
     trigger: "802호 김OO님 침상에서 낙상, 침상 난간에 후두부를 부딪힘. 신규간호사인 당신이 발견",
     eventTime: "03:08",
 
@@ -40,65 +42,75 @@ const scenarios = [
         sbarCategory: "S",
         keywords: ["802"],
         hint: "병실 번호",
-        followUpQuestion: "몇 호실이세요?"
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
       },
       {
         key: "환자성명확인",
         sbarCategory: "S",
         keywords: ["김", "성함"],
         hint: "환자 성명",
-        followUpQuestion: "환자분 성함이 어떻게 되세요?"
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
       },
       {
         key: "현재상황",
         sbarCategory: "S",
         keywords: ["낙상", "넘어"],
-        hint: "현재 상황(침상 낙상)을 명확히 전달하세요."
+        hint: "현재 상황(침상 낙상)을 명확히 전달하세요.",
+        rationale: "낙상 사실을 먼저 전해야 의사가 두부 손상·출혈 위험을 바로 떠올릴 수 있습니다."
       },
       {
         key: "발생시각",
         sbarCategory: "S",
         keywords: ["03:08", "3:08", "03시", "3시"],
-        hint: "낙상이 발생한 시각(03:08)을 포함하세요."
+        hint: "낙상이 발생한 시각(03:08)을 포함하세요.",
+        rationale: "발생 시각이 있어야 경과 시간과 추가 검사·관찰 시점을 판단할 수 있습니다."
       },
       {
         key: "항응고배경",
         sbarCategory: "B",
         keywords: ["와파린", "항응고", "INR", "1.4", "아스피린"],
-        hint: "항응고제 복용 또는 PT/INR 등 관련 배경을 포함하세요."
+        hint: "항응고제 복용 또는 PT/INR 등 관련 배경을 포함하세요.",
+        rationale: "항응고 복용·INR은 두부 외상 후 출혈 위험을 높여 CT·처치 우선순위에 영향을 줍니다."
       },
       {
         key: "의식상태",
         sbarCategory: "A",
         keywords: ["의식", "명료", "기면", "혼미", "반혼수", "혼수"],
         hint: "의식 수준 평가",
-        followUpQuestion: "의식 상태는 어떠세요?"
+        followUpQuestion: "의식 상태는 어떠세요?",
+        rationale: "의식 수준은 두개내 출혈·뇌손상 진행 여부를 가늠하는 핵심 지표입니다."
       },
       {
         key: "두부손상상태",
         sbarCategory: "A",
         keywords: ["후두부", "부종", "열상", "압통", "출혈", "혈종", "찰과상"],
         hint: "부딪힌 부위(두부) 상태",
-        followUpQuestion: "부딪힌 부위 상태는 어떠세요? 부종이나 열상, 압통 있나요?"
+        followUpQuestion: "부딪힌 부위 상태는 어떠세요? 부종이나 열상, 압통 있나요?",
+        rationale: "부종·열상·압통 정보는 국소 손상 정도와 CT·봉합 필요성을 판단하는 근거입니다."
       },
       {
         key: "신경학적증상",
         sbarCategory: "A",
         keywords: ["구토", "오심", "어지러움", "두통"],
         hint: "구토·어지러움 등 동반 증상",
-        followUpQuestion: "구토나 어지러움 같은 증상은 없으세요?"
+        followUpQuestion: "구토나 어지러움 같은 증상은 없으세요?",
+        rationale: "구토·어지러움·두통은 두개내 병변을 시사할 수 있어 누락 시 위험 신호가 빠집니다."
       },
       {
         key: "활력징후",
         sbarCategory: "A",
         keywords: ["128", "76", "BP", "혈압", "88", "HR", "심박"],
-        hint: "측정한 활력징후 수치(BP, HR 등)를 포함하세요."
+        hint: "측정한 활력징후 수치(BP, HR 등)를 포함하세요.",
+        rationale: "구체 수치는 쇼크·이차 손상 여부를 객관적으로 전달하는 필수 평가입니다."
       },
       {
         key: "요청사항",
         sbarCategory: "R",
         keywords: ["CT", "처방", "방문", "확인", "요청", "부탁", "지시"],
-        hint: "의사에게 원하는 검사·처치·방문을 구체적으로 요청하세요."
+        hint: "의사에게 원하는 검사·처치·방문을 구체적으로 요청하세요.",
+        rationale: "원하는 검사·방문·처치를 명시해야 의사가 바로 실행할 다음 단계를 잡을 수 있습니다."
       }
     ]
   },
@@ -108,6 +120,8 @@ const scenarios = [
     title: "흉통 노티",
     partnerName: "박준호",
     partnerRole: "의사",
+    level: 2,
+    levelLabel: "중급",
     trigger: "701호 박OO님(65세, M) 갑작스러운 흉통 호소, 좌측 방사통 동반",
     eventTime: "14:20",
     patient: {
@@ -129,13 +143,58 @@ const scenarios = [
       Treatment: "ECG 모니터링 중, NTG 설하정 투여 전"
     },
     requiredElements: [
-      { key: "병실확인", sbarCategory: "S", keywords: ["701"], hint: "병실 번호", followUpQuestion: "몇 호실이세요?" },
-      { key: "환자성명확인", sbarCategory: "S", keywords: ["박", "성함"], hint: "환자 성명", followUpQuestion: "환자분 성함이 어떻게 되세요?" },
-      { key: "흉통양상", sbarCategory: "S", keywords: ["흉통", "방사통", "NRS"], hint: "통증 양상과 강도가 빠지면 심각도 판단이 어렵습니다." },
-      { key: "발생시각", sbarCategory: "S", keywords: ["14:20", "2시 20", "14시"], hint: "흉통이 시작된 시각(14:20)을 포함하세요." },
-      { key: "활력징후", sbarCategory: "A", keywords: ["혈압", "BP", "150", "심박", "HR"], hint: "구체적 수치가 없으면 상태 평가가 전달되지 않습니다." },
-      { key: "심전도확인", sbarCategory: "A", keywords: ["12리드", "12-lead", "촬영", "찍었", "전송", "보내드", "보여드", "사진", "정상동", "ST"], hint: "흉통 시 ECG 확인 여부는 필수 보고 항목입니다.", followUpQuestion: "12리드 ECG는 찍으셨어요? 사진 보내주시거나 보여주실 수 있어요?" },
-      { key: "요청사항", sbarCategory: "R", keywords: ["처방", "요청", "봐주세요", "와주세요", "투약", "NTG", "할까요", "확인", "지시", "부탁"], hint: "무엇을 원하는지 명확히 요청해야 합니다. (예: NTG 투약할까요?)" }
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["701"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["박", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "흉통양상",
+        sbarCategory: "S",
+        keywords: ["흉통", "방사통", "NRS"],
+        hint: "통증 양상과 강도가 빠지면 심각도 판단이 어렵습니다.",
+        rationale: "방사통·강도는 심근허혈 가능성을 시사하며, 양상 없이 보고하면 심각도가 전달되지 않습니다."
+      },
+      {
+        key: "발생시각",
+        sbarCategory: "S",
+        keywords: ["14:20", "2시 20", "14시"],
+        hint: "흉통이 시작된 시각(14:20)을 포함하세요.",
+        rationale: "흉통 시작 시각은 증상 지속 시간과 응급 처치 시점을 판단하는 기준입니다."
+      },
+      {
+        key: "활력징후",
+        sbarCategory: "A",
+        keywords: ["혈압", "BP", "150", "심박", "HR"],
+        hint: "구체적 수치가 없으면 상태 평가가 전달되지 않습니다.",
+        rationale: "혈압·심박 수치는 혈역학 불안정 여부를 보여 주어 처치 강도 결정에 필요합니다."
+      },
+      {
+        key: "심전도확인",
+        sbarCategory: "A",
+        keywords: ["12리드", "12-lead", "촬영", "찍었", "전송", "보내드", "보여드", "사진", "정상동", "ST"],
+        hint: "흉통 시 ECG 확인 여부는 필수 보고 항목입니다.",
+        followUpQuestion: "12리드 ECG는 찍으셨어요? 사진 보내주시거나 보여주실 수 있어요?",
+        rationale: "흉통 환자는 12리드 ECG로 ST 변화 유무를 확인해야 하며, 전달하지 않으면 골든타임 판단이 늦어질 수 있습니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["처방", "요청", "봐주세요", "와주세요", "투약", "NTG", "할까요", "확인", "지시", "부탁"],
+        hint: "무엇을 원하는지 명확히 요청해야 합니다. (예: NTG 투약할까요?)",
+        rationale: "NTG 등 구체 요청이 있어야 의사가 즉시 처방·방문 여부를 결정할 수 있습니다."
+      }
     ]
   },
 
@@ -144,6 +203,8 @@ const scenarios = [
     title: "호흡곤란 노티",
     partnerName: "이서연",
     partnerRole: "의사",
+    level: 3,
+    levelLabel: "고급",
     trigger: "903호 이OO님(80세, COPD) 갑자기 호흡곤란 호소, SpO2 88%로 저하",
     eventTime: "22:15",
     patient: {
@@ -165,13 +226,57 @@ const scenarios = [
       Treatment: "산소 2L → 4L 상향 적용, 기도흡인 시행"
     },
     requiredElements: [
-      { key: "병실확인", sbarCategory: "S", keywords: ["903"], hint: "병실 번호", followUpQuestion: "몇 호실이세요?" },
-      { key: "환자성명확인", sbarCategory: "S", keywords: ["이", "성함"], hint: "환자 성명", followUpQuestion: "환자분 성함이 어떻게 되세요?" },
-      { key: "발생시각", sbarCategory: "S", keywords: ["22:15", "10시 15", "22시"], hint: "호흡곤란이 발생한 시각(22:15)을 포함하세요." },
-      { key: "SpO2수치", sbarCategory: "S", keywords: ["88", "산소포화도", "SpO2"], hint: "구체적 산소포화도 수치가 핵심 정보입니다." },
-      { key: "호흡수", sbarCategory: "A", keywords: ["호흡수", "RR", "30"], hint: "호흡수 변화는 상태 평가에 필수입니다." },
-      { key: "산소요법현황", sbarCategory: "B", keywords: ["산소", "리터", "L", "캐뉼라"], hint: "현재 적용 중인 산소요법 정보가 빠지면 의사가 조치를 판단하기 어렵습니다." },
-      { key: "요청사항", sbarCategory: "R", keywords: ["처방", "요청", "봐주세요", "와주세요"], hint: "다음 조치를 명확히 요청해야 합니다." }
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["903"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["이", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "발생시각",
+        sbarCategory: "S",
+        keywords: ["22:15", "10시 15", "22시"],
+        hint: "호흡곤란이 발생한 시각(22:15)을 포함하세요.",
+        rationale: "발생 시각이 있어야 증상 진행 속도와 응급 개입 시점을 판단할 수 있습니다."
+      },
+      {
+        key: "SpO2수치",
+        sbarCategory: "S",
+        keywords: ["88", "산소포화도", "SpO2"],
+        hint: "구체적 산소포화도 수치가 핵심 정보입니다.",
+        rationale: "구체 SpO2는 저산소증 심각도를 보여 주며, 수치 없이 보고하면 산소 증량·응급도를 판단하기 어렵습니다."
+      },
+      {
+        key: "호흡수",
+        sbarCategory: "A",
+        keywords: ["호흡수", "RR", "30"],
+        hint: "호흡수 변화는 상태 평가에 필수입니다.",
+        rationale: "호흡수 증가는 호흡부전 진행을 반영하는 핵심 평가 항목입니다."
+      },
+      {
+        key: "산소요법현황",
+        sbarCategory: "B",
+        keywords: ["산소", "리터", "L", "캐뉼라"],
+        hint: "현재 적용 중인 산소요법 정보가 빠지면 의사가 조치를 판단하기 어렵습니다.",
+        rationale: "현재 산소 유량·적용 방식을 알아야 추가 산소·ABGA·방문 필요성을 판단할 수 있습니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["처방", "요청", "봐주세요", "와주세요"],
+        hint: "다음 조치를 명확히 요청해야 합니다.",
+        rationale: "원하는 다음 조치를 명시해야 의사가 즉시 처방·방문 여부를 결정할 수 있습니다."
+      }
     ]
   },
 
@@ -180,6 +285,8 @@ const scenarios = [
     title: "발열 노티",
     partnerName: "최유진",
     partnerRole: "의사",
+    level: 1,
+    levelLabel: "초급",
     trigger: "605호 최OO님(55세) 발열 및 오한 호소, 최근 요로감염 병력",
     eventTime: "06:40",
     patient: {
@@ -201,13 +308,57 @@ const scenarios = [
       Treatment: "혈액배양 검사 오더 대기중"
     },
     requiredElements: [
-      { key: "병실확인", sbarCategory: "S", keywords: ["605"], hint: "병실 번호", followUpQuestion: "몇 호실이세요?" },
-      { key: "환자성명확인", sbarCategory: "S", keywords: ["최", "성함"], hint: "환자 성명", followUpQuestion: "환자분 성함이 어떻게 되세요?" },
-      { key: "발생시각", sbarCategory: "S", keywords: ["06:40", "6:40", "6시 40", "06시"], hint: "발열을 확인한 시각(06:40)을 포함하세요." },
-      { key: "체온수치", sbarCategory: "S", keywords: ["39.2", "발열", "고열"], hint: "구체적 체온 수치가 빠지면 심각도가 전달되지 않습니다." },
-      { key: "감염징후", sbarCategory: "B", keywords: ["WBC", "CRP", "오한"], hint: "감염 관련 검사 수치나 증상이 배경(B) 정보로 필요합니다." },
-      { key: "활력징후변화", sbarCategory: "A", keywords: ["혈압", "BP", "100", "저혈압", "HR"], hint: "패혈증 의심 시 혈압 저하 여부가 중요한 평가 요소입니다." },
-      { key: "요청사항", sbarCategory: "R", keywords: ["혈액배양", "항생제", "처방", "요청"], hint: "다음 조치를 명확히 요청해야 합니다." }
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["605"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["최", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "발생시각",
+        sbarCategory: "S",
+        keywords: ["06:40", "6:40", "6시 40", "06시"],
+        hint: "발열을 확인한 시각(06:40)을 포함하세요.",
+        rationale: "확인 시각이 있어야 발열 경과와 재측정·처치 시점을 판단할 수 있습니다."
+      },
+      {
+        key: "체온수치",
+        sbarCategory: "S",
+        keywords: ["39.2", "발열", "고열"],
+        hint: "구체적 체온 수치가 빠지면 심각도가 전달되지 않습니다.",
+        rationale: "구체 체온은 발열 심각도와 패혈증 의심 강도를 전달하는 핵심 수치입니다."
+      },
+      {
+        key: "감염징후",
+        sbarCategory: "B",
+        keywords: ["WBC", "CRP", "오한"],
+        hint: "감염 관련 검사 수치나 증상이 배경(B) 정보로 필요합니다.",
+        rationale: "WBC·CRP·오한은 감염 진행 배경을 보여 주어 항생제·배양 판단을 돕습니다."
+      },
+      {
+        key: "활력징후변화",
+        sbarCategory: "A",
+        keywords: ["혈압", "BP", "100", "저혈압", "HR"],
+        hint: "패혈증 의심 시 혈압 저하 여부가 중요한 평가 요소입니다.",
+        rationale: "혈압 저하·빈맥은 패혈성 쇼크 가능성을 알려 즉각 처치 필요성을 높입니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["혈액배양", "항생제", "처방", "요청"],
+        hint: "다음 조치를 명확히 요청해야 합니다.",
+        rationale: "혈액배양·항생제 등 구체 요청이 있어야 다음 처치가 바로 이어질 수 있습니다."
+      }
     ]
   },
 
@@ -216,6 +367,8 @@ const scenarios = [
     title: "저혈당 노티",
     partnerName: "정하윤",
     partnerRole: "의사",
+    level: 2,
+    levelLabel: "중급",
     trigger: "502호 정OO님(70세, 당뇨) 식은땀 및 의식저하, 혈당 45mg/dL 측정",
     eventTime: "07:10",
     patient: {
@@ -237,13 +390,57 @@ const scenarios = [
       Treatment: "50% 포도당 투여 준비중"
     },
     requiredElements: [
-      { key: "병실확인", sbarCategory: "S", keywords: ["502"], hint: "병실 번호", followUpQuestion: "몇 호실이세요?" },
-      { key: "환자성명확인", sbarCategory: "S", keywords: ["정", "성함"], hint: "환자 성명", followUpQuestion: "환자분 성함이 어떻게 되세요?" },
-      { key: "발생시각", sbarCategory: "S", keywords: ["07:10", "7:10", "7시 10", "07시"], hint: "저혈당을 확인한 시각(07:10)을 포함하세요." },
-      { key: "혈당수치", sbarCategory: "S", keywords: ["45", "혈당", "저혈당"], hint: "구체적 혈당 수치가 핵심 정보입니다." },
-      { key: "의식상태", sbarCategory: "A", keywords: ["의식", "저하", "졸림", "호명"], hint: "의식 수준 변화는 저혈당 응급도 판단에 필수입니다." },
-      { key: "증상", sbarCategory: "A", keywords: ["식은땀", "떨림"], hint: "동반 증상이 상태 평가에 포함되어야 합니다." },
-      { key: "요청사항", sbarCategory: "R", keywords: ["포도당", "처방", "요청"], hint: "필요한 처치를 명확히 요청해야 합니다." }
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["502"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["정", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "발생시각",
+        sbarCategory: "S",
+        keywords: ["07:10", "7:10", "7시 10", "07시"],
+        hint: "저혈당을 확인한 시각(07:10)을 포함하세요.",
+        rationale: "확인 시각이 있어야 저혈당 경과와 재측정·처치 시점을 판단할 수 있습니다."
+      },
+      {
+        key: "혈당수치",
+        sbarCategory: "S",
+        keywords: ["45", "혈당", "저혈당"],
+        hint: "구체적 혈당 수치가 핵심 정보입니다.",
+        rationale: "구체 혈당은 저혈당 응급도를 결정하며, 수치 없이 보고하면 포도당 투여 우선순위가 흐려집니다."
+      },
+      {
+        key: "의식상태",
+        sbarCategory: "A",
+        keywords: ["의식", "저하", "졸림", "호명"],
+        hint: "의식 수준 변화는 저혈당 응급도 판단에 필수입니다.",
+        rationale: "의식 저하는 저혈당 중증도와 기도·안전 관리 필요성을 판단하는 핵심입니다."
+      },
+      {
+        key: "증상",
+        sbarCategory: "A",
+        keywords: ["식은땀", "떨림"],
+        hint: "동반 증상이 상태 평가에 포함되어야 합니다.",
+        rationale: "식은땀·떨림은 저혈당 동반 증상을 뒷받침해 상태 평가의 신뢰도를 높입니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["포도당", "처방", "요청"],
+        hint: "필요한 처치를 명확히 요청해야 합니다.",
+        rationale: "포도당 투여 등 구체 요청이 있어야 즉시 처치로 이어질 수 있습니다."
+      }
     ]
   },
 
@@ -252,6 +449,8 @@ const scenarios = [
     title: "수혈 반응 의심 노티",
     partnerName: "한지우",
     partnerRole: "의사",
+    level: 3,
+    levelLabel: "고급",
     trigger: "1005호 한OO님 수혈 시작 15분 후 오한 및 두드러기 발생",
     eventTime: "16:45",
     patient: {
@@ -273,13 +472,58 @@ const scenarios = [
       Treatment: "수혈 즉시 중단, 생리식염수로 라인 유지중"
     },
     requiredElements: [
-      { key: "병실확인", sbarCategory: "S", keywords: ["1005"], hint: "병실 번호", followUpQuestion: "몇 호실이세요?" },
-      { key: "환자성명확인", sbarCategory: "S", keywords: ["한", "성함"], hint: "환자 성명", followUpQuestion: "환자분 성함이 어떻게 되세요?" },
-      { key: "발생시각", sbarCategory: "S", keywords: ["16:45", "4시 45", "16시", "15분"], hint: "증상 발생 시각(16:45) 또는 수혈 시작 후 경과 시간을 포함하세요." },
-      { key: "수혈반응증상", sbarCategory: "S", keywords: ["오한", "두드러기", "발진", "가려움"], hint: "수혈 반응의 구체적 증상이 핵심 정보입니다." },
-      { key: "활력징후변화", sbarCategory: "A", keywords: ["체온", "38.0", "혈압", "BP"], hint: "수혈 전후 활력징후 변화가 평가(A)에 필요합니다." },
-      { key: "조치사항", sbarCategory: "B", keywords: ["중단", "중지", "멈춤", "스탑", "라인 잠금", "클램프"], hint: "수혈 즉시 중단 여부", followUpQuestion: "수혈은 중단하셨어요?" },
-      { key: "요청사항", sbarCategory: "R", keywords: ["처방", "요청", "봐주세요"], hint: "다음 조치를 명확히 요청해야 합니다." }
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["1005"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["한", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "발생시각",
+        sbarCategory: "S",
+        keywords: ["16:45", "4시 45", "16시", "15분"],
+        hint: "증상 발생 시각(16:45) 또는 수혈 시작 후 경과 시간을 포함하세요.",
+        rationale: "발생 시각·수혈 후 경과시간은 급성 수혈 반응 가능성과 보고 시점을 판단하는 기준입니다."
+      },
+      {
+        key: "수혈반응증상",
+        sbarCategory: "S",
+        keywords: ["오한", "두드러기", "발진", "가려움"],
+        hint: "수혈 반응의 구체적 증상이 핵심 정보입니다.",
+        rationale: "오한·두드러기 등 구체 증상은 수혈 반응 유형을 추정하는 첫 근거입니다."
+      },
+      {
+        key: "활력징후변화",
+        sbarCategory: "A",
+        keywords: ["체온", "38.0", "혈압", "BP"],
+        hint: "수혈 전후 활력징후 변화가 평가(A)에 필요합니다.",
+        rationale: "수혈 전후 체온·혈압 변화는 반응 중증도를 객관적으로 보여 줍니다."
+      },
+      {
+        key: "조치사항",
+        sbarCategory: "B",
+        keywords: ["중단", "중지", "멈춤", "스탑", "라인 잠금", "클램프"],
+        hint: "수혈 즉시 중단 여부",
+        followUpQuestion: "수혈은 중단하셨어요?",
+        rationale: "수혈 부작용 의심 시 원인 확인보다 즉시 중단이 우선입니다. 중단 없이 보고하면 의사가 반응이 계속되는 줄 모른 채 판단하게 됩니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["처방", "요청", "봐주세요"],
+        hint: "다음 조치를 명확히 요청해야 합니다.",
+        rationale: "원하는 다음 조치를 명시해야 의사가 즉시 처방·방문 여부를 결정할 수 있습니다."
+      }
     ]
   }
 ];

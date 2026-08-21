@@ -23,7 +23,14 @@ function renderScenarioList(containerId) {
 
   el.innerHTML = "";
 
-  scenarios.forEach((s, index) => {
+  const sorted = scenarios.slice().sort((a, b) => {
+    const la = Number(a.level) || 99;
+    const lb = Number(b.level) || 99;
+    if (la !== lb) return la - lb;
+    return String(a.id).localeCompare(String(b.id));
+  });
+
+  sorted.forEach((s, index) => {
     const row = document.createElement("button");
     row.type = "button";
     row.className = "chat-room";
@@ -43,12 +50,20 @@ function renderScenarioList(containerId) {
         : s.subtitle || "";
     const initial = (s.partnerName || partnerLabel || "?").charAt(0);
     const color = AVATAR_COLORS[index % AVATAR_COLORS.length];
+    const level = Number(s.level) || 0;
+    const levelLabel = s.levelLabel || "";
+    const levelBadge = levelLabel
+      ? '<span class="chat-room__level chat-room__level--' + level + '">' + escapeHtml(levelLabel) + '</span>'
+      : "";
 
     row.innerHTML =
       '<div class="chat-room__avatar" style="background:' + color + '">' + escapeHtml(initial) + '</div>' +
       '<div class="chat-room__body">' +
         '<div class="chat-room__top">' +
-          '<div class="chat-room__preview">' + escapeHtml(patientLine) + '</div>' +
+          '<div class="chat-room__preview">' +
+            '<span class="chat-room__preview-text">' + escapeHtml(patientLine) + '</span>' +
+            levelBadge +
+          '</div>' +
           '<div class="chat-room__situation">' + escapeHtml(situation) + '</div>' +
         '</div>' +
         '<div class="chat-room__name">' + escapeHtml(partnerLabel) + '</div>' +
@@ -300,7 +315,8 @@ function initNotifyConversation(session) {
 }
 
 /**
- * 사용자 메시지 전송 → 누락 시 의사 후속 질문(최대 3회) → 최종 평가
+ * 사용자 메시지 전송 → 누락 시 의사 후속 질문 → 최종 평가
+ * 되묻기 횟수 상한: getMaxFollowUps(requiredElements)
  */
 function handleNotifySubmit(session, text, chatBody, feedbackSlot, partnerLabel) {
   if (!session || session.notifyFinished || !text?.trim()) return { done: false };
@@ -311,14 +327,16 @@ function handleNotifySubmit(session, text, chatBody, feedbackSlot, partnerLabel)
   appendMessage(chatBody, { sender: "me", text: message, time: nowHHMM() });
 
   const combined = session.notifyTexts.join(" ");
-  const elements = session.scenario.requiredElements || [];
+  // session.requiredElements는 없음 → scenario에 붙어 있음
+  const elements = session.scenario?.requiredElements || [];
   const grade = gradeNotifyText(combined, elements);
   session.lastGrade = grade;
   session.notifyText = combined;
 
   const missed = getMissedForFollowUp(grade, session.askedKeys);
+  const maxFollowUps = getMaxFollowUps(elements);
 
-  if (session.followUpCount < MAX_NOTIFY_FOLLOWUPS && missed.length > 0) {
+  if (session.followUpCount < maxFollowUps && missed.length > 0) {
     const target = missed[0];
     const sourceEl = elements.find((e) => e.key === target.key) || target;
     session.askedKeys.push(target.key);
@@ -378,6 +396,10 @@ function renderNotifyFeedback(grade, container, options = {}) {
   const renderItem = (item) => {
     const hit = item.included;
     const label = hit ? "맞음" : "보완 필요";
+    const rationaleHtml =
+      !hit && item.rationale
+        ? `<p class="feedback-checklist__rationale">${escapeHtml(item.rationale)}</p>`
+        : "";
     return `
       <li class="feedback-checklist__item ${hit ? "feedback-checklist__item--hit" : "feedback-checklist__item--miss"}">
         <div class="feedback-checklist__row">
@@ -387,6 +409,7 @@ function renderNotifyFeedback(grade, container, options = {}) {
           <span class="feedback-checklist__status">${label}</span>
         </div>
         <p class="feedback-checklist__explain">${escapeHtml(explainChecklistItem(item))}</p>
+        ${rationaleHtml}
       </li>
     `;
   };

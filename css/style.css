@@ -76,14 +76,34 @@ body {
   flex: 1;
   min-width: 0;
   margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   font-size: 0.98rem;
   font-weight: 600;
   color: #191919;
   line-height: 1.35;
+}
+.chat-room__preview-text {
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.chat-room__level {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0.12rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.chat-room__level--1 { background: #e8f5ee; color: #1e6b3a; }
+.chat-room__level--2 { background: #fff4e0; color: #8a6200; }
+.chat-room__level--3 { background: #fdecea; color: #a33b32; }
 .chat-room__badge { flex-shrink: 0; min-width: 1.15rem; height: 1.15rem; padding: 0 0.35rem; border-radius: 999px; background: #fe4350; color: #fff; font-size: 0.68rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .app-header { padding: 2rem 1.25rem 1.25rem; background: linear-gradient(160deg, #3a7bd5 0%, #00d2ff 100%); color: #fff; }
 .brand { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }

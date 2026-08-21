@@ -5,7 +5,14 @@
  * - calculateSBARSummary: 결과 화면용
  */
 
-const MAX_NOTIFY_FOLLOWUPS = 3;
+/**
+ * 시나리오 requiredElements 길이에 비례한 되묻기 상한
+ * (R 제외 누락 항목 중 최대 6회까지)
+ */
+function getMaxFollowUps(requiredElements) {
+  const list = Array.isArray(requiredElements) ? requiredElements : [];
+  return Math.min(list.length - 1, 6);
+}
 
 /** 항목별 의사 후속 질문 (없으면 keywords에서 자동 생성) */
 const FOLLOW_UP_QUESTIONS = {
@@ -36,7 +43,7 @@ const FOLLOW_UP_QUESTIONS = {
  * keywords 중 하나라도 포함되면 해당 항목 hit
  *
  * @param {string} text
- * @param {Array<{key:string,sbarCategory:string,keywords:string[],hint:string,passHint?:string}>} requiredElements
+ * @param {Array<{key:string,sbarCategory:string,keywords:string[],hint:string,passHint?:string,rationale?:string}>} requiredElements
  */
 function gradeNotifyText(text, requiredElements) {
   const normalized = String(text || "").toLowerCase();
@@ -53,6 +60,7 @@ function gradeNotifyText(text, requiredElements) {
       sbarCategory: el.sbarCategory,
       hint: el.hint || "",
       passHint: el.passHint || "",
+      rationale: el.rationale || "",
       matchedKeywords,
       included
     };
@@ -139,10 +147,12 @@ function buildFollowUpQuestion(element) {
 
 function explainChecklistItem(item) {
   if (item.included) {
+    if (item.matchedKeywords?.length) {
+      console.debug("[scoring] matchedKeywords", item.key, item.matchedKeywords);
+    }
     if (item.passHint) return item.passHint;
-    const matched = (item.matchedKeywords || []).slice(0, 3);
-    if (matched.length) {
-      return `잘 포함되었습니다. (확인: ${matched.join(", ")})`;
+    if (item.hint) {
+      return `잘 포함되었습니다. (${item.hint})`;
     }
     return "이 항목에 해당하는 내용이 노티에 포함되어 있습니다.";
   }
