@@ -223,6 +223,16 @@ async function playMessages(messages, container, delayMs = 600) {
  * @param {{sender:string,text:string,time?:string,name?:string}} msg
  * @param {{partnerLabel?:string}} [options]
  */
+function scrollChatToBottom(container) {
+  if (!container) return;
+  const scroller =
+    (typeof container.closest === "function" && container.closest(".call-scroll")) ||
+    container;
+  requestAnimationFrame(() => {
+    scroller.scrollTop = scroller.scrollHeight;
+  });
+}
+
 function appendMessage(container, msg, options = {}) {
   const isMe = msg.sender === "me";
   const nameLabel = isMe ? "나" : msg.name || options.partnerLabel || "의사";
@@ -234,7 +244,7 @@ function appendMessage(container, msg, options = {}) {
     ${msg.time ? `<div class="msg__time">${escapeHtml(msg.time)}</div>` : ""}
   `;
   container.appendChild(wrap);
-  container.scrollTop = container.scrollHeight;
+  scrollChatToBottom(container);
 }
 
 /**
@@ -349,7 +359,7 @@ function handleNotifySubmit(session, text, chatBody, feedbackSlot, partnerLabel)
         { sender: "partner", text: question, time: nowHHMM() },
         { partnerLabel }
       );
-      chatBody.scrollTop = chatBody.scrollHeight;
+      scrollChatToBottom(chatBody);
     }, 450);
 
     return { done: false, followUp: true, question };
@@ -378,7 +388,7 @@ function finishNotifyConversation(session, grade, chatBody, feedbackSlot, partne
     elements
   });
 
-  chatBody.scrollTop = chatBody.scrollHeight;
+  scrollChatToBottom(chatBody);
 }
 
 function renderNotifyFeedback(grade, container, options = {}) {
@@ -438,7 +448,12 @@ function renderNotifyFeedback(grade, container, options = {}) {
     </div>
   `;
 
-  container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  const scroller = container.closest(".call-scroll");
+  if (scroller) {
+    scrollChatToBottom(scroller);
+  } else {
+    container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
 }
 
 /* ===== helpers ===== */

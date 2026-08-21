@@ -6,9 +6,86 @@
   <title>시나리오 — 노티 훈련</title>
   <link rel="stylesheet" href="css/style.css" />
   <style>
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .app--scenario {
+      height: 100vh;
+      max-height: 100vh;
+      overflow: hidden;
+    }
+
+    .app--scenario .chat-header {
+      flex-shrink: 0;
+    }
+
     .scenario-prep {
       flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #f5f7fa;
+    }
+
+    /* ===== 환자 차트 도크 ===== */
+    .chart-dock {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: #f5f7fa;
+      border-bottom: 1px solid var(--border, #e5e5e5);
+    }
+
+    .scenario-prep:not(.scenario-prep--calling) .chart-dock {
+      flex: 1;
+      max-height: none;
+    }
+
+    .scenario-prep--calling .chart-dock {
+      max-height: 42vh;
+    }
+
+    .chart-dock__toolbar {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: flex-end;
+      padding: 0.45rem 1rem 0.25rem;
+    }
+
+    .chart-toggle {
+      border: 1px solid var(--border, #e5e5e5);
+      background: #fff;
+      color: #555;
+      border-radius: 999px;
+      padding: 0.28rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chart-toggle:hover {
+      background: #f7f8fa;
+    }
+
+    .chart-dock__scroll {
+      flex: 1;
+      min-height: 0;
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chart-dock.is-collapsed .chart-dock__scroll {
+      display: none;
+    }
+
+    .scenario-prep--calling .chart-dock.is-collapsed {
+      max-height: none;
     }
 
     .chart-cards {
@@ -45,19 +122,37 @@
       padding: 0 1rem 1.25rem;
     }
 
-    .call-section {
-      margin: 0 1rem 1.5rem;
+    .patient-banner {
+      margin-bottom: 0.65rem;
+      padding: 0.65rem 0.85rem;
+      background: #fff;
       border: 1px solid var(--border, #e5e5e5);
-      border-radius: 12px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.4;
+      word-break: keep-all;
+    }
+
+    /* ===== 대화 섹션 ===== */
+    .call-section {
+      flex: 1;
+      min-height: 0;
+      margin: 0;
+      border: none;
+      border-radius: 0;
       overflow: hidden;
       background: var(--bg, #b2c7d9);
+      display: flex;
+      flex-direction: column;
     }
 
     .call-section[hidden] {
-      display: none;
+      display: none !important;
     }
 
     .kakao-bar {
+      flex-shrink: 0;
       background: #fee500;
       color: #191919;
       text-align: center;
@@ -67,12 +162,21 @@
       letter-spacing: -0.01em;
     }
 
+    .call-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+    }
+
     .call-chat {
       padding: 1rem;
       display: flex;
       flex-direction: column;
       gap: 0.65rem;
-      min-height: 120px;
+      min-height: 0;
     }
 
     .msg__name {
@@ -86,19 +190,8 @@
       text-align: right;
     }
 
-    .patient-banner {
-      margin-bottom: 0.65rem;
-      padding: 0.65rem 0.85rem;
-      background: #fff;
-      border: 1px solid var(--border, #e5e5e5);
-      border-radius: 10px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      line-height: 1.4;
-      word-break: keep-all;
-    }
-
     .notify-composer {
+      flex-shrink: 0;
       display: flex;
       gap: 0.5rem;
       padding: 0.75rem;
@@ -276,7 +369,7 @@
   </style>
 </head>
 <body>
-  <div class="app" id="appRoot">
+  <div class="app app--scenario" id="appRoot">
     <header class="chat-header">
       <a class="chat-header__back" href="index.html" aria-label="목록으로">←</a>
       <div>
@@ -286,16 +379,33 @@
     </header>
 
     <main class="scenario-prep" id="scenarioMain">
-      <section id="triggerArea"></section>
-      <section class="chart-panel" id="chartArea"></section>
-
-      <div class="call-actions" id="callActions">
-        <button type="button" class="btn-primary" id="callBtn">의사에게 노티하기</button>
-      </div>
+      <section class="chart-dock" id="chartDock">
+        <div class="chart-dock__toolbar">
+          <button
+            type="button"
+            class="chart-toggle"
+            id="chartToggleBtn"
+            aria-expanded="true"
+            aria-controls="chartScroll"
+          >
+            차트 접기
+          </button>
+        </div>
+        <div class="chart-dock__scroll" id="chartScroll">
+          <section id="triggerArea"></section>
+          <section class="chart-panel" id="chartArea"></section>
+          <div class="call-actions" id="callActions">
+            <button type="button" class="btn-primary" id="callBtn">의사에게 노티하기</button>
+          </div>
+        </div>
+      </section>
 
       <section class="call-section" id="callSection" hidden>
         <div class="kakao-bar" id="kakaoBar">의사</div>
-        <div class="call-chat" id="chatBody"></div>
+        <div class="call-scroll" id="callScroll">
+          <div class="call-chat" id="chatBody"></div>
+          <div id="feedbackSlot"></div>
+        </div>
         <form class="notify-composer" id="notifyComposer" autocomplete="off">
           <textarea
             id="notifyInput"
@@ -305,7 +415,6 @@
           ></textarea>
           <button type="submit" class="notify-send" id="notifySend">전송</button>
         </form>
-        <div id="feedbackSlot"></div>
       </section>
     </main>
   </div>
@@ -331,7 +440,22 @@
       if (form) {
         form.addEventListener("submit", onNotifySubmit);
       }
+
+      const chartToggleBtn = document.getElementById("chartToggleBtn");
+      if (chartToggleBtn) {
+        chartToggleBtn.addEventListener("click", toggleChartDock);
+      }
     });
+
+    function toggleChartDock() {
+      const dock = document.getElementById("chartDock");
+      const btn = document.getElementById("chartToggleBtn");
+      if (!dock || !btn) return;
+
+      const collapsed = dock.classList.toggle("is-collapsed");
+      btn.textContent = collapsed ? "차트 펼치기" : "차트 접기";
+      btn.setAttribute("aria-expanded", String(!collapsed));
+    }
 
     function startCall() {
       if (!session || callStarted) return;
@@ -346,6 +470,8 @@
         callBtn.disabled = true;
       }
       if (callActions) callActions.hidden = true;
+
+      document.getElementById("scenarioMain")?.classList.add("scenario-prep--calling");
 
       partnerLabel = getPartnerLabel(session.scenario);
       const kakaoBar = document.getElementById("kakaoBar");
@@ -365,7 +491,6 @@
       );
 
       callSection.hidden = false;
-      callSection.scrollIntoView({ behavior: "smooth", block: "start" });
       document.getElementById("notifyInput")?.focus();
     }
 
