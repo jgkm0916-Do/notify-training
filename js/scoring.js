@@ -57,14 +57,32 @@ const FOLLOW_UP_QUESTIONS = {
  * 채점용 텍스트 정규화 (대소문자, SpO₂, 2 L 등)
  */
 function normalizeNotifyText(text) {
-  return String(text || "")
-    .toLowerCase()
-    .replace(/spo\s*[o０0]?\s*[₂2]/gi, "spo2")
-    .replace(/₂/g, "2")
-    .replace(/(\d)\s*l\b/gi, "$1l")
-    .replace(/(\d)\s*리터/g, "$1리터")
-    .replace(/\s+/g, " ")
-    .trim();
+  let t = String(text || "").toLowerCase();
+
+  // SpO₂ / SpO2
+  t = t.replace(/spo\s*[o０0]?\s*[₂2]/gi, "spo2");
+  t = t.replace(/₂/g, "2");
+  t = t.replace(/ℓ/g, "l");
+
+  // 산소 장치: nasal prong/cannula, 비강캐뉼라, N-P/N/P/NP/NC → np
+  t = t.replace(/nasal\s*prongs?/g, "np");
+  t = t.replace(/nasal\s*cannulas?/g, "np");
+  t = t.replace(/비강\s*캐뉼라/g, "np");
+  t = t.replace(/비강\s*카테터/g, "np");
+  t = t.replace(/코줄/g, "np");
+  t = t.replace(/\bnc\b/g, "np");
+  t = t.replace(/\bn[\s\-./]*p\b/g, "np");
+  t = t.replace(/n[\-./]\s*p/g, "np");
+
+  // 유량 2L 변형 → 2l
+  t = t.replace(/분당\s*2\s*리터/g, "2l");
+  t = t.replace(/2\s*l\s*\/\s*min/g, "2l");
+  t = t.replace(/2\s*liters?\b/g, "2l");
+  t = t.replace(/(\d)\s*l\b/g, "$1l");
+  t = t.replace(/(\d)\s*리터/g, "$1l");
+
+  t = t.replace(/\s+/g, " ").trim();
+  return t;
 }
 
 function normalizeKeyword(kw) {
@@ -213,10 +231,10 @@ function buildScn03OxygenFollowUp(oxygenItem, alreadyProbed) {
   const flowOk = Boolean(
     oxygenItem?.groupSatisfied && oxygenItem.groupSatisfied[1]
   );
-  // 장치/유량 일부만 있거나, 이미 "산소 하고 있어요?"를 물은 뒤면 구체화
-  if (deviceOk || flowOk || alreadyProbed) {
-    return "어떤 걸로 몇 리터 하고 있어요?";
-  }
+  if (deviceOk && flowOk) return null;
+  if (deviceOk && !flowOk) return "몇 리터로 하고 있어요?";
+  if (!deviceOk && flowOk) return "어떤 장치로 하고 있어요?";
+  if (alreadyProbed) return "어떤 장치로 몇 리터 하고 있어요?";
   return "지금 산소는 하고 있어요?";
 }
 

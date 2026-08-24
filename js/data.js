@@ -280,8 +280,32 @@ const scenarios = [
         key: "산소요법현황",
         sbarCategory: "B",
         keywordGroups: [
-          ["비강캐뉼라", "비강 캐뉼라", "nasal cannula", "nc"],
-          ["2l", "2 l", "2리터", "2 리터"]
+          [
+            "np",
+            "n-p",
+            "n/p",
+            "n.p",
+            "nc",
+            "nasal prong",
+            "nasal cannula",
+            "비강캐뉼라",
+            "비강 캐뉼라",
+            "비강카테터",
+            "비강 카테터",
+            "코줄"
+          ],
+          [
+            "2l",
+            "2 l",
+            "2ℓ",
+            "2리터",
+            "2 리터",
+            "2liter",
+            "2 liters",
+            "2l/min",
+            "2 l/min",
+            "분당 2리터"
+          ]
         ],
         hint: "산소 장치와 유량(예: 비강캐뉼라 2L)",
         followUpQuestion: "지금 산소는 하고 있어요?",
