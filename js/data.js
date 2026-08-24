@@ -263,20 +263,18 @@ const scenarios = [
         rationale: "발생 시각이 있어야 증상 진행 속도와 응급 개입 시점을 판단할 수 있습니다."
       },
       {
-        key: "SpO2수치",
+        key: "활력징후",
         sbarCategory: "A",
-        keywords: ["88", "spo2", "산소포화도"],
-        hint: "산소포화도(SpO₂) 수치",
-        followUpQuestion: "산소포화도는요?",
-        rationale: "구체 SpO₂는 저산소증 심각도를 보여 주며, 수치 없이 보고하면 산소 증량·응급도를 판단하기 어렵습니다."
-      },
-      {
-        key: "호흡수",
-        sbarCategory: "A",
-        keywords: ["호흡수", "rr", "30회", "rr 30", "호흡수 30"],
-        hint: "호흡수",
-        followUpQuestion: "호흡수는요?",
-        rationale: "호흡수 증가는 호흡부전 진행을 반영하는 핵심 평가 항목입니다."
+        keywordGroups: [
+          ["130/80", "130", "bp", "혈압"],
+          ["118", "hr", "심박", "맥박"],
+          ["호흡수", "rr", "30회"],
+          ["37.0", "37도", "bt", "체온"],
+          ["88", "spo2", "산소포화도"]
+        ],
+        hint: "BP·HR·RR·BT·SpO₂ 전체 활력징후",
+        followUpQuestion: "지금 바이탈하고 산소포화도는 어떻게 돼요?",
+        rationale: "호흡곤란 시 혈압·맥박·호흡수·체온·산소포화도를 함께 전달해야 전신 상태와 저산소 정도를 판단할 수 있습니다."
       },
       {
         key: "산소요법현황",
@@ -286,7 +284,7 @@ const scenarios = [
           ["2l", "2 l", "2리터", "2 리터"]
         ],
         hint: "산소 장치와 유량(예: 비강캐뉼라 2L)",
-        followUpQuestion: "산소는 어떤 걸로 몇 리터 하고 있어요?",
+        followUpQuestion: "지금 산소는 하고 있어요?",
         rationale: "현재 산소 장치와 유량을 함께 알아야 추가 산소·방문 필요성을 판단할 수 있습니다."
       },
       {

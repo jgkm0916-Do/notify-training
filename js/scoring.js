@@ -16,8 +16,16 @@ function getMaxFollowUps(requiredElements) {
   return Math.min(Math.max(n - 1, 0), 6);
 }
 
-/** 활력·산소 통합 질문 대상 (scn_03 등) */
-const VITAL_OXYGEN_FOLLOWUP_KEYS = ["SpO2수치", "호흡수", "산소요법현황"];
+/** scn_03 전용: 활력징후(1요소) → 산소요법 순서로 질문 */
+const SCN03_VITAL_KEY = "활력징후";
+const SCN03_OXYGEN_KEY = "산소요법현황";
+const SCN03_VITAL_LABELS = [
+  { i: 0, ask: "혈압" },
+  { i: 1, ask: "맥박" },
+  { i: 2, ask: "호흡수" },
+  { i: 3, ask: "체온" },
+  { i: 4, ask: "산소포화도" }
+];
 
 /** 항목별 의사 후속 질문 (없으면 keywords에서 자동 생성) */
 const FOLLOW_UP_QUESTIONS = {
@@ -28,7 +36,7 @@ const FOLLOW_UP_QUESTIONS = {
   발생시각: "언제부터 그랬어요?",
   항응고배경: "항응고제 복용 여부는요?",
   의식및증상: "의식 상태랑 증상은요?",
-  활력징후: "혈압이랑 맥박은요?",
+  활력징후: "지금 바이탈하고 산소포화도는 어떻게 돼요?",
   활력징후변화: "활력징후 변화는요?",
   흉통양상: "흉통 양상이 어떤가요?",
   심전도확인: "ECG는 확인하셨어요?",
@@ -151,47 +159,67 @@ function getMissedForFollowUp(grade, askedKeys) {
 }
 
 /**
- * SpO2 / RR / 산소요법 누락 조합 → 자연스러운 통합 질문
+ * scn_03: 활력징후 그룹(BP·HR·RR·BT·SpO₂) 누락 → 한 문장 질문
  */
-function buildVitalOxygenFollowUp(missedKeys, oxygenItem) {
-  const miss = new Set(missedKeys || []);
-  const needSp = miss.has("SpO2수치");
-  const needRr = miss.has("호흡수");
-  const needO2 = miss.has("산소요법현황");
+function buildScn03VitalFollowUp(groupSatisfied) {
+  const sat = Array.isArray(groupSatisfied)
+    ? groupSatisfied
+    : [false, false, false, false, false];
+  const missing = SCN03_VITAL_LABELS.filter((g) => !sat[g.i]);
+  const present = SCN03_VITAL_LABELS.filter((g) => sat[g.i]);
 
+  if (missing.length === 0) return null;
+  if (present.length === 0) {
+    return "지금 바이탈하고 산소포화도는 어떻게 돼요?";
+  }
+
+  // SpO₂만 답함
+  if (present.length === 1 && sat[4]) {
+    return "다른 바이탈은 어떻게 돼요?";
+  }
+  // BP·HR만 답함
+  if (sat[0] && sat[1] && !sat[2] && !sat[3] && !sat[4]) {
+    return "호흡수하고 산소포화도는요?";
+  }
+  // SpO₂·RR만 답함
+  if (sat[2] && sat[4] && !sat[0] && !sat[1] && !sat[3]) {
+    return "혈압하고 맥박은요?";
+  }
+
+  if (missing.length === 1) return missing[0].ask + "는요?";
+  if (missing.length === 2) {
+    return missing[0].ask + "하고 " + missing[1].ask + "는요?";
+  }
+  if (missing.length === 3) {
+    return (
+      missing[0].ask +
+      "하고 " +
+      missing[1].ask +
+      "하고 " +
+      missing[2].ask +
+      "는요?"
+    );
+  }
+  return "다른 바이탈은 어떻게 돼요?";
+}
+
+/**
+ * scn_03: 산소요법 — 바이탈 완료 후 별도 질문
+ */
+function buildScn03OxygenFollowUp(oxygenItem, alreadyProbed) {
   const deviceOk = Boolean(
     oxygenItem?.groupSatisfied && oxygenItem.groupSatisfied[0]
   );
   const flowOk = Boolean(
     oxygenItem?.groupSatisfied && oxygenItem.groupSatisfied[1]
   );
-
-  if (!needSp && !needRr && needO2) {
-    if (deviceOk && !flowOk) return "몇 리터로 적용 중이에요?";
-    if (!deviceOk && flowOk) return "비강캐뉼라로 하고 있는 건가요?";
-    return "산소는 어떤 걸로 몇 리터 하고 있어요?";
+  // 장치/유량 일부만 있거나, 이미 "산소 하고 있어요?"를 물은 뒤면 구체화
+  if (deviceOk || flowOk || alreadyProbed) {
+    return "어떤 걸로 몇 리터 하고 있어요?";
   }
-
-  if (needSp && needRr && needO2) {
-    return "지금 바이탈하고 산소는 어떻게 하고 있어요?";
-  }
-  if (!needSp && needRr && needO2) {
-    return "호흡수랑 현재 산소 적용 상태는요?";
-  }
-  if (needSp && !needRr && needO2) {
-    return "산소포화도랑 현재 산소 적용 상태는요?";
-  }
-  if (needSp && needRr && !needO2) {
-    return "현재 산소포화도와 호흡수는요?";
-  }
-  if (!needSp && needRr && !needO2) return "호흡수는요?";
-  if (needSp && !needRr && !needO2) return "산소포화도는요?";
-  return "지금 바이탈하고 산소는 어떻게 하고 있어요?";
+  return "지금 산소는 하고 있어요?";
 }
 
-/**
- * 누락 항목 → 의사 후속 질문 (단일)
- */
 function buildFollowUpQuestion(element) {
   if (!element) return "그 부분 다시 말씀해 주시겠어요?";
   if (element.followUpQuestion) return element.followUpQuestion;
@@ -207,15 +235,15 @@ function buildFollowUpQuestion(element) {
  * - SpO2/RR/산소가 함께 남아 있으면 한 번에 묶어 질문
  * - 활력·산소 그룹은 askedKeys에 넣지 않아 부분 답변 후 남은 것만 다시 물을 수 있음
  */
-function buildNotifyFollowUp(grade, missed, elements) {
+function buildNotifyFollowUp(grade, missed, elements, askedKeys) {
   const list = missed || [];
   if (!list.length) return null;
 
-  const vitalMissed = list.filter((m) =>
-    VITAL_OXYGEN_FOLLOWUP_KEYS.includes(m.key)
-  );
+  const hasScn03Vital = (elements || []).some((e) => e.key === SCN03_VITAL_KEY);
+  const vitalMissed = list.find((m) => m.key === SCN03_VITAL_KEY);
+  const oxygenMissed = list.find((m) => m.key === SCN03_OXYGEN_KEY);
   const otherMissed = list.filter(
-    (m) => !VITAL_OXYGEN_FOLLOWUP_KEYS.includes(m.key)
+    (m) => m.key !== SCN03_VITAL_KEY && m.key !== SCN03_OXYGEN_KEY
   );
 
   if (otherMissed.length > 0) {
@@ -229,14 +257,38 @@ function buildNotifyFollowUp(grade, missed, elements) {
     };
   }
 
-  const oxygenItem = (grade?.checklist || []).find(
-    (c) => c.key === "산소요법현황"
-  );
-  const keys = vitalMissed.map((m) => m.key);
+  // scn_03 전용: 활력징후 그룹 → 산소요법 순서 (개별 SpO2/RR 질문 금지)
+  if (hasScn03Vital) {
+    if (vitalMissed) {
+      const vitalItem = (grade?.checklist || []).find(
+        (c) => c.key === SCN03_VITAL_KEY
+      );
+      return {
+        question: buildScn03VitalFollowUp(vitalItem?.groupSatisfied),
+        askedKeysToAdd: [],
+        targets: [vitalMissed]
+      };
+    }
+    if (oxygenMissed) {
+      const oxygenItem = (grade?.checklist || []).find(
+        (c) => c.key === SCN03_OXYGEN_KEY
+      );
+      const probed = (askedKeys || []).includes("__scn03_o2_probed__");
+      return {
+        question: buildScn03OxygenFollowUp(oxygenItem, probed),
+        askedKeysToAdd: probed ? [] : ["__scn03_o2_probed__"],
+        targets: [oxygenMissed]
+      };
+    }
+  }
+
+  const target = list[0];
+  const sourceEl =
+    (elements || []).find((e) => e.key === target.key) || target;
   return {
-    question: buildVitalOxygenFollowUp(keys, oxygenItem),
-    askedKeysToAdd: [],
-    targets: vitalMissed
+    question: buildFollowUpQuestion(sourceEl),
+    askedKeysToAdd: [target.key],
+    targets: [target]
   };
 }
 

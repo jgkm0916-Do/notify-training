@@ -349,7 +349,7 @@ function handleNotifySubmit(session, text, chatBody, feedbackSlot, partnerLabel)
   if (session.followUpCount < maxFollowUps && missed.length > 0) {
     const followUp =
       typeof buildNotifyFollowUp === "function"
-        ? buildNotifyFollowUp(grade, missed, elements)
+        ? buildNotifyFollowUp(grade, missed, elements, session.askedKeys)
         : null;
     const question =
       (followUp && followUp.question) ||
