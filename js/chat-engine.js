@@ -347,12 +347,24 @@ function handleNotifySubmit(session, text, chatBody, feedbackSlot, partnerLabel)
   const maxFollowUps = getMaxFollowUps(elements);
 
   if (session.followUpCount < maxFollowUps && missed.length > 0) {
-    const target = missed[0];
-    const sourceEl = elements.find((e) => e.key === target.key) || target;
-    session.askedKeys.push(target.key);
+    const followUp =
+      typeof buildNotifyFollowUp === "function"
+        ? buildNotifyFollowUp(grade, missed, elements)
+        : null;
+    const question =
+      (followUp && followUp.question) ||
+      buildFollowUpQuestion(
+        elements.find((e) => e.key === missed[0].key) || missed[0]
+      );
+    const keysToAdd =
+      followUp && followUp.askedKeysToAdd && followUp.askedKeysToAdd.length
+        ? followUp.askedKeysToAdd
+        : [missed[0].key];
+    keysToAdd.forEach((k) => {
+      if (!session.askedKeys.includes(k)) session.askedKeys.push(k);
+    });
     session.followUpCount += 1;
 
-    const question = buildFollowUpQuestion(sourceEl);
     window.setTimeout(() => {
       appendMessage(
         chatBody,
@@ -400,20 +412,32 @@ function renderNotifyFeedback(grade, container, options = {}) {
   const title = options.title || `${grade.includedCount}/${grade.total} 항목 포함`;
   const lead = options.lead || "보낸 노티를 항목별로 살펴본 결과입니다.";
 
-  const hitItems = (grade.checklist || []).filter((i) => i.included);
-  const missItems = (grade.checklist || []).filter((i) => !i.included);
+  const requiredItems = (grade.checklist || []).filter((i) => i.required !== false);
+  const optionalItems = (grade.checklist || []).filter((i) => i.required === false);
+  const hitItems = requiredItems.filter((i) => i.included);
+  const missItems = requiredItems.filter((i) => !i.included);
+  const optionalFeedback =
+    typeof getOptionalRequestFeedback === "function"
+      ? getOptionalRequestFeedback(grade)
+      : null;
 
   const renderItem = (item) => {
     const hit = item.included;
-    const label = hit ? "맞음" : "보완 필요";
+    const isOptional = item.required === false || item.optional;
+    const label = hit ? "맞음" : isOptional ? "참고" : "보완 필요";
     const rationaleHtml =
-      !hit && item.rationale
+      !hit && !isOptional && item.rationale
         ? `<p class="feedback-checklist__rationale">${escapeHtml(item.rationale)}</p>`
         : "";
+    const itemClass = hit
+      ? "feedback-checklist__item--hit"
+      : isOptional
+        ? "feedback-checklist__item--optional"
+        : "feedback-checklist__item--miss";
     return `
-      <li class="feedback-checklist__item ${hit ? "feedback-checklist__item--hit" : "feedback-checklist__item--miss"}">
+      <li class="feedback-checklist__item ${itemClass}">
         <div class="feedback-checklist__row">
-          <span class="feedback-checklist__mark">${hit ? "✓" : "✗"}</span>
+          <span class="feedback-checklist__mark">${hit ? "✓" : isOptional ? "·" : "✗"}</span>
           <span class="feedback-checklist__cat">${escapeHtml(item.sbarCategory || "")}</span>
           <span class="feedback-checklist__key">${escapeHtml(item.key || "")}</span>
           <span class="feedback-checklist__status">${label}</span>
@@ -434,6 +458,11 @@ function renderNotifyFeedback(grade, container, options = {}) {
           : ""
       }
       ${
+        optionalFeedback && !rMissNotice
+          ? `<p class="feedback-checklist__optional-tip">${escapeHtml(optionalFeedback)}</p>`
+          : ""
+      }
+      ${
         hitItems.length
           ? `<h3 class="feedback-checklist__section">맞은 항목</h3>
              <ul class="feedback-checklist__list">${hitItems.map(renderItem).join("")}</ul>`
@@ -444,6 +473,12 @@ function renderNotifyFeedback(grade, container, options = {}) {
           ? `<h3 class="feedback-checklist__section">빠진·보완할 항목</h3>
              <ul class="feedback-checklist__list">${missItems.map(renderItem).join("")}</ul>`
           : `<p class="feedback-checklist__all-ok">필수 항목을 모두 포함했습니다.</p>`
+      }
+      ${
+        optionalItems.length
+          ? `<h3 class="feedback-checklist__section">선택·가산 항목</h3>
+             <ul class="feedback-checklist__list">${optionalItems.map(renderItem).join("")}</ul>`
+          : ""
       }
     </div>
   `;

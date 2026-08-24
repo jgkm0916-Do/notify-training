@@ -241,45 +241,71 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["이", "성함"],
+        keywords: ["이OO", "이○○", "이ㅇㅇ", "이00", "903호 이OO", "903호 이○○"],
         hint: "환자 성명",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "현재상황",
+        sbarCategory: "S",
+        keywords: ["호흡곤란", "숨이", "숨차", "호흡 곤란"],
+        hint: "갑작스러운 호흡곤란 상황",
+        followUpQuestion: "지금 환자분이 어떤 상태인가요?",
+        rationale: "현재 문제(호흡곤란)를 먼저 전해야 의사가 긴급도를 바로 파악할 수 있습니다."
       },
       {
         key: "발생시각",
         sbarCategory: "S",
         keywords: ["22:15", "10시 15", "22시"],
         hint: "호흡곤란이 발생한 시각(22:15)을 포함하세요.",
+        followUpQuestion: "언제부터 그랬어요?",
         rationale: "발생 시각이 있어야 증상 진행 속도와 응급 개입 시점을 판단할 수 있습니다."
       },
       {
         key: "SpO2수치",
-        sbarCategory: "S",
-        keywords: ["88", "산소포화도", "SpO2"],
-        hint: "구체적 산소포화도 수치가 핵심 정보입니다.",
-        rationale: "구체 SpO2는 저산소증 심각도를 보여 주며, 수치 없이 보고하면 산소 증량·응급도를 판단하기 어렵습니다."
+        sbarCategory: "A",
+        keywords: ["88", "spo2", "산소포화도"],
+        hint: "산소포화도(SpO₂) 수치",
+        followUpQuestion: "산소포화도는요?",
+        rationale: "구체 SpO₂는 저산소증 심각도를 보여 주며, 수치 없이 보고하면 산소 증량·응급도를 판단하기 어렵습니다."
       },
       {
         key: "호흡수",
         sbarCategory: "A",
-        keywords: ["호흡수", "RR", "30"],
-        hint: "호흡수 변화는 상태 평가에 필수입니다.",
+        keywords: ["호흡수", "rr", "30회", "rr 30", "호흡수 30"],
+        hint: "호흡수",
+        followUpQuestion: "호흡수는요?",
         rationale: "호흡수 증가는 호흡부전 진행을 반영하는 핵심 평가 항목입니다."
       },
       {
         key: "산소요법현황",
         sbarCategory: "B",
-        keywords: ["산소", "리터", "L", "캐뉼라"],
-        hint: "현재 적용 중인 산소요법 정보가 빠지면 의사가 조치를 판단하기 어렵습니다.",
-        rationale: "현재 산소 유량·적용 방식을 알아야 추가 산소·ABGA·방문 필요성을 판단할 수 있습니다."
+        keywordGroups: [
+          ["비강캐뉼라", "비강 캐뉼라", "nasal cannula", "nc"],
+          ["2l", "2 l", "2리터", "2 리터"]
+        ],
+        hint: "산소 장치와 유량(예: 비강캐뉼라 2L)",
+        followUpQuestion: "산소는 어떤 걸로 몇 리터 하고 있어요?",
+        rationale: "현재 산소 장치와 유량을 함께 알아야 추가 산소·방문 필요성을 판단할 수 있습니다."
       },
       {
         key: "요청사항",
         sbarCategory: "R",
-        keywords: ["처방", "요청", "봐주세요", "와주세요"],
-        hint: "다음 조치를 명확히 요청해야 합니다.",
-        rationale: "원하는 다음 조치를 명시해야 의사가 즉시 처방·방문 여부를 결정할 수 있습니다."
+        required: false,
+        keywords: [
+          "봐주세요",
+          "와주세요",
+          "방문",
+          "확인 부탁",
+          "추가 처방",
+          "ABGA",
+          "네뷸",
+          "네뷸라이저"
+        ],
+        hint: "필요한 조치를 함께 요청하면 더욱 적극적인 노티가 됩니다.",
+        passHint: "필요한 조치까지 명확하게 요청했습니다.",
+        rationale: "필수 상태 보고가 우선입니다. 요청은 있으면 더 적극적인 노티가 됩니다."
       }
     ]
   },

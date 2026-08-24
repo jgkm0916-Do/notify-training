@@ -1,22 +1,29 @@
 /**
  * 채점 로직
  * - gradeNotifyText: 자유 텍스트 노티 ↔ requiredElements 키워드 매칭
- * - buildFollowUpQuestion: 누락 항목에 대한 의사 후속 질문 생성
+ * - buildFollowUpQuestion / buildNotifyFollowUp: 누락 항목 의사 후속 질문
  * - calculateSBARSummary: 결과 화면용
  */
 
 /**
  * 시나리오 requiredElements 길이에 비례한 되묻기 상한
- * (R 제외 누락 항목 중 최대 6회까지)
+ * (필수 항목 기준, 최대 6회)
  */
 function getMaxFollowUps(requiredElements) {
   const list = Array.isArray(requiredElements) ? requiredElements : [];
-  return Math.min(list.length - 1, 6);
+  const requiredCount = list.filter((el) => el.required !== false).length;
+  const n = requiredCount || list.length;
+  return Math.min(Math.max(n - 1, 0), 6);
 }
+
+/** 활력·산소 통합 질문 대상 (scn_03 등) */
+const VITAL_OXYGEN_FOLLOWUP_KEYS = ["SpO2수치", "호흡수", "산소요법현황"];
 
 /** 항목별 의사 후속 질문 (없으면 keywords에서 자동 생성) */
 const FOLLOW_UP_QUESTIONS = {
   환자식별: "몇 호실, 어떤 환자분이세요?",
+  병실확인: "몇 호실이세요?",
+  환자성명확인: "환자분 성함이 어떻게 되세요?",
   현재상황: "지금 상황이 어떻게 되나요?",
   발생시각: "언제부터 그랬어요?",
   항응고배경: "항응고제 복용 여부는요?",
@@ -39,57 +46,81 @@ const FOLLOW_UP_QUESTIONS = {
 };
 
 /**
+ * 채점용 텍스트 정규화 (대소문자, SpO₂, 2 L 등)
+ */
+function normalizeNotifyText(text) {
+  return String(text || "")
+    .toLowerCase()
+    .replace(/spo\s*[o０0]?\s*[₂2]/gi, "spo2")
+    .replace(/₂/g, "2")
+    .replace(/(\d)\s*l\b/gi, "$1l")
+    .replace(/(\d)\s*리터/g, "$1리터")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizeKeyword(kw) {
+  return normalizeNotifyText(kw);
+}
+
+function isElementRequired(el) {
+  if (!el) return true;
+  if (el.required === false) return false;
+  if (el.optional === true) return false;
+  return true;
+}
+
+/**
  * 자유 입력 노티 문장을 requiredElements 기준으로 채점
- * keywords 중 하나라도 포함되면 해당 항목 hit
- *
- * @param {string} text
- * @param {Array<{key:string,sbarCategory:string,keywords?:string[],keywordGroups?:string[][],hint:string,passHint?:string,rationale?:string}>} requiredElements
  */
 function gradeNotifyText(text, requiredElements) {
-  const normalized = String(text || "").toLowerCase();
+  const normalized = normalizeNotifyText(text);
   const elements = Array.isArray(requiredElements) ? requiredElements : [];
 
   const checklist = elements.map((el) => {
     let matchedKeywords = [];
     let included = false;
+    let groupSatisfied = null;
 
     if (Array.isArray(el.keywordGroups) && el.keywordGroups.length > 0) {
-      // 각 그룹에서 최소 1개씩 매칭되어야 통과
       const groupHits = el.keywordGroups.map((group) => {
         const list = Array.isArray(group) ? group : [];
-        return list.filter((kw) =>
-          normalized.includes(String(kw).toLowerCase())
-        );
+        return list.filter((kw) => normalized.includes(normalizeKeyword(kw)));
       });
-      included = groupHits.every((hits) => hits.length > 0);
+      groupSatisfied = groupHits.map((hits) => hits.length > 0);
+      included = groupSatisfied.every(Boolean);
       matchedKeywords = groupHits.flat();
     } else {
-      // 기존: keywords 중 하나만 있어도 통과
       const keywords = el.keywords || [];
       matchedKeywords = keywords.filter((kw) =>
-        normalized.includes(String(kw).toLowerCase())
+        normalized.includes(normalizeKeyword(kw))
       );
       included = matchedKeywords.length > 0;
     }
 
+    const required = isElementRequired(el);
     return {
       key: el.key,
       sbarCategory: el.sbarCategory,
       hint: el.hint || "",
       passHint: el.passHint || "",
       rationale: el.rationale || "",
+      required,
+      optional: !required,
       matchedKeywords,
+      groupSatisfied,
       included
     };
   });
 
-  const includedCount = checklist.filter((c) => c.included).length;
-  const total = checklist.length;
+  const requiredItems = checklist.filter((c) => c.required);
+  const includedCount = requiredItems.filter((c) => c.included).length;
+  const total = requiredItems.length;
 
   const sbarScore = { S: 0, B: 0, A: 0, R: 0 };
   checklist.forEach((c) => {
     const cat = c.sbarCategory;
-    if (c.included && sbarScore[cat] !== undefined) {
+    if (c.required && c.included && sbarScore[cat] !== undefined) {
       sbarScore[cat] = 1;
     }
   });
@@ -104,18 +135,113 @@ function gradeNotifyText(text, requiredElements) {
 }
 
 /**
- * 아직 묻지 않은 누락 항목 (R 권고사항은 되묻기 제외)
+ * 아직 묻지 않은 필수 누락 항목
+ * - optional / required:false 제외
+ * - R(권고)는 되묻기 제외 (기존 동작 유지)
  */
 function getMissedForFollowUp(grade, askedKeys) {
   const asked = askedKeys || [];
   return (grade?.checklist || []).filter(
-    (c) => !c.included && !asked.includes(c.key) && c.sbarCategory !== "R"
+    (c) =>
+      c.required &&
+      !c.included &&
+      !asked.includes(c.key) &&
+      c.sbarCategory !== "R"
   );
 }
 
 /**
+ * SpO2 / RR / 산소요법 누락 조합 → 자연스러운 통합 질문
+ */
+function buildVitalOxygenFollowUp(missedKeys, oxygenItem) {
+  const miss = new Set(missedKeys || []);
+  const needSp = miss.has("SpO2수치");
+  const needRr = miss.has("호흡수");
+  const needO2 = miss.has("산소요법현황");
+
+  const deviceOk = Boolean(
+    oxygenItem?.groupSatisfied && oxygenItem.groupSatisfied[0]
+  );
+  const flowOk = Boolean(
+    oxygenItem?.groupSatisfied && oxygenItem.groupSatisfied[1]
+  );
+
+  if (!needSp && !needRr && needO2) {
+    if (deviceOk && !flowOk) return "몇 리터로 적용 중이에요?";
+    if (!deviceOk && flowOk) return "비강캐뉼라로 하고 있는 건가요?";
+    return "산소는 어떤 걸로 몇 리터 하고 있어요?";
+  }
+
+  if (needSp && needRr && needO2) {
+    return "지금 바이탈하고 산소는 어떻게 하고 있어요?";
+  }
+  if (!needSp && needRr && needO2) {
+    return "호흡수랑 현재 산소 적용 상태는요?";
+  }
+  if (needSp && !needRr && needO2) {
+    return "산소포화도랑 현재 산소 적용 상태는요?";
+  }
+  if (needSp && needRr && !needO2) {
+    return "현재 산소포화도와 호흡수는요?";
+  }
+  if (!needSp && needRr && !needO2) return "호흡수는요?";
+  if (needSp && !needRr && !needO2) return "산소포화도는요?";
+  return "지금 바이탈하고 산소는 어떻게 하고 있어요?";
+}
+
+/**
+ * 누락 항목 → 의사 후속 질문 (단일)
+ */
+function buildFollowUpQuestion(element) {
+  if (!element) return "그 부분 다시 말씀해 주시겠어요?";
+  if (element.followUpQuestion) return element.followUpQuestion;
+  if (FOLLOW_UP_QUESTIONS[element.key]) return FOLLOW_UP_QUESTIONS[element.key];
+
+  const kw = (element.keywords || []).find((k) => String(k).length >= 2);
+  if (kw) return `${kw}는요?`;
+  return `${element.key} 말씀해 주시겠어요?`;
+}
+
+/**
+ * 되묻기 대상 선택 + 질문 생성
+ * - SpO2/RR/산소가 함께 남아 있으면 한 번에 묶어 질문
+ * - 활력·산소 그룹은 askedKeys에 넣지 않아 부분 답변 후 남은 것만 다시 물을 수 있음
+ */
+function buildNotifyFollowUp(grade, missed, elements) {
+  const list = missed || [];
+  if (!list.length) return null;
+
+  const vitalMissed = list.filter((m) =>
+    VITAL_OXYGEN_FOLLOWUP_KEYS.includes(m.key)
+  );
+  const otherMissed = list.filter(
+    (m) => !VITAL_OXYGEN_FOLLOWUP_KEYS.includes(m.key)
+  );
+
+  if (otherMissed.length > 0) {
+    const target = otherMissed[0];
+    const sourceEl =
+      (elements || []).find((e) => e.key === target.key) || target;
+    return {
+      question: buildFollowUpQuestion(sourceEl),
+      askedKeysToAdd: [target.key],
+      targets: [target]
+    };
+  }
+
+  const oxygenItem = (grade?.checklist || []).find(
+    (c) => c.key === "산소요법현황"
+  );
+  const keys = vitalMissed.map((m) => m.key);
+  return {
+    question: buildVitalOxygenFollowUp(keys, oxygenItem),
+    askedKeysToAdd: [],
+    targets: vitalMissed
+  };
+}
+
+/**
  * S/B/A 되묻기 종료 후 의사 마무리 대사
- * R 포함 시: 요청에 대한 응답 / R 누락 시: scenario.closingLineNoR
  */
 function buildDoctorClosingMessage(grade, elements, scenario) {
   const rItem = (grade?.checklist || []).find((c) => c.sbarCategory === "R");
@@ -138,11 +264,12 @@ function buildDoctorClosingMessage(grade, elements, scenario) {
 }
 
 /**
- * 최종 피드백 — R 누락 안내 문구
+ * 최종 피드백 — 필수 R 누락 안내 (선택 R은 soft tip)
  */
 function getRecommendationMissNotice(grade, elements) {
   const rItem = (grade?.checklist || []).find((c) => c.sbarCategory === "R");
   if (!rItem || rItem.included) return null;
+  if (!rItem.required) return null;
 
   const rEl = (elements || []).find((e) => e.sbarCategory === "R");
   const example = rEl?.hint || "구체적인 검사·처치 요청을 포함하세요.";
@@ -150,20 +277,15 @@ function getRecommendationMissNotice(grade, elements) {
 }
 
 /**
- * 누락 항목 → 의사 후속 질문
+ * 선택 R 참고 피드백
  */
-function buildFollowUpQuestion(element) {
-  if (!element) return "그 부분 다시 말씀해 주시겠어요?";
-  if (element.followUpQuestion) return element.followUpQuestion;
-
-  if (FOLLOW_UP_QUESTIONS[element.key]) {
-    return FOLLOW_UP_QUESTIONS[element.key];
+function getOptionalRequestFeedback(grade) {
+  const rItem = (grade?.checklist || []).find((c) => c.sbarCategory === "R");
+  if (!rItem || rItem.required) return null;
+  if (rItem.included) {
+    return "필요한 조치까지 명확하게 요청했습니다.";
   }
-
-  const kw = (element.keywords || []).find((k) => String(k).length >= 2);
-  if (kw) return `${kw}는요?`;
-
-  return `${element.key} 말씀해 주시겠어요?`;
+  return "필요한 조치를 함께 요청하면 더욱 적극적인 노티가 됩니다.";
 }
 
 function explainChecklistItem(item) {
@@ -172,10 +294,19 @@ function explainChecklistItem(item) {
       console.debug("[scoring] matchedKeywords", item.key, item.matchedKeywords);
     }
     if (item.passHint) return item.passHint;
+    if (item.sbarCategory === "R" && item.optional) {
+      return "필요한 조치까지 명확하게 요청했습니다.";
+    }
     if (item.hint) {
       return `잘 포함되었습니다. (${item.hint})`;
     }
     return "이 항목에 해당하는 내용이 노티에 포함되어 있습니다.";
+  }
+  if (item.optional) {
+    return (
+      item.hint ||
+      "필요한 조치를 함께 요청하면 더욱 적극적인 노티가 됩니다."
+    );
   }
   return item.hint || "이 항목이 노티에서 빠져 있습니다.";
 }
