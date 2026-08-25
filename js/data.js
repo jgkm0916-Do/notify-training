@@ -13,12 +13,12 @@ const scenarios = [
     level: 1,
     levelLabel: "초급",
     closingLineNoR: "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요.",
-    trigger: "802호 김OO님 침상에서 낙상, 침상 난간에 후두부를 부딪힘. 신규간호사인 당신이 발견",
+    trigger: "802호 윤정희님 침상에서 낙상, 침상 난간에 후두부를 부딪힘. 신규간호사인 당신이 발견",
     eventTime: "03:08",
 
     patient: {
       room: "802호",
-      name: "김OO",
+      name: "윤정희",
       ageSex: "78세/F",
       diagnosis: "심방세동",
       pod: null
@@ -49,10 +49,16 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["김", "성함"],
-        hint: "환자 성명",
+        keywords: [
+          "윤정희",
+          "윤정희님",
+          "윤정희 환자",
+          "윤정희 환자분",
+          "802호 윤정희"
+        ],
+        hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
-        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+        rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
       },
       {
         key: "현재상황",
@@ -124,11 +130,11 @@ const scenarios = [
     level: 2,
     levelLabel: "중급",
     closingLineNoR: "알겠습니다. 지금 바로 가서 확인해볼게요.",
-    trigger: "701호 박OO님(65세, M) 갑작스러운 흉통 호소, 좌측 방사통 동반",
+    trigger: "701호 송재호님(65세, M) 갑작스러운 흉통 호소, 좌측 방사통 동반",
     eventTime: "14:20",
     patient: {
       room: "701호",
-      name: "박OO",
+      name: "송재호",
       ageSex: "65세/M",
       diagnosis: "불안정성 협심증 의증",
       pod: null
@@ -156,10 +162,16 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["박", "성함"],
-        hint: "환자 성명",
+        keywords: [
+          "송재호",
+          "송재호님",
+          "송재호 환자",
+          "송재호 환자분",
+          "701호 송재호"
+        ],
+        hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
-        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+        rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
       },
       {
         key: "흉통양상",
@@ -209,11 +221,11 @@ const scenarios = [
     level: 3,
     levelLabel: "고급",
     closingLineNoR: "알겠습니다. 바로 가겠습니다.",
-    trigger: "903호 이OO님(80세, COPD) 갑자기 호흡곤란 호소, SpO2 88%로 저하",
+    trigger: "903호 배영숙님(80세, COPD) 갑자기 호흡곤란 호소, SpO2 88%로 저하",
     eventTime: "22:15",
     patient: {
       room: "903호",
-      name: "이OO",
+      name: "배영숙",
       ageSex: "80세/F",
       diagnosis: "COPD",
       pod: null
@@ -241,10 +253,16 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["이OO", "이○○", "이ㅇㅇ", "이00", "903호 이OO", "903호 이○○"],
-        hint: "환자 성명",
+        keywords: [
+          "배영숙",
+          "배영숙님",
+          "배영숙 환자",
+          "배영숙 환자분",
+          "903호 배영숙"
+        ],
+        hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
-        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+        rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
       },
       {
         key: "현재상황",
@@ -340,11 +358,11 @@ const scenarios = [
     level: 1,
     levelLabel: "초급",
     closingLineNoR: "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요.",
-    trigger: "605호 최OO님(55세) 발열 및 오한 호소, 최근 요로감염 병력",
+    trigger: "605호 강미숙님(55세) 발열 및 오한 호소, 최근 요로감염 병력",
     eventTime: "06:40",
     patient: {
       room: "605호",
-      name: "최OO",
+      name: "강미숙",
       ageSex: "55세/F",
       diagnosis: "요로감염",
       pod: null
@@ -372,10 +390,16 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["최", "성함"],
-        hint: "환자 성명",
+        keywords: [
+          "강미숙",
+          "강미숙님",
+          "강미숙 환자",
+          "강미숙 환자분",
+          "605호 강미숙"
+        ],
+        hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
-        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+        rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
       },
       {
         key: "발생시각",
@@ -429,11 +453,11 @@ const scenarios = [
     level: 2,
     levelLabel: "중급",
     closingLineNoR: "지금 바로 가겠습니다. 그 사이 프로토콜대로 처치 부탁드려요.",
-    trigger: "502호 정OO님(70세, 당뇨) 식은땀 및 의식저하, 혈당 45mg/dL 측정",
+    trigger: "502호 오정자님(70세, 당뇨) 식은땀 및 의식저하, 혈당 45mg/dL 측정",
     eventTime: "08:00",
     patient: {
       room: "502호",
-      name: "정OO",
+      name: "오정자",
       ageSex: "70세/M",
       diagnosis: "제2형 당뇨병",
       pod: null
@@ -461,10 +485,16 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["정", "성함"],
-        hint: "환자 성명",
+        keywords: [
+          "오정자",
+          "오정자님",
+          "오정자 환자",
+          "오정자 환자분",
+          "502호 오정자"
+        ],
+        hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
-        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+        rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
       },
       {
         key: "발생시각",
@@ -530,11 +560,11 @@ const scenarios = [
     level: 3,
     levelLabel: "고급",
     closingLineNoR: "알겠습니다. 바로 가겠습니다.",
-    trigger: "1005호 한OO님 수혈 시작 15분 후 오한 및 두드러기 발생",
+    trigger: "1005호 임현수님 수혈 시작 15분 후 오한 및 두드러기 발생",
     eventTime: "16:45",
     patient: {
       room: "1005호",
-      name: "한OO",
+      name: "임현수",
       ageSex: "62세/F",
       diagnosis: "위암 수술 후",
       pod: "POD#2"
@@ -562,10 +592,16 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["한", "성함"],
-        hint: "환자 성명",
+        keywords: [
+          "임현수",
+          "임현수님",
+          "임현수 환자",
+          "임현수 환자분",
+          "1005호 임현수"
+        ],
+        hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
-        rationale: "성명을 함께 말하면 호실·동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+        rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
       },
       {
         key: "발생시각",
@@ -647,13 +683,12 @@ function getScenarioCardSubtitle(scenario) {
   return getScenarioListSituation(scenario);
 }
 
-/** 목록 왼쪽: 호실 + 이름 + 나이 (일률) */
+/** 목록 왼쪽: 호실 + 이름 + 나이/성별 (일률) */
 function getScenarioListPatientLine(scenario) {
   const p = (scenario && scenario.patient) || {};
-  const age = String(p.ageSex || "").split("/")[0].trim();
   const rawName = p.name || "";
-  const name = rawName ? (rawName.endsWith("님") ? rawName : rawName + "님") : "";
-  return [p.room, name, age ? "(" + age + ")" : ""].filter(Boolean).join(" ");
+  const ageSex = p.ageSex ? "(" + p.ageSex + ")" : "";
+  return [p.room, rawName, ageSex].filter(Boolean).join(" ");
 }
 
 /** 목록 오른쪽: 상황만 짧게 */
