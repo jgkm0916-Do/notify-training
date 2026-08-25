@@ -7,13 +7,17 @@
 
 /**
  * 시나리오 requiredElements 길이에 비례한 되묻기 상한
- * (필수 항목 기준, 최대 6회)
+ * (필수 항목 기준, 기본 최대 6회 / scn_06 그룹 항목 시 10회)
  */
 function getMaxFollowUps(requiredElements) {
   const list = Array.isArray(requiredElements) ? requiredElements : [];
   const requiredCount = list.filter((el) => el.required !== false).length;
   const n = requiredCount || list.length;
-  return Math.min(Math.max(n - 1, 0), 6);
+  const hasScn06Groups = list.some(
+    (el) => el.key === "수혈전후활력징후" || el.key === "수혈진행정보"
+  );
+  const cap = hasScn06Groups ? 10 : 6;
+  return Math.min(Math.max(n - 1, 0), cap);
 }
 
 /** scn_03 전용: 활력징후(1요소) → 산소요법 순서로 질문 */
@@ -88,6 +92,11 @@ function normalizeNotifyText(text) {
   t = t.replace(/2\s*liters?\b/g, "2l");
   t = t.replace(/(\d)\s*l\b/g, "$1l");
   t = t.replace(/(\d)\s*리터/g, "$1l");
+
+  // 주입량 ml/cc
+  t = t.replace(/(\d+)\s*m\s*l\b/gi, "$1ml");
+  t = t.replace(/(\d+)\s*cc\b/gi, "$1ml");
+  t = t.replace(/(\d+)\s*씨씨/g, "$1ml");
 
   t = t.replace(/\s+/g, " ").trim();
   return t;
@@ -246,6 +255,36 @@ function buildScn03OxygenFollowUp(oxygenItem, alreadyProbed) {
   return "지금 산소는 하고 있어요?";
 }
 
+/**
+ * scn_06: 수혈 전후 활력징후 — 전/후 그룹 모두 필요
+ */
+function buildScn06VitalFollowUp(vitalItem) {
+  const sat = Array.isArray(vitalItem?.groupSatisfied)
+    ? vitalItem.groupSatisfied
+    : [false, false];
+  const preOk = Boolean(sat[0]);
+  const curOk = Boolean(sat[1]);
+  if (preOk && curOk) return null;
+  if (curOk && !preOk) return "수혈 전 바이탈은 어땠어요?";
+  if (preOk && !curOk) return "지금 바이탈은요?";
+  return "수혈 전후 바이탈 비교해서 알려주세요.";
+}
+
+/**
+ * scn_06: 수혈 진행정보 — 시작 시각 + 주입량
+ */
+function buildScn06ProgressFollowUp(progressItem) {
+  const sat = Array.isArray(progressItem?.groupSatisfied)
+    ? progressItem.groupSatisfied
+    : [false, false];
+  const startOk = Boolean(sat[0]);
+  const volOk = Boolean(sat[1]);
+  if (startOk && volOk) return null;
+  if (startOk && !volOk) return "증상 생길 때까지 얼마나 들어갔어요?";
+  if (!startOk && volOk) return "수혈은 몇 시에 시작했어요?";
+  return "수혈은 몇 시에 시작했고 지금까지 얼마나 들어갔어요?";
+}
+
 function buildFollowUpQuestion(element) {
   if (!element) return "그 부분 다시 말씀해 주시겠어요?";
   if (element.followUpQuestion) return element.followUpQuestion;
@@ -266,10 +305,17 @@ function buildNotifyFollowUp(grade, missed, elements, askedKeys) {
   if (!list.length) return null;
 
   const hasScn03Vital = (elements || []).some((e) => e.key === SCN03_VITAL_KEY);
+  const hasScn06 = (elements || []).some((e) => e.key === SCN06_VITAL_KEY);
   const vitalMissed = list.find((m) => m.key === SCN03_VITAL_KEY);
   const oxygenMissed = list.find((m) => m.key === SCN03_OXYGEN_KEY);
+  const scn06VitalMissed = list.find((m) => m.key === SCN06_VITAL_KEY);
+  const scn06ProgressMissed = list.find((m) => m.key === SCN06_PROGRESS_KEY);
   const otherMissed = list.filter(
-    (m) => m.key !== SCN03_VITAL_KEY && m.key !== SCN03_OXYGEN_KEY
+    (m) =>
+      m.key !== SCN03_VITAL_KEY &&
+      m.key !== SCN03_OXYGEN_KEY &&
+      m.key !== SCN06_VITAL_KEY &&
+      m.key !== SCN06_PROGRESS_KEY
   );
 
   if (otherMissed.length > 0) {
@@ -281,6 +327,30 @@ function buildNotifyFollowUp(grade, missed, elements, askedKeys) {
       askedKeysToAdd: [target.key],
       targets: [target]
     };
+  }
+
+  // scn_06: 중단 등 확인 후 → 전후 바이탈 → 수혈 진행정보
+  if (hasScn06) {
+    if (scn06VitalMissed) {
+      const vitalItem = (grade?.checklist || []).find(
+        (c) => c.key === SCN06_VITAL_KEY
+      );
+      return {
+        question: buildScn06VitalFollowUp(vitalItem),
+        askedKeysToAdd: [],
+        targets: [scn06VitalMissed]
+      };
+    }
+    if (scn06ProgressMissed) {
+      const progressItem = (grade?.checklist || []).find(
+        (c) => c.key === SCN06_PROGRESS_KEY
+      );
+      return {
+        question: buildScn06ProgressFollowUp(progressItem),
+        askedKeysToAdd: [],
+        targets: [scn06ProgressMissed]
+      };
+    }
   }
 
   // scn_03 전용: 활력징후 그룹 → 산소요법 순서 (개별 SpO2/RR 질문 금지)
