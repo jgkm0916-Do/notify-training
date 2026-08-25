@@ -322,11 +322,16 @@ function initNotifyConversation(session) {
   session.followUpCount = 0;
   session.askedKeys = [];
   session.notifyFinished = false;
+  session.pendingFollowUpKey = null;
+  session.confirmedFollowUpKeys = [];
 }
 
 /**
  * 사용자 메시지 전송 → 누락 시 의사 후속 질문 → 최종 평가
  * 되묻기 횟수 상한: getMaxFollowUps(requiredElements)
+ *
+ * 의사가 follow-up을 던지면 session.pendingFollowUpKey에 대상 element key를 저장.
+ * 다음 간호사 메시지가 짧은 긍정이면 해당 key를 confirmedFollowUpKeys에 넣어 채점에 반영.
  */
 function handleNotifySubmit(session, text, chatBody, feedbackSlot, partnerLabel) {
   if (!session || session.notifyFinished || !text?.trim()) return { done: false };
@@ -336,10 +341,30 @@ function handleNotifySubmit(session, text, chatBody, feedbackSlot, partnerLabel)
 
   appendMessage(chatBody, { sender: "me", text: message, time: nowHHMM() });
 
+  if (!Array.isArray(session.confirmedFollowUpKeys)) {
+    session.confirmedFollowUpKeys = [];
+  }
+
+  const pendingKey = session.pendingFollowUpKey || null;
+  if (pendingKey) {
+    if (
+      typeof isAffirmativeReply === "function" &&
+      isAffirmativeReply(message)
+    ) {
+      if (!session.confirmedFollowUpKeys.includes(pendingKey)) {
+        session.confirmedFollowUpKeys.push(pendingKey);
+      }
+    }
+    // 긍정·부정·그 외 답변 모두 대기 질문 소진
+    session.pendingFollowUpKey = null;
+  }
+
   const combined = session.notifyTexts.join(" ");
   // session.requiredElements는 없음 → scenario에 붙어 있음
   const elements = session.scenario?.requiredElements || [];
-  const grade = gradeNotifyText(combined, elements);
+  const grade = gradeNotifyText(combined, elements, {
+    forceIncludedKeys: session.confirmedFollowUpKeys
+  });
   session.lastGrade = grade;
   session.notifyText = combined;
 
@@ -364,6 +389,12 @@ function handleNotifySubmit(session, text, chatBody, feedbackSlot, partnerLabel)
       if (!session.askedKeys.includes(k)) session.askedKeys.push(k);
     });
     session.followUpCount += 1;
+    session.pendingFollowUpKey =
+      (followUp &&
+        followUp.targets &&
+        followUp.targets[0] &&
+        followUp.targets[0].key) ||
+      missed[0].key;
 
     window.setTimeout(() => {
       appendMessage(

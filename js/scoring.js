@@ -113,12 +113,88 @@ function isElementRequired(el) {
   return true;
 }
 
+/** 되묻기 직후 짧은 확인/부정 응답 판별용 */
+function normalizeConfirmReply(text) {
+  return String(text || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[.!?。！？~,，、]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+const AFFIRMATIVE_REPLIES = new Set([
+  "네",
+  "예",
+  "응",
+  "어",
+  "네네",
+  "예예",
+  "맞아요",
+  "맞습니다",
+  "맞음",
+  "맞아",
+  "그렇습니다",
+  "그렇죠",
+  "그래요",
+  "그럼요",
+  "그래",
+  "했어요",
+  "했습니다",
+  "네 맞아요",
+  "예 맞아요",
+  "네 했어요",
+  "예 했어요"
+]);
+
+const NEGATIVE_REPLIES = new Set([
+  "아니요",
+  "아니",
+  "아뇨",
+  "아닙니다",
+  "아니에요",
+  "안 했어요",
+  "안했어요",
+  "못 했어요",
+  "못했어요",
+  "못했습니다",
+  "아직요",
+  "아직 안 했어요"
+]);
+
+/**
+ * 되묻기에 대한 짧은 긍정 응답인지
+ * (시나리오 공통 — pendingFollowUpKey와 함께 사용)
+ */
+function isAffirmativeReply(text) {
+  const t = normalizeConfirmReply(text);
+  if (!t || t.length > 24) return false;
+  return AFFIRMATIVE_REPLIES.has(t);
+}
+
+/**
+ * 되묻기에 대한 짧은 부정 응답인지
+ */
+function isNegativeReply(text) {
+  const t = normalizeConfirmReply(text);
+  if (!t || t.length > 24) return false;
+  if (NEGATIVE_REPLIES.has(t)) return true;
+  return /^(아니|아뇨|아니요|아닙니다)/.test(t);
+}
+
 /**
  * 자유 입력 노티 문장을 requiredElements 기준으로 채점
+ * @param {string} text
+ * @param {Array} requiredElements
+ * @param {{ forceIncludedKeys?: string[] }} [options]
+ *        되묻기 긍정 확인으로 포함 처리할 element key 목록
  */
-function gradeNotifyText(text, requiredElements) {
+function gradeNotifyText(text, requiredElements, options) {
   const normalized = normalizeNotifyText(text);
   const elements = Array.isArray(requiredElements) ? requiredElements : [];
+  const forceIncludedKeys = new Set(
+    (options && options.forceIncludedKeys) || []
+  );
 
   const checklist = elements.map((el) => {
     let matchedKeywords = [];
@@ -139,6 +215,16 @@ function gradeNotifyText(text, requiredElements) {
         normalized.includes(normalizeKeyword(kw))
       );
       included = matchedKeywords.length > 0;
+    }
+
+    if (forceIncludedKeys.has(el.key)) {
+      included = true;
+      if (Array.isArray(el.keywordGroups) && el.keywordGroups.length > 0) {
+        groupSatisfied = el.keywordGroups.map(() => true);
+      }
+      if (!matchedKeywords.length) {
+        matchedKeywords = ["확인응답"];
+      }
     }
 
     const required = isElementRequired(el);
