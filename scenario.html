@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>시나리오 — 노티 훈련</title>
   <meta name="theme-color" content="#3a7bd5" />
   <meta name="application-name" content="간호사 노티 훈련" />
@@ -20,17 +20,21 @@
     html,
     body {
       height: 100%;
+      height: 100dvh;
       overflow: hidden;
     }
 
     .app--scenario {
       height: 100vh;
+      height: 100dvh;
       max-height: 100vh;
+      max-height: 100dvh;
       overflow: hidden;
     }
 
     .app--scenario .chat-header {
       flex-shrink: 0;
+      padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
     }
 
     .scenario-prep {
@@ -58,7 +62,13 @@
     }
 
     .scenario-prep--calling .chart-dock {
-      max-height: 42vh;
+      flex: 0 1 auto;
+      max-height: min(36dvh, 280px);
+    }
+
+    .scenario-prep--calling .call-section {
+      flex: 1 1 auto;
+      min-height: 0;
     }
 
     .chart-dock__toolbar {
@@ -205,23 +215,26 @@
       flex-shrink: 0;
       display: flex;
       gap: 0.5rem;
-      padding: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      padding-bottom: calc(0.65rem + env(safe-area-inset-bottom, 0px));
       background: #fff;
       border-top: 1px solid var(--border, #e5e5e5);
       align-items: flex-end;
+      z-index: 3;
     }
 
     .notify-composer textarea {
       flex: 1;
-      min-height: 72px;
-      max-height: 140px;
+      min-width: 0;
+      min-height: 52px;
+      max-height: 120px;
       padding: 0.65rem 0.75rem;
       border: 1px solid var(--border, #e5e5e5);
       border-radius: 10px;
       font-family: inherit;
-      font-size: 0.9rem;
+      font-size: 16px; /* iOS 자동 확대 방지 */
       line-height: 1.4;
-      resize: vertical;
+      resize: none;
     }
 
     .notify-composer textarea:focus {
@@ -231,6 +244,8 @@
 
     .notify-send {
       flex-shrink: 0;
+      min-width: 4.25rem;
+      min-height: 44px;
       padding: 0.7rem 1rem;
       border: none;
       border-radius: 10px;
@@ -240,11 +255,24 @@
       font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     .notify-send:disabled {
       opacity: 0.45;
       cursor: not-allowed;
+    }
+
+    @media (max-height: 700px) {
+      .scenario-prep--calling .chart-dock {
+        max-height: min(28dvh, 200px);
+      }
+
+      .notify-composer textarea {
+        min-height: 44px;
+        max-height: 96px;
+      }
     }
 
     .feedback-checklist {
@@ -441,7 +469,7 @@
             id="notifyInput"
             name="notify"
             placeholder="SBAR에 맞춰 노티 내용을 입력하세요…"
-            rows="3"
+            rows="2"
           ></textarea>
           <button type="submit" class="notify-send" id="notifySend">전송</button>
         </form>
