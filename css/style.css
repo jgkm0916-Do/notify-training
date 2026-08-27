@@ -179,6 +179,40 @@ body {
   word-break: keep-all;
 }
 
+.practice-history {
+  margin: 0.65rem 1rem 0;
+  padding: 0.75rem 0.9rem;
+  background: #f0f4f8;
+  border: 1px solid #d9e2ec;
+  border-radius: 8px;
+}
+
+.practice-history__title {
+  margin: 0 0 0.45rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #2a4a6b;
+  word-break: keep-all;
+}
+
+.practice-history__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 5.5rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.practice-history__item {
+  font-size: 0.8rem;
+  color: #4a5d73;
+  line-height: 1.35;
+}
+
 .chat-header__avatar {
   width: 40px;
   height: 40px;

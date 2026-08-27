@@ -101,6 +101,7 @@ function initScenarioPage() {
 
   const session = startScenario(id);
   renderTrigger(scenario, document.getElementById("triggerArea"));
+  renderPracticeHistory(id, document.getElementById("triggerArea"));
   renderChartData(scenario.chartData, document.getElementById("chartArea"), scenario);
 
   return session;
@@ -129,6 +130,118 @@ function renderTrigger(scenario, container) {
       <p class="trigger-banner__text">${escapeHtml(trigger || "")}</p>
     </div>
   `;
+}
+
+/* ===== 연습 기록 (localStorage) ===== */
+
+function notifyHistoryKey(scenarioId) {
+  return `notifyHistory_${scenarioId}`;
+}
+
+function getNotifyHistory(scenarioId) {
+  if (!scenarioId) return [];
+  try {
+    const raw = localStorage.getItem(notifyHistoryKey(scenarioId));
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    console.warn("[notify-history] load failed", err);
+    return [];
+  }
+}
+
+function saveNotifyHistory(scenarioId, history) {
+  if (!scenarioId) return;
+  try {
+    localStorage.setItem(notifyHistoryKey(scenarioId), JSON.stringify(history));
+  } catch (err) {
+    console.warn("[notify-history] save failed", err);
+  }
+}
+
+/**
+ * 최종 채점 결과를 시나리오별 연습 기록에 append
+ * @returns {{ previous: object|null, current: object, history: object[] }}
+ */
+function recordNotifyAttempt(scenarioId, session, grade) {
+  const history = getNotifyHistory(scenarioId);
+  const previous = history.length ? history[history.length - 1] : null;
+
+  const requiredItems = (grade?.checklist || []).filter((i) => i.required !== false);
+  const missedKeys = requiredItems.filter((i) => !i.included).map((i) => i.key);
+
+  const current = {
+    timestamp: new Date().toISOString(),
+    followUpCount: session?.followUpCount || 0,
+    passedItems: grade?.includedCount || 0,
+    totalItems: grade?.total || requiredItems.length,
+    missedKeys
+  };
+
+  history.push(current);
+  saveNotifyHistory(scenarioId, history);
+  return { previous, current, history };
+}
+
+/** 직전 시도 대비 한 줄 비교 문구 (직전 없으면 "") */
+function buildHistoryComparison(previous, current) {
+  if (!previous || !current) return "";
+
+  const followDiff = (previous.followUpCount || 0) - (current.followUpCount || 0);
+  const passDiff = (current.passedItems || 0) - (previous.passedItems || 0);
+
+  let followPart;
+  if (followDiff > 0) {
+    followPart = `되묻기 ${followDiff}번 줄었고`;
+  } else if (followDiff < 0) {
+    followPart = `되묻기 ${Math.abs(followDiff)}번 늘었고`;
+  } else {
+    followPart = "되묻기 횟수는 비슷하고";
+  }
+
+  let passPart;
+  if (passDiff > 0) {
+    passPart = `통과 항목이 ${passDiff}개 늘었어요.`;
+  } else if (passDiff < 0) {
+    passPart = `통과 항목이 ${Math.abs(passDiff)}개 줄었어요.`;
+  } else {
+    passPart = "통과 항목 수는 비슷해요.";
+  }
+
+  return `지난번보다 ${followPart}, ${passPart}`;
+}
+
+/** 시나리오 시작 화면 — 이전 연습 기록 요약 (없으면 숨김) */
+function renderPracticeHistory(scenarioId, container) {
+  if (!container || !scenarioId) return;
+
+  const existing = container.querySelector(".practice-history");
+  if (existing) existing.remove();
+
+  const history = getNotifyHistory(scenarioId);
+  if (!history.length) return;
+
+  const nextRound = history.length + 1;
+  const recent = history.slice(-3).reverse();
+
+  const rows = recent
+    .map((entry, i) => {
+      const round = history.length - i;
+      const follow = entry.followUpCount || 0;
+      const passed = entry.passedItems || 0;
+      const total = entry.totalItems || 0;
+      return `<li class="practice-history__item">${round}회 · 되묻기 ${follow}번 · ${passed}/${total} 항목</li>`;
+    })
+    .join("");
+
+  const wrap = document.createElement("div");
+  wrap.className = "practice-history";
+  wrap.innerHTML = `
+    <p class="practice-history__title">이 시나리오 ${nextRound}번째 연습이에요</p>
+    <ul class="practice-history__list">${rows}</ul>
+  `;
+  container.appendChild(wrap);
 }
 
 /**
@@ -425,10 +538,15 @@ function finishNotifyConversation(session, grade, chatBody, feedbackSlot, partne
     { partnerLabel }
   );
 
+  const scenarioId = session.scenario?.id;
+  const { previous, current } = recordNotifyAttempt(scenarioId, session, grade);
+  const comparison = buildHistoryComparison(previous, current);
+
   renderNotifyFeedback(grade, feedbackSlot, {
     title: "최종 평가",
     lead: `총 ${session.notifyTexts.length}번의 메시지를 바탕으로 평가했습니다.`,
-    elements
+    elements,
+    comparison
   });
 
   scrollChatToBottom(chatBody);
@@ -442,6 +560,7 @@ function renderNotifyFeedback(grade, container, options = {}) {
 
   const title = options.title || `${grade.includedCount}/${grade.total} 항목 포함`;
   const lead = options.lead || "보낸 노티를 항목별로 살펴본 결과입니다.";
+  const comparison = options.comparison || "";
 
   const requiredItems = (grade.checklist || []).filter((i) => i.required !== false);
   const optionalItems = (grade.checklist || []).filter((i) => i.required === false);
@@ -482,6 +601,11 @@ function renderNotifyFeedback(grade, container, options = {}) {
   container.innerHTML = `
     <div class="feedback-checklist">
       <div class="feedback-checklist__summary">${escapeHtml(title)}</div>
+      ${
+        comparison
+          ? `<p class="feedback-checklist__compare">${escapeHtml(comparison)}</p>`
+          : ""
+      }
       <p class="feedback-checklist__lead">${escapeHtml(lead)}</p>
       ${
         rMissNotice
