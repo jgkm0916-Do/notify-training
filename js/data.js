@@ -1230,6 +1230,304 @@ const scenarios = [
         rationale: "활동성 출혈 의심 시 신속한 수혈 여부와 재수술 가능성을 의사가 즉시 판단해야 합니다."
       }
     ]
+  },
+
+  {
+    id: "scn_13",
+    title: "급성 뇌졸중 의심 노티",
+    partnerName: "장민준",
+    partnerRole: "의사",
+    level: 3,
+    levelLabel: "고급",
+    closingLineNoR: "지금 바로 가겠습니다. 응급 코드 발동할게요.",
+    trigger: "1102호 배창수님, 갑자기 우측 편마비 및 발음 이상 발생. 목격자 있음",
+    eventTime: "11:05",
+    patient: {
+      room: "1102호",
+      name: "배창수",
+      ageSex: "70세/M",
+      diagnosis: "고혈압, 심방세동 과거력",
+      pod: null
+    },
+    messages: [
+      { sender: "partner", text: "네, 말씀하세요.", time: "11:07" }
+    ],
+    chartData: {
+      VS: "BP 178/98, HR 96(불규칙), RR 18, BT 36.7, SpO2 96%",
+      Lab: "혈당 128 (즉시 확인), 아직 CT 시행 전",
+      Meds: "암로디핀 복용 중, 항응고제 미복용",
+      IO: "intake 정상 · output 정상",
+      Symptoms: "11:05 우측 얼굴 처짐, 우측 팔다리 위약감(도수근력 2/5), 발음이 어눌하고 이해력은 유지됨",
+      Treatment: "즉시 침상안정, 금식 지시, 신경학적 사정 및 혈당 체크 완료"
+    },
+    requiredElements: [
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["1102"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["배", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "증상발생정확시각",
+        sbarCategory: "S",
+        keywords: ["11:05", "11시 5", "정확한 시각", "목격"],
+        hint: "증상 발생 정확한 시각(목격 시점)",
+        followUpQuestion: "증상이 정확히 몇 시부터 시작됐어요? 목격자가 있나요?",
+        rationale: "뇌졸중은 발병 후 골든타임 내 혈전용해제 투여가 예후를 좌우하므로, 정확한 발생 시각 확인이 가장 중요합니다."
+      },
+      {
+        key: "FAST증상",
+        sbarCategory: "A",
+        keywords: ["편마비", "얼굴 처짐", "위약", "어눌", "구음"],
+        hint: "얼굴 처짐, 편측 위약, 언어 이상(FAST)",
+        followUpQuestion: "얼굴 처짐, 팔다리 위약감, 언어 이상 각각 어떤가요?",
+        rationale: "FAST(안면·팔·언어·시간) 사정은 뇌졸중 초기 선별의 표준 항목으로, 세 가지를 모두 확인해야 합니다."
+      },
+      {
+        key: "혈당확인",
+        sbarCategory: "A",
+        keywords: ["혈당", "128"],
+        hint: "저혈당 여부 확인(뇌졸중 유사 증상 감별)",
+        followUpQuestion: "혈당은 확인하셨어요?",
+        rationale: "저혈당도 편마비 등 뇌졸중과 유사한 증상을 유발할 수 있어, 감별을 위해 반드시 먼저 확인해야 합니다."
+      },
+      {
+        key: "항응고제복용여부",
+        sbarCategory: "B",
+        keywords: ["항응고제", "미복용", "복용"],
+        hint: "항응고제 복용 여부",
+        followUpQuestion: "항응고제 복용 중이신가요?",
+        rationale: "항응고제 복용 여부가 혈전용해제 사용 가능 여부 판단에 직접 영향을 줍니다."
+      },
+      {
+        key: "활력징후",
+        sbarCategory: "A",
+        keywordGroups: [
+          ["BP", "혈압", "178"],
+          ["HR", "맥박", "불규칙"]
+        ],
+        hint: "혈압, 맥박(불규칙 리듬 포함)",
+        followUpQuestion: "혈압이랑 맥박은 어떠세요?",
+        rationale: "심방세동에 의한 불규칙한 맥박은 색전성 뇌졸중의 원인이 될 수 있어 중요한 정보입니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["CT", "방문", "즉시", "확인 부탁", "지시"],
+        hint: "즉시 CT 및 방문 요청",
+        followUpQuestion: "지금 즉시 CT 및 방문 필요할지 확인 부탁드려도 될까요?",
+        rationale: "뇌졸중 의심 시 골든타임 내 신속한 영상검사와 의사 판단이 예후를 결정하므로 즉각적인 요청이 필수입니다."
+      }
+    ]
+  },
+
+  {
+    id: "scn_14",
+    title: "중증 저혈당 쇼크 노티",
+    partnerName: "노하은",
+    partnerRole: "의사",
+    level: 3,
+    levelLabel: "고급",
+    closingLineNoR: "지금 바로 가겠습니다. 응급 코드 발동할게요.",
+    trigger: "915호 방영식님, 반응 없이 침대에서 발견. 혈당 28mg/dL 측정됨",
+    eventTime: "03:40",
+    patient: {
+      room: "915호",
+      name: "방영식",
+      ageSex: "68세/M",
+      diagnosis: "제1형 당뇨병",
+      pod: null
+    },
+    messages: [
+      { sender: "partner", text: "네, 말씀하세요.", time: "03:42" }
+    ],
+    chartData: {
+      VS: "BP 108/70, HR 122, RR 20, BT 36.2, SpO2 96%",
+      Lab: "03:40 측정 · 혈당 28mg/dL",
+      Meds: "저녁 21:00 인슐린 글라진(란투스) 20U 투여함, 저녁식사는 거의 섭취 못함",
+      IO: "intake 200ml · output 150ml, 저녁식사 거의 섭취 안 함",
+      Symptoms: "자극에 반응 없음(통증 자극에 약한 반응), 전신 식은땀, 경구 섭취 불가능한 상태",
+      Treatment: "즉시 정맥로 확보, 경구 포도당 투여 불가로 판단"
+    },
+    requiredElements: [
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["915"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["방", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "혈당수치",
+        sbarCategory: "S",
+        keywords: ["28"],
+        hint: "구체적 혈당 수치",
+        followUpQuestion: "혈당 수치가 정확히 몇이었어요?",
+        rationale: "수치가 매우 낮을수록 응급도가 다르므로, 정확한 수치 보고가 응급 처치 결정에 필수입니다."
+      },
+      {
+        key: "의식상태",
+        sbarCategory: "A",
+        keywords: ["반응 없", "자극", "무반응", "의식소실"],
+        hint: "의식 수준(자극 반응 여부)",
+        followUpQuestion: "지금 의식 상태가 어떠세요? 자극에 반응하나요?",
+        rationale: "의식소실 동반 저혈당은 경구 섭취가 불가능한 응급 상황으로, 즉시 정맥 포도당 투여가 필요합니다."
+      },
+      {
+        key: "경구섭취가능여부",
+        sbarCategory: "A",
+        keywords: ["경구", "섭취 불가", "삼킴", "먹일 수"],
+        hint: "경구 섭취 가능 여부",
+        followUpQuestion: "경구로 뭔가 드실 수 있는 상태인가요?",
+        rationale: "의식저하로 경구 섭취가 불가능하면 반드시 정맥 내 포도당 투여로 전환해야 합니다."
+      },
+      {
+        key: "인슐린투약여부",
+        sbarCategory: "B",
+        keywords: ["인슐린", "란투스", "글라진", "20U", "투약"],
+        hint: "인슐린 투약 시각 및 용량",
+        followUpQuestion: "언제 인슐린 맞으셨고 용량은요?",
+        rationale: "인슐린 투약 시각과 용량, 식사 섭취 여부를 함께 확인해야 저혈당 원인과 지속 시간을 판단할 수 있습니다."
+      },
+      {
+        key: "활력징후",
+        sbarCategory: "A",
+        keywordGroups: [
+          ["BP", "혈압"],
+          ["HR", "맥박", "122"]
+        ],
+        hint: "혈압, 맥박",
+        followUpQuestion: "혈압이랑 맥박은 어떠세요?",
+        rationale: "빈맥은 저혈당에 대한 신체의 대상 반응(카테콜아민 분비)을 반영하는 중요한 지표입니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["방문", "즉시", "확인 부탁", "지시", "처방"],
+        hint: "즉시 방문 요청",
+        followUpQuestion: "지금 즉시 봐주실 수 있을까요?",
+        rationale: "의식소실을 동반한 중증 저혈당은 응급 상황이므로, 특정 처치를 지정하기보다 즉시 방문이 필요하다는 긴급도를 명확히 전달하는 것이 우선입니다."
+      }
+    ]
+  },
+
+  {
+    id: "scn_15",
+    title: "패혈성 쇼크 초기 징후 노티",
+    partnerName: "권도윤",
+    partnerRole: "의사",
+    level: 3,
+    levelLabel: "고급",
+    closingLineNoR: "지금 바로 가겠습니다. 응급 코드 발동할게요.",
+    trigger: "1201호 유금옥님, 요로감염 치료 중 갑자기 저혈압, 빈맥, 고열, 의식 혼미 발생",
+    eventTime: "02:20",
+    patient: {
+      room: "1201호",
+      name: "유금옥",
+      ageSex: "76세/F",
+      diagnosis: "요로감염(UTI)으로 항생제 치료 중",
+      pod: null
+    },
+    messages: [
+      { sender: "partner", text: "네, 말씀하세요.", time: "02:22" }
+    ],
+    chartData: {
+      VS: "이전(22:00) BP 118/74, HR 88, RR 18, BT 37.8, SpO2 97% · 현재(02:20) BP 82/54, HR 128, RR 26, BT 39.5, SpO2 93%",
+      Lab: "어제 20:00 시행 - WBC 18,500 (상승), CRP 15.2 (상승), Lactate 결과 대기중",
+      Meds: "세프트리악손 IV 투여 중(어제부터 시작)",
+      IO: "intake 900ml · output 200ml(최근 4시간), 소변량 감소",
+      Symptoms: "의식 혼미(질문에 지연 반응), 사지 냉감, 피부 얼룩덜룩함(mottling)",
+      Treatment: "즉시 수액 개방, 활력징후 재측정 완료, 혈액배양 검사 시행 전"
+    },
+    requiredElements: [
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["1201"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["유", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "감염배경",
+        sbarCategory: "B",
+        keywords: ["요로감염", "UTI", "항생제"],
+        hint: "감염원(요로감염) 및 항생제 치료 여부",
+        followUpQuestion: "원래 어떤 감염으로 치료 중이셨어요?",
+        rationale: "기존 감염원을 알아야 패혈증의 원인을 신속히 추정하고 항생제 조정 여부를 판단할 수 있습니다."
+      },
+      {
+        key: "활력징후변화",
+        sbarCategory: "A",
+        keywordGroups: [
+          ["BP", "혈압", "82"],
+          ["HR", "맥박", "128"],
+          ["BT", "체온", "39.5"]
+        ],
+        hint: "이전 대비 혈압·맥박·체온 변화",
+        followUpQuestion: "이전이랑 비교해서 혈압, 맥박, 체온 어떻게 변했어요?",
+        rationale: "저혈압, 빈맥, 고열이 동시에 나타나는 것은 패혈성 쇼크의 전형적 신호로, 셋 중 하나만 봐서는 놓칠 수 있습니다."
+      },
+      {
+        key: "의식변화",
+        sbarCategory: "A",
+        keywords: ["혼미", "의식", "지연 반응", "처짐"],
+        hint: "의식 수준 변화",
+        followUpQuestion: "의식 상태는 어떠세요?",
+        rationale: "의식 변화는 패혈증으로 인한 뇌 관류 저하를 시사하는 중요한 악화 신호입니다."
+      },
+      {
+        key: "말초관류상태",
+        sbarCategory: "A",
+        keywords: ["냉감", "얼룩", "mottling", "차갑"],
+        hint: "사지 냉감·피부 얼룩 등 말초 관류 상태",
+        followUpQuestion: "손발이 차갑거나 피부색이 얼룩덜룩하지 않나요?",
+        rationale: "말초 관류 저하 소견은 쇼크로 인한 조직 관류 부족을 시사하는 신체 사정 항목입니다."
+      },
+      {
+        key: "소변량감소",
+        sbarCategory: "A",
+        keywords: ["소변량", "감소", "output"],
+        hint: "최근 소변량 감소 여부",
+        followUpQuestion: "최근 소변량은 어때요?",
+        rationale: "핍뇨는 쇼크로 인한 신장 관류 저하를 반영하는 중요한 지표입니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["방문", "즉시", "확인 부탁", "지시", "처방", "수액"],
+        hint: "즉시 방문 및 처치 요청",
+        followUpQuestion: "지금 즉시 봐주실 수 있을까요?",
+        rationale: "패혈성 쇼크는 인지 즉시 수액 소생과 항생제 조정이 필요한 응급 상황이므로 신속한 요청이 생명과 직결됩니다."
+      }
+    ]
   }
 ];
 
