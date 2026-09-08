@@ -14,7 +14,17 @@ const CHART_LABELS = {
   Treatment: "처치"
 };
 
-const AVATAR_COLORS = ["#4a90d9","#5dade2","#48c9b0","#58d68d","#f5b041","#af7ac5","#e59866"];
+const AVATAR_COLORS = [
+  "#4a90d9",
+  "#5dade2",
+  "#48c9b0",
+  "#58d68d",
+  "#f5b041",
+  "#af7ac5",
+  "#e59866",
+  "#5c6bc0",
+  "#26a69a"
+];
 
 /** index.html — 카톡형 채팅방 목록 */
 function renderScenarioList(containerId) {

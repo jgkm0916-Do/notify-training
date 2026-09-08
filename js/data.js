@@ -677,6 +677,270 @@ const scenarios = [
         rationale: "원하는 다음 조치를 명시해야 의사가 즉시 처방·방문 여부를 결정할 수 있습니다."
       }
     ]
+  },
+
+  {
+    id: "scn_07",
+    title: "배변 이상 노티",
+    partnerName: "박지훈",
+    partnerRole: "의사",
+    level: 1,
+    levelLabel: "초급",
+    closingLineNoR: "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요.",
+    trigger: "604호 홍길순님, 수술 후 3일째 배변 없음. 복부 불편감 호소",
+    eventTime: "10:30",
+    patient: {
+      room: "604호",
+      name: "홍길순",
+      ageSex: "68세/F",
+      diagnosis: "대장암 수술 후 POD#3",
+      pod: 3
+    },
+    messages: [
+      { sender: "partner", text: "네, 말씀하세요.", time: "10:32" }
+    ],
+    chartData: {
+      VS: "BP 122/78, HR 76, RR 16, BT 36.6, SpO2 98%",
+      Lab: "특이 소견 없음",
+      Meds: "옥시코돈 5mg PRN (마지막 투여 08:00), 변비약 미투여",
+      IO: "intake 1500ml · output 1400ml, 최근 배변 3일 전",
+      Symptoms: "복부 팽만감 호소, 장음 감소, 오심 없음, 방귀는 있음",
+      Treatment: "복부 촉진 시행, 아직 완화제 투여 전"
+    },
+    requiredElements: [
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["604"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["홍", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "마지막배변일",
+        sbarCategory: "S",
+        keywords: ["3일", "사흘", "배변"],
+        hint: "마지막 배변 시점",
+        followUpQuestion: "마지막 배변이 언제였어요?",
+        rationale: "무배변 기간이 처치 방향(관장·완화제 등)을 결정하는 핵심 정보입니다."
+      },
+      {
+        key: "마약성진통제사용",
+        sbarCategory: "B",
+        keywords: ["옥시코돈", "마약성", "진통제", "PRN"],
+        hint: "마약성 진통제 사용 여부",
+        followUpQuestion: "마약성 진통제 쓰고 계신가요?",
+        rationale: "마약성 진통제는 장운동을 저하시켜 변비의 흔한 원인이 되므로, 원인 파악에 필수적입니다."
+      },
+      {
+        key: "복부사정",
+        sbarCategory: "A",
+        keywords: ["팽만", "장음", "복부", "촉진"],
+        hint: "복부 팽만·장음 상태",
+        followUpQuestion: "복부 상태는 어떠세요? 팽만감이나 장음은 확인하셨어요?",
+        rationale: "복부 팽만·장음 감소는 장폐색 등 더 심각한 문제와 감별해야 할 소견입니다."
+      },
+      {
+        key: "동반증상",
+        sbarCategory: "A",
+        keywords: ["오심", "구토", "방귀", "가스"],
+        hint: "오심·구토 동반 여부, 가스 배출 여부",
+        followUpQuestion: "오심이나 구토는 없으세요? 가스는 나오세요?",
+        rationale: "가스 배출 여부는 완전 폐색인지 단순 변비인지 감별하는 데 중요합니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["처방", "완화제", "관장", "지시", "확인 부탁"],
+        hint: "완화제·관장 등 처치 지시 요청",
+        followUpQuestion: "완화제 처방이나 관장 필요할지 확인 부탁드려도 될까요?",
+        rationale: "구체적 처치 방향에 대한 확인 요청이 있어야 의사가 신속히 지시할 수 있습니다."
+      }
+    ]
+  },
+
+  {
+    id: "scn_08",
+    title: "약물 알레르기 반응 노티",
+    partnerName: "김도현",
+    partnerRole: "의사",
+    level: 1,
+    levelLabel: "초급",
+    closingLineNoR: "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요.",
+    trigger: "308호 이수진님, 항생제 투여 후 전신 두드러기 발생. 활력징후 안정적",
+    eventTime: "13:40",
+    patient: {
+      room: "308호",
+      name: "이수진",
+      ageSex: "45세/F",
+      diagnosis: "폐렴으로 항생제 치료 중",
+      pod: null
+    },
+    messages: [
+      { sender: "partner", text: "네, 말씀하세요.", time: "13:42" }
+    ],
+    chartData: {
+      VS: "BP 118/76, HR 82, RR 18, BT 36.9, SpO2 99%",
+      Lab: "특이 소견 없음",
+      Meds: "세프트리악손 IV 13:30 투여 시작, 10분 후 증상 발생",
+      IO: "intake 정상 · output 정상",
+      Symptoms: "전신 두드러기, 가려움증 호소, 호흡곤란·부종 없음",
+      Treatment: "투여 즉시 중단, 활력징후 측정 완료"
+    },
+    requiredElements: [
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["308"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["이", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "원인약물중단여부",
+        sbarCategory: "B",
+        keywords: ["중단", "중지", "멈춤"],
+        hint: "원인 의심 약물 투여 중단 여부",
+        followUpQuestion: "투여는 중단하셨어요?",
+        rationale: "알레르기 반응 의심 시 원인 확인보다 투여 중단이 우선입니다. 중단 없이 보고하면 반응이 계속되는 줄 모른 채 판단하게 됩니다."
+      },
+      {
+        key: "원인약물확인",
+        sbarCategory: "B",
+        keywords: ["세프트리악손", "항생제", "약물명"],
+        hint: "원인 의심 약물명",
+        followUpQuestion: "무슨 약물 투여 중이었어요?",
+        rationale: "원인 약물을 특정해야 향후 처방에서 교차반응 약물을 피할 수 있습니다."
+      },
+      {
+        key: "증상양상",
+        sbarCategory: "A",
+        keywords: ["두드러기", "가려움", "발진"],
+        hint: "피부 반응 양상",
+        followUpQuestion: "어떤 증상이 있나요?",
+        rationale: "피부 반응의 범위와 양상은 중증도 판단의 기초 정보입니다."
+      },
+      {
+        key: "전신증상동반여부",
+        sbarCategory: "A",
+        keywords: ["호흡곤란", "부종", "어지러움", "없", "안정"],
+        hint: "호흡곤란·부종 등 전신 반응 동반 여부",
+        followUpQuestion: "호흡곤란이나 얼굴·입술 부종은 없으세요?",
+        rationale: "호흡기·순환기 증상 동반 여부가 아나필락시스 여부를 가르는 핵심 감별점입니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["방문", "봐주세요", "확인 부탁", "처방", "지시"],
+        hint: "의사 방문 또는 처방 지시 요청",
+        followUpQuestion: "선생님, 방문하셔서 확인해 주시겠어요?",
+        rationale: "구체적 요청이 있어야 의사가 우선순위를 판단해 신속히 대응할 수 있습니다."
+      }
+    ]
+  },
+
+  {
+    id: "scn_09",
+    title: "수술 후 오심·구토 노티",
+    partnerName: "정유라",
+    partnerRole: "의사",
+    level: 1,
+    levelLabel: "초급",
+    closingLineNoR: "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요.",
+    trigger: "410호 강민호님, 수술 후 오심 호소하며 1회 구토",
+    eventTime: "09:20",
+    patient: {
+      room: "410호",
+      name: "강민호",
+      ageSex: "52세/M",
+      diagnosis: "담낭절제술 후 POD#1",
+      pod: 1
+    },
+    messages: [
+      { sender: "partner", text: "네, 말씀하세요.", time: "09:22" }
+    ],
+    chartData: {
+      VS: "BP 128/82, HR 88, RR 18, BT 36.7, SpO2 98%",
+      Lab: "특이 소견 없음",
+      Meds: "펜타닐 PCA 사용 중, 마지막 진통제 투여 08:30",
+      IO: "intake 800ml · output 600ml, 금일 아침 식이 섭취 안 함",
+      Symptoms: "오심 지속, 09:10경 1회 구토(음식물), 복부 팽만 없음",
+      Treatment: "구토 후 좌위 유지, 아직 항구토제 투여 전"
+    },
+    requiredElements: [
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["410"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["강", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "구토양상",
+        sbarCategory: "S",
+        keywords: ["구토", "횟수", "1회"],
+        hint: "구토 횟수 및 양상",
+        followUpQuestion: "구토는 몇 번 하셨고 어떤 양상이었어요?",
+        rationale: "구토 횟수와 내용물은 원인 감별(마취 후유증, 장폐색 등)에 필요한 기초 정보입니다."
+      },
+      {
+        key: "진통제사용여부",
+        sbarCategory: "B",
+        keywords: ["펜타닐", "PCA", "마약성", "진통제"],
+        hint: "마약성 진통제 사용 여부",
+        followUpQuestion: "마약성 진통제 쓰고 계신가요?",
+        rationale: "마약성 진통제는 오심·구토의 흔한 원인이므로 원인 파악에 필요합니다."
+      },
+      {
+        key: "복부증상",
+        sbarCategory: "A",
+        keywords: ["복부", "팽만", "통증"],
+        hint: "복부 팽만·통증 동반 여부",
+        followUpQuestion: "복부 팽만감이나 통증은 없으세요?",
+        rationale: "복부 소견 동반 여부가 단순 약물 부작용인지 다른 합병증인지 감별에 필요합니다."
+      },
+      {
+        key: "식이섭취상태",
+        sbarCategory: "B",
+        keywords: ["식이", "섭취", "금식", "안 먹"],
+        hint: "최근 식이 섭취 상태",
+        followUpQuestion: "오늘 식사는 좀 하셨어요?",
+        rationale: "식이 섭취 여부는 항구토제 투여 방식(경구·주사) 결정에 참고가 됩니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["처방", "항구토제", "확인 부탁", "지시"],
+        hint: "항구토제 등 처치 지시 요청",
+        followUpQuestion: "항구토제 처방 확인 부탁드려도 될까요?",
+        rationale: "구체적 처치 방향 확인 요청이 있어야 의사가 신속히 지시할 수 있습니다."
+      }
+    ]
   }
 ];
 
