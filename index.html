@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>노티 연습</title>
+  <title>노티 훈련</title>
   <meta name="theme-color" content="#3a7bd5" />
-  <meta name="application-name" content="노티 연습" />
+  <meta name="application-name" content="노티 훈련" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="노티 연습" />
+  <meta name="apple-mobile-web-app-title" content="노티 훈련" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon-32.png" />
@@ -19,28 +19,53 @@
 </head>
 <body>
   <div class="app app--kakao-home">
-    <header class="kakao-home-header">
-      <div class="kakao-home-header__top">
-        <h1 class="kakao-home-header__title">노티 연습</h1>
-      </div>
-      <p class="kakao-home-header__sub">의사에게 SBAR 노티 연습</p>
+    <!-- 메인: 제목 + 큰 난이도 탭(미리보기 포함). 시나리오 카드는 숨김 -->
+    <section class="home-landing" id="homeLanding">
+      <header class="home-landing__header">
+        <h1 class="home-landing__title">노티 훈련</h1>
+        <p class="home-landing__sub">의사에게 SBAR 노티 훈련</p>
+      </header>
 
-      <nav class="level-tabs" id="levelTabs" role="tablist" aria-label="난이도">
-        <button type="button" class="level-tabs__btn is-active" role="tab" aria-selected="true" data-level="1">초급</button>
-        <button type="button" class="level-tabs__btn" role="tab" aria-selected="false" data-level="2">중급</button>
-        <button type="button" class="level-tabs__btn" role="tab" aria-selected="false" data-level="3">고급</button>
+      <nav class="level-cards" id="levelCards" aria-label="난이도 선택">
+        <button type="button" class="level-card level-card--1" data-level="1">
+          <div class="level-card__top">
+            <span class="level-card__label">초급</span>
+            <span class="level-card__count" data-count-for="1"></span>
+          </div>
+          <p class="level-card__preview" data-preview-for="1"></p>
+        </button>
+        <button type="button" class="level-card level-card--2" data-level="2">
+          <div class="level-card__top">
+            <span class="level-card__label">중급</span>
+            <span class="level-card__count" data-count-for="2"></span>
+          </div>
+          <p class="level-card__preview" data-preview-for="2"></p>
+        </button>
+        <button type="button" class="level-card level-card--3" data-level="3">
+          <div class="level-card__top">
+            <span class="level-card__label">고급</span>
+            <span class="level-card__count" data-count-for="3"></span>
+          </div>
+          <p class="level-card__preview" data-preview-for="3"></p>
+        </button>
       </nav>
+    </section>
 
-      <p class="level-preview" id="levelPreview" aria-live="polite"></p>
-    </header>
-
-    <main class="chat-room-list" id="scenarioList" role="tabpanel">
-      <!-- 선택한 난이도 시나리오만 렌더링 -->
-    </main>
+    <!-- 탭 진입 후: 시나리오 채팅방 목록 -->
+    <section class="home-level" id="homeLevel" hidden>
+      <header class="home-level__header">
+        <button type="button" class="home-level__back" id="backToHomeBtn" aria-label="난이도 선택으로">←</button>
+        <div>
+          <div class="home-level__title" id="levelViewTitle">초급</div>
+          <div class="home-level__sub">시나리오를 선택해 연습하세요</div>
+        </div>
+      </header>
+      <main class="chat-room-list" id="scenarioList"></main>
+    </section>
   </div>
 
   <script src="js/data.js?v=15"></script>
-  <script src="js/chat-engine.js?v=17"></script>
+  <script src="js/chat-engine.js?v=18"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       if (typeof initHomePage === "function") {

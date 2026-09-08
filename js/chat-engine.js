@@ -55,51 +55,65 @@ function getScenariosByLevel(level) {
     .sort((a, b) => String(a.id).localeCompare(String(b.id)));
 }
 
-function updateLevelPreview(level) {
-  const previewEl = document.getElementById("levelPreview");
-  if (!previewEl) return;
+const LEVEL_LABELS = { 1: "초급", 2: "중급", 3: "고급" };
 
-  const list = getScenariosByLevel(level);
-  if (!list.length) {
-    previewEl.textContent = "";
-    previewEl.hidden = true;
-    return;
-  }
-
-  previewEl.hidden = false;
-  previewEl.textContent = list
-    .map((s, i) => `${i + 1}. ${getScenarioPreviewLabel(s)}`)
-    .join("  ");
+function fillLevelCardPreviews() {
+  [1, 2, 3].forEach((level) => {
+    const list = getScenariosByLevel(level);
+    const previewEl = document.querySelector('[data-preview-for="' + level + '"]');
+    const countEl = document.querySelector('[data-count-for="' + level + '"]');
+    if (countEl) {
+      countEl.textContent = list.length ? list.length + "개" : "";
+    }
+    if (previewEl) {
+      previewEl.textContent = list.length
+        ? list.map((s, i) => i + 1 + ". " + getScenarioPreviewLabel(s)).join("  ")
+        : "시나리오 준비 중";
+    }
+  });
 }
 
-/** index.html — 난이도 탭 + 해당 시나리오 목록 */
+function showHomeLanding() {
+  const landing = document.getElementById("homeLanding");
+  const levelView = document.getElementById("homeLevel");
+  if (landing) landing.hidden = false;
+  if (levelView) levelView.hidden = true;
+  fillLevelCardPreviews();
+}
+
+function enterLevelView(level) {
+  const landing = document.getElementById("homeLanding");
+  const levelView = document.getElementById("homeLevel");
+  const titleEl = document.getElementById("levelViewTitle");
+  const lv = Number(level) || 1;
+
+  if (landing) landing.hidden = true;
+  if (levelView) levelView.hidden = false;
+  if (titleEl) titleEl.textContent = LEVEL_LABELS[lv] || "시나리오";
+
+  renderScenarioList("scenarioList", { level: lv });
+  window.scrollTo(0, 0);
+}
+
+/** index.html — 메인(난이도 탭) → 탭 진입 후 시나리오 목록 */
 function initHomePage() {
-  const tabs = document.getElementById("levelTabs");
-  if (!tabs || typeof scenarios === "undefined") {
-    renderScenarioList("scenarioList");
-    return;
+  if (typeof scenarios === "undefined") return;
+
+  showHomeLanding();
+
+  const cards = document.getElementById("levelCards");
+  if (cards) {
+    cards.addEventListener("click", (e) => {
+      const btn = e.target.closest(".level-card");
+      if (!btn) return;
+      enterLevelView(btn.dataset.level);
+    });
   }
 
-  let activeLevel = 1;
-
-  const setActiveTab = (level) => {
-    activeLevel = Number(level) || 1;
-    tabs.querySelectorAll(".level-tabs__btn").forEach((btn) => {
-      const on = Number(btn.dataset.level) === activeLevel;
-      btn.classList.toggle("is-active", on);
-      btn.setAttribute("aria-selected", on ? "true" : "false");
-    });
-    updateLevelPreview(activeLevel);
-    renderScenarioList("scenarioList", { level: activeLevel });
-  };
-
-  tabs.addEventListener("click", (e) => {
-    const btn = e.target.closest(".level-tabs__btn");
-    if (!btn) return;
-    setActiveTab(btn.dataset.level);
-  });
-
-  setActiveTab(1);
+  const backBtn = document.getElementById("backToHomeBtn");
+  if (backBtn) {
+    backBtn.addEventListener("click", () => showHomeLanding());
+  }
 }
 
 /** index.html — 카톡형 채팅방 목록 (level 옵션 시 해당 난이도만) */
@@ -151,15 +165,9 @@ function renderScenarioList(containerId, options = {}) {
         : s.subtitle || "";
     const initial = (s.partnerName || partnerLabel || "?").charAt(0);
 
-    // 전체 scenarios 기준 안정적 색상
-    const colorIndex = Math.max(
-      0,
-      scenarios.findIndex((x) => x.id === s.id)
-    );
+    const colorIndex = Math.max(0, scenarios.findIndex((x) => x.id === s.id));
     const color =
-      AVATAR_COLORS[
-        (colorIndex >= 0 ? colorIndex : index) % AVATAR_COLORS.length
-      ];
+      AVATAR_COLORS[(colorIndex >= 0 ? colorIndex : index) % AVATAR_COLORS.length];
 
     row.innerHTML =
       '<div class="chat-room__avatar" style="background:' +
@@ -172,16 +180,13 @@ function renderScenarioList(containerId, options = {}) {
       '<div class="chat-room__preview">' +
       '<span class="chat-room__preview-text">' +
       escapeHtml(patientLine) +
-      "</span>" +
-      "</div>" +
+      "</span></div>" +
       '<div class="chat-room__situation">' +
       escapeHtml(situation) +
-      "</div>" +
-      "</div>" +
+      "</div></div>" +
       '<div class="chat-room__name">' +
       escapeHtml(partnerLabel) +
-      "</div>" +
-      "</div>" +
+      "</div></div>" +
       '<span class="chat-room__badge" aria-label="새 메시지">1</span>';
 
     row.addEventListener("click", () => {
@@ -191,10 +196,6 @@ function renderScenarioList(containerId, options = {}) {
   });
 }
 
-
-/**
- * scenario.html — URL ?id= 로 시나리오 로드 후 trigger / chartData 렌더
- */
 function initScenarioPage() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
