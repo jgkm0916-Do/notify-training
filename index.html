@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>간호사 노티 훈련</title>
+  <title>노티 연습</title>
   <meta name="theme-color" content="#3a7bd5" />
-  <meta name="application-name" content="간호사 노티 훈련" />
+  <meta name="application-name" content="노티 연습" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="노티 훈련" />
+  <meta name="apple-mobile-web-app-title" content="노티 연습" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon-32.png" />
@@ -21,26 +21,31 @@
   <div class="app app--kakao-home">
     <header class="kakao-home-header">
       <div class="kakao-home-header__top">
-        <h1 class="kakao-home-header__title">노티 훈련</h1>
-        <div class="kakao-home-header__actions" aria-hidden="true">
-          <span class="kakao-icon">⌕</span>
-          <span class="kakao-icon">＋</span>
-          <span class="kakao-icon">☰</span>
-        </div>
+        <h1 class="kakao-home-header__title">노티 연습</h1>
       </div>
       <p class="kakao-home-header__sub">의사에게 SBAR 노티 연습</p>
+
+      <nav class="level-tabs" id="levelTabs" role="tablist" aria-label="난이도">
+        <button type="button" class="level-tabs__btn is-active" role="tab" aria-selected="true" data-level="1">초급</button>
+        <button type="button" class="level-tabs__btn" role="tab" aria-selected="false" data-level="2">중급</button>
+        <button type="button" class="level-tabs__btn" role="tab" aria-selected="false" data-level="3">고급</button>
+      </nav>
+
+      <p class="level-preview" id="levelPreview" aria-live="polite"></p>
     </header>
 
-    <main class="chat-room-list" id="scenarioList">
-      <!-- 시나리오 = 채팅방 행으로 렌더링 -->
+    <main class="chat-room-list" id="scenarioList" role="tabpanel">
+      <!-- 선택한 난이도 시나리오만 렌더링 -->
     </main>
   </div>
 
   <script src="js/data.js?v=15"></script>
-  <script src="js/chat-engine.js?v=15"></script>
+  <script src="js/chat-engine.js?v=17"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      if (typeof renderScenarioList === "function") {
+      if (typeof initHomePage === "function") {
+        initHomePage();
+      } else if (typeof renderScenarioList === "function") {
         renderScenarioList("scenarioList");
       }
     });

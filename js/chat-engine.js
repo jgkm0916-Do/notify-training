@@ -32,19 +32,104 @@ const AVATAR_COLORS = [
   "#ec407a"
 ];
 
-/** index.html — 카톡형 채팅방 목록 */
-function renderScenarioList(containerId) {
+/** 미리보기용 짧은 상황명 (예: 낙상, 저혈당) */
+function getScenarioPreviewLabel(scenario) {
+  if (!scenario) return "";
+  let label = String(scenario.title || "")
+    .replace(/\s*노티$/, "")
+    .replace(/\s*발생$/, "")
+    .replace(/\s*의심$/, "")
+    .trim();
+  if (!label && typeof getScenarioListSituation === "function") {
+    label = getScenarioListSituation(scenario);
+  }
+  return label || scenario.id || "";
+}
+
+function getScenariosByLevel(level) {
+  if (typeof scenarios === "undefined") return [];
+  const lv = Number(level) || 1;
+  return scenarios
+    .filter((s) => Number(s.level) === lv)
+    .slice()
+    .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+}
+
+function updateLevelPreview(level) {
+  const previewEl = document.getElementById("levelPreview");
+  if (!previewEl) return;
+
+  const list = getScenariosByLevel(level);
+  if (!list.length) {
+    previewEl.textContent = "";
+    previewEl.hidden = true;
+    return;
+  }
+
+  previewEl.hidden = false;
+  previewEl.textContent = list
+    .map((s, i) => `${i + 1}. ${getScenarioPreviewLabel(s)}`)
+    .join("  ");
+}
+
+/** index.html — 난이도 탭 + 해당 시나리오 목록 */
+function initHomePage() {
+  const tabs = document.getElementById("levelTabs");
+  if (!tabs || typeof scenarios === "undefined") {
+    renderScenarioList("scenarioList");
+    return;
+  }
+
+  let activeLevel = 1;
+
+  const setActiveTab = (level) => {
+    activeLevel = Number(level) || 1;
+    tabs.querySelectorAll(".level-tabs__btn").forEach((btn) => {
+      const on = Number(btn.dataset.level) === activeLevel;
+      btn.classList.toggle("is-active", on);
+      btn.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    updateLevelPreview(activeLevel);
+    renderScenarioList("scenarioList", { level: activeLevel });
+  };
+
+  tabs.addEventListener("click", (e) => {
+    const btn = e.target.closest(".level-tabs__btn");
+    if (!btn) return;
+    setActiveTab(btn.dataset.level);
+  });
+
+  setActiveTab(1);
+}
+
+/** index.html — 카톡형 채팅방 목록 (level 옵션 시 해당 난이도만) */
+function renderScenarioList(containerId, options = {}) {
   const el = document.getElementById(containerId);
   if (!el || typeof scenarios === "undefined") return;
 
   el.innerHTML = "";
 
-  const sorted = scenarios.slice().sort((a, b) => {
-    const la = Number(a.level) || 99;
-    const lb = Number(b.level) || 99;
-    if (la !== lb) return la - lb;
+  const filterLevel =
+    options.level != null && options.level !== ""
+      ? Number(options.level)
+      : null;
+
+  const sorted = (
+    filterLevel != null ? getScenariosByLevel(filterLevel) : scenarios.slice()
+  ).sort((a, b) => {
+    if (filterLevel == null) {
+      const la = Number(a.level) || 99;
+      const lb = Number(b.level) || 99;
+      if (la !== lb) return la - lb;
+    }
     return String(a.id).localeCompare(String(b.id));
   });
+
+  if (!sorted.length) {
+    el.innerHTML =
+      '<p class="chat-room-list__empty">이 난이도 시나리오가 아직 없습니다.</p>';
+    return;
+  }
 
   sorted.forEach((s, index) => {
     const row = document.createElement("button");
@@ -65,25 +150,38 @@ function renderScenarioList(containerId) {
         ? getScenarioListSituation(s)
         : s.subtitle || "";
     const initial = (s.partnerName || partnerLabel || "?").charAt(0);
-    const color = AVATAR_COLORS[index % AVATAR_COLORS.length];
-    const level = Number(s.level) || 0;
-    const levelLabel = s.levelLabel || "";
-    const levelBadge = levelLabel
-      ? '<span class="chat-room__level chat-room__level--' + level + '">' + escapeHtml(levelLabel) + '</span>'
-      : "";
+
+    // 전체 scenarios 기준 안정적 색상
+    const colorIndex = Math.max(
+      0,
+      scenarios.findIndex((x) => x.id === s.id)
+    );
+    const color =
+      AVATAR_COLORS[
+        (colorIndex >= 0 ? colorIndex : index) % AVATAR_COLORS.length
+      ];
 
     row.innerHTML =
-      '<div class="chat-room__avatar" style="background:' + color + '">' + escapeHtml(initial) + '</div>' +
+      '<div class="chat-room__avatar" style="background:' +
+      color +
+      '">' +
+      escapeHtml(initial) +
+      "</div>" +
       '<div class="chat-room__body">' +
-        '<div class="chat-room__top">' +
-          '<div class="chat-room__preview">' +
-            '<span class="chat-room__preview-text">' + escapeHtml(patientLine) + '</span>' +
-            levelBadge +
-          '</div>' +
-          '<div class="chat-room__situation">' + escapeHtml(situation) + '</div>' +
-        '</div>' +
-        '<div class="chat-room__name">' + escapeHtml(partnerLabel) + '</div>' +
-      '</div>' +
+      '<div class="chat-room__top">' +
+      '<div class="chat-room__preview">' +
+      '<span class="chat-room__preview-text">' +
+      escapeHtml(patientLine) +
+      "</span>" +
+      "</div>" +
+      '<div class="chat-room__situation">' +
+      escapeHtml(situation) +
+      "</div>" +
+      "</div>" +
+      '<div class="chat-room__name">' +
+      escapeHtml(partnerLabel) +
+      "</div>" +
+      "</div>" +
       '<span class="chat-room__badge" aria-label="새 메시지">1</span>';
 
     row.addEventListener("click", () => {

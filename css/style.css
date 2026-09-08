@@ -47,7 +47,56 @@ body {
 .kakao-home-header__actions { display: flex; align-items: center; gap: 0.85rem; color: #191919; }
 .kakao-icon { font-size: 1.05rem; line-height: 1; opacity: 0.85; }
 .kakao-home-header__sub { margin-top: 0.35rem; font-size: 0.8rem; color: #8e8e8e; }
+
+.level-tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.85rem;
+  padding: 0.2rem;
+  background: #f3f5f7;
+  border-radius: 10px;
+}
+
+.level-tabs__btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 0.55rem 0.4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.level-tabs__btn.is-active {
+  background: #fff;
+  color: #191919;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.level-tabs__btn[data-level="1"].is-active { color: #1e6b3a; }
+.level-tabs__btn[data-level="2"].is-active { color: #8a6200; }
+.level-tabs__btn[data-level="3"].is-active { color: #a33b32; }
+
+.level-preview {
+  margin: 0.65rem 0 0;
+  padding: 0.55rem 0.15rem 0.1rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #6b7280;
+  word-break: keep-all;
+}
+
 .chat-room-list { flex: 1; display: flex; flex-direction: column; background: #fff; padding-bottom: 1.5rem; }
+.chat-room-list__empty {
+  padding: 2rem 1.25rem;
+  text-align: center;
+  color: #8e8e8e;
+  font-size: 0.9rem;
+}
 .chat-room { display: flex; align-items: center; gap: 0.85rem; width: 100%; padding: 0.85rem 1rem; border: none; border-bottom: 1px solid #f5f5f5; background: #fff; text-align: left; font-family: inherit; color: inherit; cursor: pointer; }
 .chat-room:hover, .chat-room:active { background: #f7f7f7; }
 .chat-room__avatar { flex-shrink: 0; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
