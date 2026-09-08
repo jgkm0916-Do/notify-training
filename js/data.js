@@ -693,8 +693,8 @@ const scenarios = [
       room: "604호",
       name: "홍길순",
       ageSex: "68세/F",
-      diagnosis: "대장암 수술 후 POD#3",
-      pod: 3
+      diagnosis: "대장암 수술 후",
+      pod: "POD#3"
     },
     messages: [
       { sender: "partner", text: "네, 말씀하세요.", time: "10:32" }
@@ -869,8 +869,8 @@ const scenarios = [
       room: "410호",
       name: "강민호",
       ageSex: "52세/M",
-      diagnosis: "담낭절제술 후 POD#1",
-      pod: 1
+      diagnosis: "담낭절제술 후",
+      pod: "POD#1"
     },
     messages: [
       { sender: "partner", text: "네, 말씀하세요.", time: "09:22" }
@@ -1147,8 +1147,8 @@ const scenarios = [
       room: "712호",
       name: "김태호",
       ageSex: "58세/M",
-      diagnosis: "위절제술 후 POD#1",
-      pod: 1
+      diagnosis: "위절제술 후",
+      pod: "POD#1"
     },
     messages: [
       { sender: "partner", text: "네, 말씀하세요.", time: "05:02" }
@@ -1550,15 +1550,27 @@ function getPartnerLabel(scenario) {
 
 /**
  * 환자 한 줄 요약 (호실·이름·진단·POD·발생시각)
+ * diagnosis에 이미 POD가 있으면 pod 필드는 중복 표시하지 않음
  */
 function formatPatientSummary(patient, eventTime) {
   if (!patient) return "";
   const who = [patient.room, patient.name, patient.ageSex ? `(${patient.ageSex})` : null]
     .filter(Boolean)
     .join(" ");
+  const diagnosis = patient.diagnosis || "";
+  const podAlreadyInDx = /POD\s*#?\s*\d+/i.test(diagnosis);
+  let podLabel = patient.pod;
+  if (podLabel != null && podLabel !== "" && !podAlreadyInDx) {
+    // 숫자만 있으면 POD#N 형태로 표시
+    if (typeof podLabel === "number" || /^\d+$/.test(String(podLabel))) {
+      podLabel = `POD#${podLabel}`;
+    }
+  } else {
+    podLabel = null;
+  }
   const extras = [
-    patient.diagnosis ? `Dx. ${patient.diagnosis}` : null,
-    patient.pod || null,
+    diagnosis ? `Dx. ${diagnosis}` : null,
+    podLabel,
     eventTime ? `발생 ${eventTime}` : null
   ].filter(Boolean);
   return [who, ...extras].filter(Boolean).join(" · ");
