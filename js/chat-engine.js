@@ -23,7 +23,10 @@ const AVATAR_COLORS = [
   "#af7ac5",
   "#e59866",
   "#5c6bc0",
-  "#26a69a"
+  "#26a69a",
+  "#ef5350",
+  "#7e57c2",
+  "#42a5f5"
 ];
 
 /** index.html — 카톡형 채팅방 목록 */

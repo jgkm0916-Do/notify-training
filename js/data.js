@@ -941,6 +941,295 @@ const scenarios = [
         rationale: "구체적 처치 방향 확인 요청이 있어야 의사가 신속히 지시할 수 있습니다."
       }
     ]
+  },
+
+  {
+    id: "scn_10",
+    title: "급성 설사 노티",
+    partnerName: "윤서준",
+    partnerRole: "의사",
+    level: 2,
+    levelLabel: "중급",
+    closingLineNoR: "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요.",
+    trigger: "506호 오순자님, 오늘 아침부터 수양성 설사 5회, 어지러움 호소",
+    eventTime: "07:00",
+    patient: {
+      room: "506호",
+      name: "오순자",
+      ageSex: "74세/F",
+      diagnosis: "고혈압으로 이뇨제 복용 중",
+      pod: null
+    },
+    messages: [
+      { sender: "partner", text: "네, 말씀하세요.", time: "07:02" }
+    ],
+    chartData: {
+      VS: "BP 100/62, HR 102, RR 18, BT 37.0, SpO2 97%",
+      Lab: "어제 18:00 시행 - K+ 3.1 (저하), Na+ 133",
+      Meds: "푸로세미드(라식스) 20mg qd 복용 중",
+      IO: "intake 700ml · output(설사 포함) 1800ml, 오늘 설사 5회",
+      Symptoms: "수양성 설사 5회, 전신 위약감, 어지러움 호소, 경미한 복통",
+      Treatment: "활력징후 측정 완료, 수액 투여 전"
+    },
+    requiredElements: [
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["506"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["오", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "설사양상",
+        sbarCategory: "S",
+        keywords: ["설사", "수양성", "5회", "횟수"],
+        hint: "설사 횟수와 양상",
+        followUpQuestion: "설사는 몇 번 하셨고 어떤 양상이었어요?",
+        rationale: "횟수와 성상은 탈수·전해질 손실 정도를 가늠하는 기초 정보입니다."
+      },
+      {
+        key: "이뇨제사용여부",
+        sbarCategory: "B",
+        keywords: ["이뇨제", "라식스", "푸로세미드"],
+        hint: "이뇨제 복용 여부",
+        followUpQuestion: "혹시 이뇨제 복용 중이신가요?",
+        rationale: "이뇨제와 설사가 겹치면 전해질 소실이 더 심해질 수 있어, 원인 파악에 중요한 배경 정보입니다."
+      },
+      {
+        key: "활력징후",
+        sbarCategory: "A",
+        keywordGroups: [
+          ["BP", "혈압", "100"],
+          ["HR", "맥박", "102"]
+        ],
+        hint: "혈압, 맥박",
+        followUpQuestion: "혈압이랑 맥박은 어떠세요?",
+        rationale: "빈맥을 동반한 저혈압 경향은 탈수로 인한 순환 혈액량 감소를 시사합니다."
+      },
+      {
+        key: "전신증상",
+        sbarCategory: "A",
+        keywords: ["위약감", "어지러움", "힘없", "기운"],
+        hint: "위약감·어지러움 동반 여부",
+        followUpQuestion: "어지럽거나 힘이 빠지는 느낌은 없으세요?",
+        rationale: "저칼륨혈증 시 나타나는 전형적 증상으로, 전해질 이상을 의심할 단서가 됩니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["수액", "전해질", "확인 부탁", "처방", "지시"],
+        hint: "수액·전해질 검사 등 처치 지시 요청",
+        followUpQuestion: "수액이나 전해질 검사 필요할지 확인 부탁드려도 될까요?",
+        rationale: "구체적 처치 방향 확인 요청이 있어야 의사가 신속히 지시할 수 있습니다."
+      }
+    ]
+  },
+
+  {
+    id: "scn_11",
+    title: "낙상 후 신경학적 변화 노티",
+    partnerName: "한소희",
+    partnerRole: "의사",
+    level: 2,
+    levelLabel: "중급",
+    closingLineNoR: "지금 바로 가겠습니다.",
+    trigger: "809호 서말순님, 어제 낙상 후 관찰 중이었으나 오늘 오후 의식 변화 및 편측 위약 발생",
+    eventTime: "14:00",
+    patient: {
+      room: "809호",
+      name: "서말순",
+      ageSex: "82세/F",
+      diagnosis: "심방세동으로 항응고제 복용 중, 어제 낙상 관찰 중",
+      pod: null
+    },
+    messages: [
+      { sender: "partner", text: "네, 말씀하세요.", time: "14:02" }
+    ],
+    chartData: {
+      VS: "BP 152/88, HR 58, RR 14, BT 36.5, SpO2 97%",
+      Lab: "어제 낙상 직후 CT: 특이 소견 없음, INR 2.3 (항응고제 복용중)",
+      Meds: "와파린 5mg qd 복용 중",
+      IO: "intake 정상 · output 정상",
+      Symptoms: "어제 09:00 낙상 후 의식 명료했으나, 오늘 14:00부터 좌측 상하지 위약감, 말 어눌해짐, 졸림 증가",
+      Treatment: "활력징후 측정 완료, 신경학적 사정 시행 중"
+    },
+    requiredElements: [
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["809"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["서", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "낙상과거력",
+        sbarCategory: "S",
+        keywords: ["어제", "낙상", "전날"],
+        hint: "낙상 이력과 시점",
+        followUpQuestion: "낙상은 언제 있었어요?",
+        rationale: "낙상과 현재 증상 사이의 시간 간격이 지연성 출혈 가능성을 판단하는 핵심 단서입니다."
+      },
+      {
+        key: "항응고제복용여부",
+        sbarCategory: "B",
+        keywords: ["와파린", "항응고", "INR"],
+        hint: "항응고제 복용 및 INR 수치",
+        followUpQuestion: "항응고제 복용 여부와 INR 수치는요?",
+        rationale: "항응고제 복용 환자는 초기 CT가 정상이어도 시간이 지나며 지연성 출혈이 발생할 수 있어 반드시 확인해야 합니다."
+      },
+      {
+        key: "신경학적변화양상",
+        sbarCategory: "A",
+        keywords: ["위약", "마비", "어눌", "구음", "편측"],
+        hint: "편측 위약·구음장애 등 증상",
+        followUpQuestion: "어느 쪽에 위약감이 있고, 말투는 어떤가요?",
+        rationale: "편측 위약과 구음장애는 국소 신경학적 이상을 시사하는 응급 신호입니다."
+      },
+      {
+        key: "의식수준변화",
+        sbarCategory: "A",
+        keywords: ["졸림", "의식", "저하", "명료했으나"],
+        hint: "의식 수준 변화 여부",
+        followUpQuestion: "의식 상태는 어떻게 변했어요?",
+        rationale: "명료했던 의식이 저하되는 추세는 두개내압 상승을 의심할 수 있는 중요한 변화입니다."
+      },
+      {
+        key: "활력징후",
+        sbarCategory: "A",
+        keywordGroups: [
+          ["BP", "혈압", "152"],
+          ["HR", "맥박", "서맥", "58"]
+        ],
+        hint: "혈압, 맥박(서맥 여부 포함)",
+        followUpQuestion: "혈압이랑 맥박은 어떠세요?",
+        rationale: "고혈압과 서맥이 함께 나타나는 것은 두개내압 상승을 시사하는 대표적 신호(쿠싱 반응)입니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["CT", "방문", "확인 부탁", "지시", "처방"],
+        hint: "CT 재촬영 또는 방문 요청",
+        followUpQuestion: "CT 재촬영이나 방문 필요할지 확인 부탁드려도 될까요?",
+        rationale: "지연성 뇌출혈이 의심되는 상황이므로, 신속한 재영상검사 여부를 확인받는 것이 중요합니다."
+      }
+    ]
+  },
+
+  {
+    id: "scn_12",
+    title: "수술 후 출혈 의심 노티",
+    partnerName: "임재현",
+    partnerRole: "의사",
+    level: 2,
+    levelLabel: "중급",
+    closingLineNoR: "지금 바로 가겠습니다.",
+    trigger: "712호 김태호님, 수술 후 배액량 급증 및 활력징후 변화 관찰됨",
+    eventTime: "05:00",
+    patient: {
+      room: "712호",
+      name: "김태호",
+      ageSex: "58세/M",
+      diagnosis: "위절제술 후 POD#1",
+      pod: 1
+    },
+    messages: [
+      { sender: "partner", text: "네, 말씀하세요.", time: "05:02" }
+    ],
+    chartData: {
+      VS: "이전(00:00) BP 118/76, HR 84, RR 16, BT 36.8, SpO2 98% · 현재(05:00) BP 96/60, HR 118, RR 20, BT 36.9, SpO2 96%",
+      Lab: "수술 직후 Hb 11.2 g/dL → 오늘 05:00 재검 Hb 8.5 g/dL",
+      Meds: "수액 유지 중, 진통제 PCA 사용 중",
+      IO: "JP 배액관 - 지난 4시간 배액량 320ml(선홍색), 이전 시간당 평균 20~30ml에서 급증",
+      Symptoms: "복부 팽만감 호소, 어지러움, 안색 창백",
+      Treatment: "활력징후 재측정 완료, 수액 속도 유지 중"
+    },
+    requiredElements: [
+      {
+        key: "병실확인",
+        sbarCategory: "S",
+        keywords: ["712"],
+        hint: "병실 번호",
+        followUpQuestion: "몇 호실이세요?",
+        rationale: "병실을 밝히지 않으면 의사가 어느 환자를 말하는지 바로 특정하기 어렵습니다."
+      },
+      {
+        key: "환자성명확인",
+        sbarCategory: "S",
+        keywords: ["김", "성함"],
+        hint: "환자 성명",
+        followUpQuestion: "환자분 성함이 어떻게 되세요?",
+        rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
+      },
+      {
+        key: "배액량변화",
+        sbarCategory: "S",
+        keywords: ["배액", "320", "증가", "선홍색"],
+        hint: "배액량 변화 및 색깔",
+        followUpQuestion: "배액량이 얼마나 늘었고 색깔은 어때요?",
+        rationale: "배액량 급증과 선홍색 양상은 활동성 출혈을 의심하게 하는 직접적 신호입니다."
+      },
+      {
+        key: "활력징후변화",
+        sbarCategory: "A",
+        keywordGroups: [
+          ["BP", "혈압", "96"],
+          ["HR", "맥박", "118"]
+        ],
+        hint: "이전 대비 혈압·맥박 변화",
+        followUpQuestion: "이전이랑 비교해서 혈압, 맥박 어떻게 변했어요?",
+        rationale: "혈압 하강과 빈맥이 함께 나타나는 추세는 출혈로 인한 순환 혈액량 감소를 시사합니다."
+      },
+      {
+        key: "Hb수치변화",
+        sbarCategory: "B",
+        keywords: ["Hb", "혈색소", "8.5"],
+        hint: "Hb 수치 변화",
+        followUpQuestion: "Hb 수치는 어떻게 변했어요?",
+        rationale: "짧은 시간 내 Hb가 크게 떨어지면 활동성 출혈을 의심해야 하며, 응급 수술적 지혈이 필요할 수 있습니다."
+      },
+      {
+        key: "동반증상",
+        sbarCategory: "A",
+        keywords: ["창백", "어지러움", "복부팽만"],
+        hint: "안색 창백·어지러움 등 동반 증상",
+        followUpQuestion: "안색이나 어지러움은 어떠세요?",
+        rationale: "안색 창백과 어지러움은 출혈로 인한 저혈량 상태를 뒷받침하는 신체 징후입니다."
+      },
+      {
+        key: "관찰기간",
+        sbarCategory: "S",
+        keywords: ["4시간", "지난", "최근"],
+        hint: "변화가 관찰된 시간 범위",
+        followUpQuestion: "이 변화가 언제부터 언제까지 관찰된 거예요?",
+        rationale: "짧은 시간 내 급격한 변화라는 점이 응급도를 판단하는 데 중요합니다."
+      },
+      {
+        key: "요청사항",
+        sbarCategory: "R",
+        keywords: ["수혈", "방문", "확인 부탁", "지시", "처방"],
+        hint: "수혈 또는 방문 요청",
+        followUpQuestion: "수혈이나 방문 필요할지 확인 부탁드려도 될까요?",
+        rationale: "활동성 출혈 의심 시 신속한 수혈 여부와 재수술 가능성을 의사가 즉시 판단해야 합니다."
+      }
+    ]
   }
 ];
 
