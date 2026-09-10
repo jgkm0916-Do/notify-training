@@ -217,7 +217,7 @@ function gradeNotifyText(text, requiredElements, options) {
       included = matchedKeywords.length > 0;
     }
 
-    if (forceIncludedKeys.has(el.key)) {
+    if (forceIncludedKeys.has(el.key) && el.allowAffirmativeConfirmation === true) {
       included = true;
       if (Array.isArray(el.keywordGroups) && el.keywordGroups.length > 0) {
         groupSatisfied = el.keywordGroups.map(() => true);
@@ -298,15 +298,6 @@ function buildScn03VitalFollowUp(groupSatisfied) {
   if (present.length === 1 && sat[4]) {
     return "다른 바이탈은 어떻게 돼요?";
   }
-  // BP·HR만 답함
-  if (sat[0] && sat[1] && !sat[2] && !sat[3] && !sat[4]) {
-    return "호흡수하고 산소포화도는요?";
-  }
-  // SpO₂·RR만 답함
-  if (sat[2] && sat[4] && !sat[0] && !sat[1] && !sat[3]) {
-    return "혈압하고 맥박은요?";
-  }
-
   if (missing.length === 1) return missing[0].ask + "는요?";
   if (missing.length === 2) {
     return missing[0].ask + "하고 " + missing[1].ask + "는요?";
@@ -390,7 +381,8 @@ function buildNotifyFollowUp(grade, missed, elements, askedKeys) {
   const list = missed || [];
   if (!list.length) return null;
 
-  const hasScn03Vital = (elements || []).some((e) => e.key === SCN03_VITAL_KEY);
+  const hasScn03Vital = (elements || []).some((e) => e.key === SCN03_OXYGEN_KEY) &&
+    (elements || []).some((e) => e.key === SCN03_VITAL_KEY && e.keywordGroups?.length === 5);
   const hasScn06 = (elements || []).some((e) => e.key === SCN06_VITAL_KEY);
   const vitalMissed = list.find((m) => m.key === SCN03_VITAL_KEY);
   const oxygenMissed = list.find((m) => m.key === SCN03_OXYGEN_KEY);
@@ -398,7 +390,7 @@ function buildNotifyFollowUp(grade, missed, elements, askedKeys) {
   const scn06ProgressMissed = list.find((m) => m.key === SCN06_PROGRESS_KEY);
   const otherMissed = list.filter(
     (m) =>
-      m.key !== SCN03_VITAL_KEY &&
+      (!hasScn03Vital || m.key !== SCN03_VITAL_KEY) &&
       m.key !== SCN03_OXYGEN_KEY &&
       m.key !== SCN06_VITAL_KEY &&
       m.key !== SCN06_PROGRESS_KEY
