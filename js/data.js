@@ -49,13 +49,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: [
-          "윤정희",
-          "윤정희님",
-          "윤정희 환자",
-          "윤정희 환자분",
-          "802호 윤정희"
-        ],
+        keywords: ["윤정희"],
         hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
@@ -162,13 +156,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: [
-          "송재호",
-          "송재호님",
-          "송재호 환자",
-          "송재호 환자분",
-          "701호 송재호"
-        ],
+        keywords: ["송재호"],
         hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
@@ -253,13 +241,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: [
-          "배영숙",
-          "배영숙님",
-          "배영숙 환자",
-          "배영숙 환자분",
-          "903호 배영숙"
-        ],
+        keywords: ["배영숙"],
         hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
@@ -390,13 +372,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: [
-          "강미숙",
-          "강미숙님",
-          "강미숙 환자",
-          "강미숙 환자분",
-          "605호 강미숙"
-        ],
+        keywords: ["강미숙"],
         hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
@@ -485,13 +461,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: [
-          "오정자",
-          "오정자님",
-          "오정자 환자",
-          "오정자 환자분",
-          "502호 오정자"
-        ],
+        keywords: ["오정자"],
         hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
@@ -592,19 +562,14 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: [
-          "임현수",
-          "임현수님",
-          "임현수 환자",
-          "임현수 환자분",
-          "1005호 임현수"
-        ],
+        keywords: ["임현수"],
         hint: "환자 성명을 말하세요.",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "환자 성명을 확인해야 다른 환자와 혼동하는 것을 예방할 수 있습니다."
       },
       {
         key: "수혈중단",
+        allowAffirmativeConfirmation: true,
         sbarCategory: "B",
         keywords: ["중단", "중지", "멈춤", "스탑", "라인 잠금", "클램프"],
         hint: "수혈 즉시 중단 여부",
@@ -719,7 +684,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["홍", "성함"],
+        keywords: ["홍길순"],
         hint: "환자 성명",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
@@ -807,7 +772,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["이", "성함"],
+        keywords: ["이수진"],
         hint: "환자 성명",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
@@ -895,7 +860,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["강", "성함"],
+        keywords: ["강민호"],
         hint: "환자 성명",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
@@ -983,7 +948,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["오", "성함"],
+        keywords: ["오순자"],
         hint: "환자 성명",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
@@ -1074,7 +1039,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["서", "성함"],
+        keywords: ["서말순"],
         hint: "환자 성명",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
@@ -1173,7 +1138,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["김", "성함"],
+        keywords: ["김태호"],
         hint: "환자 성명",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
@@ -1272,7 +1237,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["배", "성함"],
+        keywords: ["배창수"],
         hint: "환자 성명",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
@@ -1371,7 +1336,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["방", "성함"],
+        keywords: ["방영식"],
         hint: "환자 성명",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."
@@ -1470,7 +1435,7 @@ const scenarios = [
       {
         key: "환자성명확인",
         sbarCategory: "S",
-        keywords: ["유", "성함"],
+        keywords: ["유금옥"],
         hint: "환자 성명",
         followUpQuestion: "환자분 성함이 어떻게 되세요?",
         rationale: "성명을 함께 말하면 동명이인 혼동을 줄이고 환자 확인이 확실해집니다."

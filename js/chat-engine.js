@@ -577,7 +577,10 @@ function handleNotifySubmit(session, text, chatBody, feedbackSlot, partnerLabel)
   if (pendingKey) {
     if (
       typeof isAffirmativeReply === "function" &&
-      isAffirmativeReply(message)
+      isAffirmativeReply(message) &&
+      session.scenario.requiredElements.some((el) =>
+        el.key === pendingKey && el.allowAffirmativeConfirmation === true
+      )
     ) {
       if (!session.confirmedFollowUpKeys.includes(pendingKey)) {
         session.confirmedFollowUpKeys.push(pendingKey);
@@ -610,7 +613,7 @@ function handleNotifySubmit(session, text, chatBody, feedbackSlot, partnerLabel)
         elements.find((e) => e.key === missed[0].key) || missed[0]
       );
     const keysToAdd =
-      followUp && followUp.askedKeysToAdd && followUp.askedKeysToAdd.length
+      followUp && Array.isArray(followUp.askedKeysToAdd)
         ? followUp.askedKeysToAdd
         : [missed[0].key];
     keysToAdd.forEach((k) => {
