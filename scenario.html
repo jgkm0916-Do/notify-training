@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -277,16 +277,108 @@
 
     .feedback-checklist {
       margin: 0;
-      padding: 1rem;
+      padding: 0;
       background: #fff;
       border-top: 1px solid var(--border, #e5e5e5);
       font-size: 0.9rem;
     }
 
+    .feedback-checklist[hidden] {
+      display: none;
+    }
+
+    .feedback-checklist__header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1rem;
+      background: #fff;
+    }
+
     .feedback-checklist__summary {
+      flex: 1;
+      min-width: 0;
       font-weight: 700;
-      margin-bottom: 0.75rem;
       font-size: 1rem;
+    }
+
+    .feedback-checklist__controls {
+      flex-shrink: 0;
+      display: flex;
+      gap: 0.35rem;
+    }
+
+    .feedback-checklist__btn {
+      border: 1px solid var(--border, #e5e5e5);
+      background: #fff;
+      color: #555;
+      border-radius: 999px;
+      padding: 0.28rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .feedback-checklist__btn:hover {
+      background: #f7f8fa;
+    }
+
+    .feedback-checklist__btn--close {
+      padding: 0.28rem 0.6rem;
+      line-height: 1;
+    }
+
+    /* 결과가 채팅을 다 덮지 않도록 높이를 제한하고 내부에서 스크롤 */
+    .feedback-checklist__body {
+      max-height: 40dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 1rem 1rem;
+      border-top: 1px solid var(--border, #e5e5e5);
+    }
+
+    .feedback-checklist.is-collapsed .feedback-checklist__body {
+      display: none;
+    }
+
+    .feedback-reopen-bar {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: flex-end;
+      padding: 0.45rem 0.75rem;
+      background: #fff;
+      border-top: 1px solid var(--border, #e5e5e5);
+    }
+
+    .feedback-reopen-bar[hidden] {
+      display: none;
+    }
+
+    .feedback-reopen {
+      border: 1px solid var(--accent, #3a7bd5);
+      background: #fff;
+      color: var(--accent, #3a7bd5);
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .feedback-reopen:hover {
+      background: #f2f7ff;
+    }
+
+    @media (max-height: 700px) {
+      .feedback-checklist__body {
+        max-height: 34dvh;
+      }
     }
 
     .feedback-checklist__list {
@@ -476,6 +568,9 @@
           <div class="call-chat" id="chatBody"></div>
           <div id="feedbackSlot"></div>
         </div>
+        <div class="feedback-reopen-bar" id="feedbackReopenBar" hidden>
+          <button type="button" class="feedback-reopen" id="feedbackReopenBtn">결과 다시 보기</button>
+        </div>
         <form class="notify-composer" id="notifyComposer" autocomplete="off">
           <textarea
             id="notifyInput"
@@ -489,9 +584,9 @@
     </main>
   </div>
 
-  <script src="js/data.js?v=20260910"></script>
-  <script src="js/scoring.js?v=20260910"></script>
-  <script src="js/chat-engine.js?v=20260910"></script>
+  <script src="js/data.js?v=20260911"></script>
+  <script src="js/scoring.js?v=20260911"></script>
+  <script src="js/chat-engine.js?v=20260911"></script>
   <script>
     let session = null;
     let callStarted = false;
@@ -515,6 +610,17 @@
       if (chartToggleBtn) {
         chartToggleBtn.addEventListener("click", toggleChartDock);
       }
+
+      // 결과 패널은 채점 후 생성되므로 상위 요소에서 위임 처리
+      const callSection = document.getElementById("callSection");
+      if (callSection) {
+        callSection.addEventListener("click", onFeedbackControlClick);
+      }
+
+      const reopenBtn = document.getElementById("feedbackReopenBtn");
+      if (reopenBtn) {
+        reopenBtn.addEventListener("click", () => setFeedbackVisible(true));
+      }
     });
 
     function toggleChartDock() {
@@ -525,6 +631,43 @@
       const collapsed = dock.classList.toggle("is-collapsed");
       btn.textContent = collapsed ? "차트 펼치기" : "차트 접기";
       btn.setAttribute("aria-expanded", String(!collapsed));
+    }
+
+    function onFeedbackControlClick(e) {
+      const btn = e.target.closest("[data-feedback-action]");
+      if (!btn) return;
+
+      if (btn.dataset.feedbackAction === "toggle") {
+        toggleFeedbackPanel(btn);
+      } else if (btn.dataset.feedbackAction === "close") {
+        setFeedbackVisible(false);
+      }
+    }
+
+    function toggleFeedbackPanel(btn) {
+      const panel = document.getElementById("feedbackPanel");
+      if (!panel) return;
+
+      const collapsed = panel.classList.toggle("is-collapsed");
+      btn.textContent = collapsed ? "결과 펼치기" : "결과 접기";
+      btn.setAttribute("aria-expanded", String(!collapsed));
+      scrollCallToBottom();
+    }
+
+    function setFeedbackVisible(visible) {
+      const panel = document.getElementById("feedbackPanel");
+      const bar = document.getElementById("feedbackReopenBar");
+      if (panel) panel.hidden = !visible;
+      if (bar) bar.hidden = visible;
+      scrollCallToBottom();
+    }
+
+    function scrollCallToBottom() {
+      const scroller = document.getElementById("callScroll");
+      if (!scroller) return;
+      requestAnimationFrame(() => {
+        scroller.scrollTop = scroller.scrollHeight;
+      });
     }
 
     function startCall() {
