@@ -755,7 +755,7 @@ const scenarios = [
     chartData: {
       VS: "BP 118/76, HR 82, RR 18, BT 36.9, SpO2 99%",
       Lab: "특이 소견 없음",
-      Meds: "세프트리악손 2g+NS 100ml 13:30 투여 시작, 10분 후 증상 발생",
+      Meds: "세프트리악손 2g + NS 100ml IV 13:30부터 30분 예정으로 투여 시작, 10분 후 증상 발생",
       IO: "intake 정상 · output 정상",
       Symptoms: "전신 두드러기, 가려움증 호소, 호흡곤란·부종 없음",
       Treatment: "투여 즉시 중단, 활력징후 측정 완료"
@@ -782,8 +782,8 @@ const scenarios = [
         sbarCategory: "B",
         keywords: ["중단", "중지", "멈춤"],
         hint: "원인 의심 약물 투여 중단 여부",
-        followUpQuestion: "투여는 중단하셨어요?",
-        rationale: "알레르기 반응 의심 시 원인 확인보다 투여 중단이 우선입니다. 중단 없이 보고하면 반응이 계속되는 줄 모른 채 판단하게 됩니다."
+        followUpQuestion: "투여는 중단하셨어요? 얼마나 들어간 상태예요?",
+        rationale: "알레르기 반응 의심 시 원인 확인보다 투여 중단이 우선입니다. 아직 dropping 중인 상태에서 중단 없이 보고하면 반응이 계속되는 줄 모른 채 판단하게 됩니다."
       },
       {
         key: "원인약물확인",
