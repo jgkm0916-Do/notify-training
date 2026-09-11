@@ -717,42 +717,62 @@ function renderNotifyFeedback(grade, container, options = {}) {
   };
 
   container.innerHTML = `
-    <div class="feedback-checklist">
-      <div class="feedback-checklist__summary">${escapeHtml(title)}</div>
-      ${
-        comparison
-          ? `<p class="feedback-checklist__compare">${escapeHtml(comparison)}</p>`
-          : ""
-      }
-      <p class="feedback-checklist__lead">${escapeHtml(lead)}</p>
-      ${
-        rMissNotice
-          ? `<p class="feedback-checklist__r-notice">${escapeHtml(rMissNotice)}</p>`
-          : ""
-      }
-      ${
-        optionalFeedback && !rMissNotice
-          ? `<p class="feedback-checklist__optional-tip">${escapeHtml(optionalFeedback)}</p>`
-          : ""
-      }
-      ${
-        hitItems.length
-          ? `<h3 class="feedback-checklist__section">맞은 항목</h3>
-             <ul class="feedback-checklist__list">${hitItems.map(renderItem).join("")}</ul>`
-          : ""
-      }
-      ${
-        missItems.length
-          ? `<h3 class="feedback-checklist__section">빠진·보완할 항목</h3>
-             <ul class="feedback-checklist__list">${missItems.map(renderItem).join("")}</ul>`
-          : `<p class="feedback-checklist__all-ok">필수 항목을 모두 포함했습니다.</p>`
-      }
-      ${
-        optionalItems.length
-          ? `<h3 class="feedback-checklist__section">선택·가산 항목</h3>
-             <ul class="feedback-checklist__list">${optionalItems.map(renderItem).join("")}</ul>`
-          : ""
-      }
+    <div class="feedback-checklist" id="feedbackPanel">
+      <div class="feedback-checklist__header">
+        <div class="feedback-checklist__summary">${escapeHtml(title)}</div>
+        <div class="feedback-checklist__controls">
+          <button
+            type="button"
+            class="feedback-checklist__btn"
+            data-feedback-action="toggle"
+            aria-expanded="true"
+            aria-controls="feedbackPanelBody"
+          >결과 접기</button>
+          <button
+            type="button"
+            class="feedback-checklist__btn feedback-checklist__btn--close"
+            data-feedback-action="close"
+            aria-label="결과 닫기"
+            title="결과 닫기"
+          >✕</button>
+        </div>
+      </div>
+      <div class="feedback-checklist__body" id="feedbackPanelBody">
+        ${
+          comparison
+            ? `<p class="feedback-checklist__compare">${escapeHtml(comparison)}</p>`
+            : ""
+        }
+        <p class="feedback-checklist__lead">${escapeHtml(lead)}</p>
+        ${
+          rMissNotice
+            ? `<p class="feedback-checklist__r-notice">${escapeHtml(rMissNotice)}</p>`
+            : ""
+        }
+        ${
+          optionalFeedback && !rMissNotice
+            ? `<p class="feedback-checklist__optional-tip">${escapeHtml(optionalFeedback)}</p>`
+            : ""
+        }
+        ${
+          hitItems.length
+            ? `<h3 class="feedback-checklist__section">맞은 항목</h3>
+               <ul class="feedback-checklist__list">${hitItems.map(renderItem).join("")}</ul>`
+            : ""
+        }
+        ${
+          missItems.length
+            ? `<h3 class="feedback-checklist__section">빠진·보완할 항목</h3>
+               <ul class="feedback-checklist__list">${missItems.map(renderItem).join("")}</ul>`
+            : `<p class="feedback-checklist__all-ok">필수 항목을 모두 포함했습니다.</p>`
+        }
+        ${
+          optionalItems.length
+            ? `<h3 class="feedback-checklist__section">선택·가산 항목</h3>
+               <ul class="feedback-checklist__list">${optionalItems.map(renderItem).join("")}</ul>`
+            : ""
+        }
+      </div>
     </div>
   `;
 
