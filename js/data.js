@@ -755,7 +755,7 @@ const scenarios = [
     chartData: {
       VS: "BP 118/76, HR 82, RR 18, BT 36.9, SpO2 99%",
       Lab: "특이 소견 없음",
-      Meds: "세프트리악손 IV 13:30 투여 시작, 10분 후 증상 발생",
+      Meds: "세프트리악손 2g+NS 100ml 13:30 투여 시작, 10분 후 증상 발생",
       IO: "intake 정상 · output 정상",
       Symptoms: "전신 두드러기, 가려움증 호소, 호흡곤란·부종 없음",
       Treatment: "투여 즉시 중단, 활력징후 측정 완료"
