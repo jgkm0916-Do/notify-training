@@ -916,24 +916,24 @@ const scenarios = [
     level: 2,
     levelLabel: "중급",
     closingLineNoR: "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요.",
-    trigger: "506호 오순자님, 오늘 아침부터 수양성 설사 5회, 어지러움 호소",
+    trigger: "506호 오순자님, 오늘 아침부터 물설사 5회, 어지러움 호소",
     eventTime: "07:00",
     patient: {
       room: "506호",
       name: "오순자",
       ageSex: "74세/F",
-      diagnosis: "고혈압으로 이뇨제 복용 중",
+      diagnosis: "고혈압, 만성 심부전 · 라식스 복용 중",
       pod: null
     },
     messages: [
       { sender: "partner", text: "네, 말씀하세요.", time: "07:02" }
     ],
     chartData: {
-      VS: "BP 100/62, HR 102, RR 18, BT 37.0, SpO2 97%",
-      Lab: "어제 18:00 시행 - K+ 3.1 (저하), Na+ 133",
-      Meds: "푸로세미드(라식스) 20mg qd 복용 중",
-      IO: "intake 700ml · output(설사 포함) 1800ml, 오늘 설사 5회",
-      Symptoms: "수양성 설사 5회, 전신 위약감, 어지러움 호소, 경미한 복통",
+      VS: "BP 100/62 (평소 130/80대), HR 102, RR 18, BT 37.0, SpO2 97%",
+      Lab: "어제 18:00 시행 - K+ 3.1 (저하), Na+ 133 (저하)",
+      Meds: "푸로세미드(라식스) 20mg qd 복용 중 (오늘 아침 투약 전)",
+      IO: "intake 700ml · output(설사 포함) 1800ml, 오늘 물설사 5회",
+      Symptoms: "물설사 5회, 전신 위약감, 어지러움 호소, 경미한 복통",
       Treatment: "활력징후 측정 완료, 수액 투여 전"
     },
     requiredElements: [
@@ -956,45 +956,56 @@ const scenarios = [
       {
         key: "설사양상",
         sbarCategory: "S",
-        keywords: ["설사", "수양성", "5회", "횟수"],
-        hint: "설사 횟수와 양상",
-        followUpQuestion: "설사는 몇 번 하셨고 어떤 양상이었어요?",
-        rationale: "횟수와 성상은 탈수·전해질 손실 정도를 가늠하는 기초 정보입니다."
+        keywords: ["설사", "물설사", "묽은 변", "묽은 설사", "수양성", "watery", "diarrhea"],
+        hint: "물설사 횟수와 양상",
+        followUpQuestion: "물설사는 몇 번 하셨고 어떤 양상이었어요?",
+        rationale: "물설사 횟수와 성상은 탈수·전해질 손실 정도를 가늠하는 기초 정보입니다."
       },
       {
         key: "이뇨제사용여부",
         sbarCategory: "B",
-        keywords: ["이뇨제", "라식스", "푸로세미드"],
-        hint: "이뇨제 복용 여부",
+        keywords: ["라식스", "푸로세미드", "lasix", "furosemide", "이뇨제"],
+        hint: "라식스(이뇨제) 복용 여부",
         followUpQuestion: "혹시 이뇨제 복용 중이신가요?",
-        rationale: "이뇨제와 설사가 겹치면 전해질 소실이 더 심해질 수 있어, 원인 파악에 중요한 배경 정보입니다."
+        rationale: "라식스와 물설사가 겹치면 탈수와 저칼륨이 더 심해질 수 있어, 배경으로 반드시 전달해야 합니다."
+      },
+      {
+        key: "저칼륨",
+        sbarCategory: "B",
+        keywords: ["칼륨", "K+", "K 3.1", "potassium", "저칼륨"],
+        hint: "혈중 칼륨 저하(K+ 3.1)",
+        followUpQuestion: "칼륨 수치는 어떻게 되세요?",
+        rationale: "이뇨제에 설사가 겹치면 저칼륨이 악화되어 부정맥 위험이 커집니다."
       },
       {
         key: "활력징후",
         sbarCategory: "A",
         keywordGroups: [
-          ["BP", "혈압", "100"],
-          ["HR", "맥박", "102"]
+          ["어지러움", "어지럽", "저혈압", "BP 100", "혈압 떨어"],
+          ["HR", "맥박", "102", "빈맥"]
         ],
-        hint: "혈압, 맥박",
-        followUpQuestion: "혈압이랑 맥박은 어떠세요?",
-        rationale: "빈맥을 동반한 저혈압 경향은 탈수로 인한 순환 혈액량 감소를 시사합니다."
+        hint: "어지러움·저혈압, 빈맥",
+        followUpQuestion: "어지러움이랑 혈압, 맥박은 어떠세요?",
+        rationale: "어지러움과 저혈압 경향에 빈맥이 있으면 탈수로 순환 혈액량이 줄어든 신호입니다."
       },
       {
-        key: "전신증상",
-        sbarCategory: "A",
-        keywords: ["위약감", "어지러움", "힘없", "기운"],
-        hint: "위약감·어지러움 동반 여부",
-        followUpQuestion: "어지럽거나 힘이 빠지는 느낌은 없으세요?",
-        rationale: "저칼륨혈증 시 나타나는 전형적 증상으로, 전해질 이상을 의심할 단서가 됩니다."
-      },
-      {
-        key: "요청사항",
+        key: "라식스보류",
         sbarCategory: "R",
-        keywords: ["수액", "전해질", "확인 부탁", "처방", "지시"],
-        hint: "수액·전해질 검사 등 처치 지시 요청",
-        followUpQuestion: "수액이나 전해질 검사 필요할지 확인 부탁드려도 될까요?",
-        rationale: "구체적 처치 방향 확인 요청이 있어야 의사가 신속히 지시할 수 있습니다."
+        keywordGroups: [
+          ["라식스", "푸로세미드", "lasix", "furosemide", "이뇨제"],
+          ["보류", "홀딩", "hold", "중단", "끊"]
+        ],
+        hint: "라식스 보류 여부 확인",
+        followUpQuestion: "지금 복용 중인 약은 뭐가 있죠?",
+        rationale: "라식스를 설사가 있는 동안 계속 주면 탈수와 저칼륨이 악화되므로, 보류 여부를 함께 확인해야 합니다."
+      },
+      {
+        key: "수액전해질",
+        sbarCategory: "R",
+        keywords: ["수액", "fluid", "전해질", "칼륨 보충", "KCl"],
+        hint: "수액·전해질 보충 요청",
+        followUpQuestion: "수액이나 전해질 보충이 필요할지 확인 부탁드려도 될까요?",
+        rationale: "탈수와 전해질 소실이 있으면 수액 처방과 전해질 보충·재검을 요청하는 것이 좋습니다."
       }
     ]
   },

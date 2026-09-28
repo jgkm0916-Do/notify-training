@@ -16,7 +16,8 @@ function getMaxFollowUps(requiredElements) {
   const hasScn06Groups = list.some(
     (el) => el.key === "수혈전후활력징후" || el.key === "수혈진행정보"
   );
-  const cap = hasScn06Groups ? 10 : 6;
+  const hasScn10Hold = list.some((el) => el.key === "라식스보류");
+  const cap = hasScn06Groups ? 10 : hasScn10Hold ? 8 : 6;
   return Math.min(Math.max(n - 1, 0), cap);
 }
 
@@ -254,6 +255,12 @@ function gradeNotifyText(text, requiredElements, options) {
     }
   });
 
+  // 급성 설사: R 만점은 이뇨제 + 보류/홀딩이 함께 있을 때만
+  const holdGate = checklist.find((c) => c.key === "라식스보류");
+  if (holdGate) {
+    sbarScore.R = holdGate.included ? 1 : 0;
+  }
+
   return {
     checklist,
     includedCount,
@@ -275,7 +282,7 @@ function getMissedForFollowUp(grade, askedKeys) {
       c.required &&
       !c.included &&
       !asked.includes(c.key) &&
-      c.sbarCategory !== "R"
+      (c.sbarCategory !== "R" || c.key === "라식스보류")
   );
 }
 
@@ -381,6 +388,23 @@ function buildNotifyFollowUp(grade, missed, elements, askedKeys) {
   const list = missed || [];
   if (!list.length) return null;
 
+  // 급성 설사: 라식스 보류가 없으면 약 복용을 되묻는다.
+  // 병실·성명이 비어 있으면 그 확인을 먼저 한다.
+  const holdMissed = list.find((m) => m.key === "라식스보류");
+  if (holdMissed) {
+    const identityMissed = list.find(
+      (m) => m.key === "병실확인" || m.key === "환자성명확인"
+    );
+    const target = identityMissed || holdMissed;
+    const sourceEl =
+      (elements || []).find((e) => e.key === target.key) || target;
+    return {
+      question: buildFollowUpQuestion(sourceEl),
+      askedKeysToAdd: [target.key],
+      targets: [target]
+    };
+  }
+
   const hasScn03Vital = (elements || []).some((e) => e.key === SCN03_OXYGEN_KEY) &&
     (elements || []).some((e) => e.key === SCN03_VITAL_KEY && e.keywordGroups?.length === 5);
   const hasScn06 = (elements || []).some((e) => e.key === SCN06_VITAL_KEY);
@@ -470,6 +494,17 @@ function buildNotifyFollowUp(grade, missed, elements, askedKeys) {
  * S/B/A 되묻기 종료 후 의사 마무리 대사
  */
 function buildDoctorClosingMessage(grade, elements, scenario) {
+  const holdItem = (grade?.checklist || []).find((c) => c.key === "라식스보류");
+  if (holdItem?.included) {
+    return "네, 라식스는 일단 홀딩하세요. 수액 처방 내고 전해질 재검 나가주세요.";
+  }
+  if (holdItem && !holdItem.included) {
+    return (
+      scenario?.closingLineNoR ||
+      "알겠습니다. 확인했으니 필요한 처치는 제가 상황 보고 판단해서 진행할게요."
+    );
+  }
+
   const rItem = (grade?.checklist || []).find((c) => c.sbarCategory === "R");
 
   if (rItem?.included) {
