@@ -71,14 +71,14 @@ const scenarios = [
       {
         key: "항응고배경",
         sbarCategory: "B",
-        keywords: ["와파린", "항응고", "INR", "아스피린"],
+        keywords: ["와파린", "항응고", "INR", "아스피린", "warfarin", "aspirin", "coumadin"],
         hint: "항응고제 복용 또는 PT/INR 등 관련 배경을 포함하세요.",
         rationale: "항응고 복용·INR은 두부 외상 후 출혈 위험을 높여 CT·처치 우선순위에 영향을 줍니다."
       },
       {
         key: "의식상태",
         sbarCategory: "A",
-        keywords: ["명료", "기면", "혼미", "반혼수", "혼수", "의식 명료", "의식명료"],
+        keywords: ["명료", "기면", "혼미", "반혼수", "혼수", "의식 명료", "의식명료", "drowsy", "drowsiness", "lethargic", "lethargy", "stuporous", "stupor", "semi-comatose", "semicomatose", "semi comatose", "comatose", "alert하", "alert 하", "alert했", "alert 했"],
         hint: "의식 수준 평가",
         followUpQuestion: "의식 상태는 어떠세요?",
         rationale: "의식 수준은 두개내 출혈·뇌손상 진행 여부를 가늠하는 핵심 지표입니다."
@@ -87,8 +87,8 @@ const scenarios = [
         key: "두부손상상태",
         sbarCategory: "A",
         keywordGroups: [
-          ["후두부", "뒤통수", "머리"],
-          ["부종", "열상", "압통", "혈종", "찰과상"]
+          ["후두부", "뒤통수", "머리", "occipital"],
+          ["부종", "열상", "압통", "혈종", "찰과상", "hematoma", "laceration", "swelling"]
         ],
         hint: "부딪힌 부위(두부) 상태",
         followUpQuestion: "부딪힌 부위 상태는 어떠세요? 부종이나 열상, 압통 있나요?",
@@ -97,7 +97,7 @@ const scenarios = [
       {
         key: "신경학적증상",
         sbarCategory: "A",
-        keywords: ["구토", "오심", "어지러움", "두통"],
+        keywords: ["구토", "오심", "어지러움", "두통", "vomiting", "nausea", "dizziness", "headache"],
         hint: "구토·어지러움 등 동반 증상",
         followUpQuestion: "구토나 어지러움 같은 증상은 없으세요?",
         rationale: "구토·어지러움·두통은 두개내 병변을 시사할 수 있어 누락 시 위험 신호가 빠집니다."
@@ -171,8 +171,8 @@ const scenarios = [
         key: "흉통양상",
         sbarCategory: "S",
         keywordGroups: [
-          ["흉통", "가슴 통증"],
-          ["방사통", "쥐어짜", "NRS", "점"]
+          ["흉통", "가슴 통증", "chest pain"],
+          ["방사통", "쥐어짜", "NRS", "점", "radiating"]
         ],
         hint: "통증 양상과 강도가 빠지면 심각도 판단이 어렵습니다.",
         rationale: "방사통·강도는 심근허혈 가능성을 시사하며, 양상 없이 보고하면 심각도가 전달되지 않습니다."
@@ -197,7 +197,7 @@ const scenarios = [
       {
         key: "심전도확인",
         sbarCategory: "A",
-        keywords: ["12리드", "12유도", "심전도", "ECG", "EKG", "정상동", "ST 상승", "ST 하강"],
+        keywords: ["12리드", "12유도", "심전도", "ECG", "EKG", "정상동", "ST 상승", "ST 하강", "ST elevation", "ST depression", "NSR"],
         hint: "흉통 시 ECG 확인 여부는 필수 보고 항목입니다.",
         followUpQuestion: "12리드 ECG는 찍으셨어요? 사진 보내주시거나 보여주실 수 있어요?",
         rationale: "흉통 환자는 12리드 ECG로 ST 변화 유무를 확인해야 하며, 전달하지 않으면 골든타임 판단이 늦어질 수 있습니다."
@@ -205,7 +205,7 @@ const scenarios = [
       {
         key: "요청사항",
         sbarCategory: "R",
-        keywords: ["방문", "봐주세요", "와주세요", "확인 부탁", "처방", "지시"],
+        keywords: ["방문", "봐주세요", "와주세요", "확인 부탁", "처방", "지시", "NTG", "nitroglycerin"],
         hint: "방문·처방 확인 등 구체적 요청을 포함하세요.",
         followUpQuestion: "선생님, 방문하셔서 확인해 주시겠어요? 처방된 NTG 투여해도 될지도 확인 부탁드립니다.",
         rationale: "구체적인 요청(방문 또는 처방 확인)이 있어야 의사가 우선순위를 판단하고 신속히 대응할 수 있습니다. 다만 처방은 의사의 권한이므로, 간호사는 소견을 보고하고 지시를 요청하는 형태가 적절합니다."
@@ -261,7 +261,7 @@ const scenarios = [
       {
         key: "현재상황",
         sbarCategory: "S",
-        keywords: ["호흡곤란", "숨이", "숨차", "호흡 곤란"],
+        keywords: ["호흡곤란", "숨이", "숨차", "호흡 곤란", "DIB"],
         hint: "갑작스러운 호흡곤란 상황",
         followUpQuestion: "지금 환자분이 어떤 상태인가요?",
         rationale: "현재 문제(호흡곤란)를 먼저 전해야 의사가 긴급도를 바로 파악할 수 있습니다."
@@ -407,7 +407,7 @@ const scenarios = [
         key: "항생제투약여부",
         sbarCategory: "B",
         keywordGroups: [
-          ["항생제", "세파"],
+          ["항생제", "세파", "antibiotics", "abx", "cephalosporin"],
           ["미투여", "안 주고", "투약 중", "투여 중"]
         ],
         hint: "현재 항생제 투약 여부",
@@ -417,7 +417,7 @@ const scenarios = [
       {
         key: "요청사항",
         sbarCategory: "R",
-        keywords: ["혈액배양", "항생제", "처방", "요청"],
+        keywords: ["혈액배양", "항생제", "처방", "요청", "blood culture"],
         hint: "다음 조치를 명확히 요청해야 합니다.",
         rationale: "혈액배양·항생제 등 구체 요청이 있어야 다음 처치가 바로 이어질 수 있습니다."
       }
@@ -479,7 +479,7 @@ const scenarios = [
       {
         key: "혈당수치",
         sbarCategory: "S",
-        keywords: ["45mg", "혈당 45", "45 mg"],
+        keywords: ["45mg", "혈당 45", "45 mg", "BST 45", "BS 45"],
         hint: "구체적 혈당 수치가 핵심 정보입니다.",
         followUpQuestion: "혈당 수치가 정확히 몇이었어요?",
         rationale: "'저혈당'이라는 표현만으로는 심각도를 판단할 수 없습니다. 정확한 수치가 있어야 의사가 응급도를 판단할 수 있습니다."
@@ -488,7 +488,7 @@ const scenarios = [
         key: "인슐린투약여부",
         sbarCategory: "B",
         keywordGroups: [
-          ["인슐린", "애피드라", "Apidra"],
+          ["인슐린", "애피드라", "Apidra", "insulin"],
           ["10U", "10단위", "7시", "아침"]
         ],
         hint: "인슐린 투약 시각 및 용량",
@@ -500,7 +500,7 @@ const scenarios = [
         sbarCategory: "B",
         keywordGroups: [
           ["식사", "아침"],
-          ["절반", "1/2", "반만", "다 못", "안 먹", "금식"]
+          ["절반", "1/2", "반만", "다 못", "안 먹", "금식", "NPO"],
         ],
         hint: "최근 식사 섭취량",
         followUpQuestion: "아침 식사는 얼마나 드셨어요?",
@@ -509,7 +509,7 @@ const scenarios = [
       {
         key: "의식상태",
         sbarCategory: "A",
-        keywords: ["의식 저하", "의식저하", "졸림", "기면", "호명에 반응", "명료"],
+        keywords: ["의식 저하", "의식저하", "졸림", "기면", "호명에 반응", "명료", "drowsy", "drowsiness", "lethargic", "lethargy", "stuporous", "stupor", "comatose", "alert하", "alert 하", "alert했", "alert 했"],
         hint: "의식 수준 변화는 저혈당 응급도 판단에 필수입니다.",
         rationale: "의식 저하는 저혈당 중증도와 기도·안전 관리 필요성을 판단하는 핵심입니다."
       },
@@ -580,7 +580,7 @@ const scenarios = [
         key: "수혈중단",
         allowAffirmativeConfirmation: true,
         sbarCategory: "B",
-        keywords: ["수혈 중단", "수혈 중지", "피 멈춤", "라인 잠금", "클램프"],
+        keywords: ["수혈 중단", "수혈 중지", "피 멈춤", "라인 잠금", "클램프", "D/C", "discontinue", "clamp"],
         hint: "수혈 즉시 중단 여부",
         followUpQuestion: "수혈은 바로 중단했어요?",
         rationale: "수혈 부작용 의심 시 원인 확인보다 즉시 중단이 우선입니다. 중단 없이 보고하면 의사가 반응이 계속되는 줄 모른 채 판단하게 됩니다."
@@ -588,7 +588,7 @@ const scenarios = [
       {
         key: "수혈반응증상",
         sbarCategory: "S",
-        keywords: ["오한", "두드러기", "발진", "가려움", "요통"],
+        keywords: ["오한", "두드러기", "발진", "가려움", "요통", "chills", "urticaria", "rash", "pruritus"],
         hint: "수혈 반응의 구체적 증상이 핵심 정보입니다.",
         followUpQuestion: "어떤 증상이 있나요?",
         rationale: "오한·두드러기 등 구체 증상은 수혈 반응 유형을 추정하는 첫 근거입니다."
@@ -604,7 +604,7 @@ const scenarios = [
       {
         key: "혈액제제종류",
         sbarCategory: "B",
-        keywords: ["PRBC", "prbc", "적혈구", "농축적혈구", "packed"],
+        keywords: ["PRBC", "prbc", "적혈구", "농축적혈구", "packed", "RBC"],
         hint: "투여 중인 혈액제제 종류(PRBC)",
         followUpQuestion: "무슨 혈액 주고 있었어요?",
         rationale: "혈액제제 종류를 알아야 급성 용혈·알레르기 등 반응 유형을 좁힐 수 있습니다."
@@ -640,7 +640,7 @@ const scenarios = [
       {
         key: "생리식염수유지",
         sbarCategory: "B",
-        keywords: ["생리식염수", "생리 식염수", "노말살린", "NS로", "N/S로"],
+        keywords: ["생리식염수", "생리 식염수", "노말살린", "NS로", "N/S로", "NS 유지", "normal saline"],
         hint: "생리식염수로 정맥로 유지 여부",
         followUpQuestion: "라인은 생리식염수로 유지 중이에요?",
         rationale: "수혈 중단 후 정맥로를 생리식염수로 유지해야 추가 처치·수액 투여가 가능합니다."
@@ -704,8 +704,8 @@ const scenarios = [
         key: "마지막배변일",
         sbarCategory: "S",
         keywordGroups: [
-          ["배변", "대변", "변을"],
-          ["3일", "사흘", "3일째", "안 나왔"]
+          ["배변", "대변", "변을", "last BM", "no BM"],
+          ["3일", "사흘", "3일째", "안 나왔", "3 days", "no BM"]
         ],
         hint: "마지막 배변 시점",
         followUpQuestion: "마지막 배변이 언제였어요?",
@@ -714,7 +714,7 @@ const scenarios = [
       {
         key: "마약성진통제사용",
         sbarCategory: "B",
-        keywords: ["옥시코돈", "마약성 진통제", "오피오이드"],
+        keywords: ["옥시코돈", "마약성 진통제", "오피오이드", "oxycodone", "oxycontin", "opioid"],
         hint: "마약성 진통제 사용 여부",
         followUpQuestion: "마약성 진통제 쓰고 계신가요?",
         rationale: "마약성 진통제는 장운동을 저하시켜 변비의 흔한 원인이 되므로, 원인 파악에 필수적입니다."
@@ -797,7 +797,7 @@ const scenarios = [
       {
         key: "원인약물중단여부",
         sbarCategory: "B",
-        keywords: ["항생제 중단", "약 중단", "투여 중단", "주입 중단"],
+        keywords: ["항생제 중단", "약 중단", "투여 중단", "주입 중단", "D/C", "discontinue"],
         hint: "원인 의심 약물 투여 중단 여부",
         followUpQuestion: "투여는 중단하셨어요? 얼마나 들어간 상태예요?",
         rationale: "알레르기 반응 의심 시 원인 확인보다 투여 중단이 우선입니다. 아직 dropping 중인 상태에서 중단 없이 보고하면 반응이 계속되는 줄 모른 채 판단하게 됩니다."
@@ -805,7 +805,7 @@ const scenarios = [
       {
         key: "원인약물확인",
         sbarCategory: "B",
-        keywords: ["세프트리악손", "로세핀", "ceftriaxone"],
+        keywords: ["세프트리악손", "로세핀", "ceftriaxone", "Rocephin"],
         hint: "원인 의심 약물명",
         followUpQuestion: "무슨 약물 투여 중이었어요?",
         rationale: "원인 약물을 특정해야 향후 처방에서 교차반응 약물을 피할 수 있습니다."
@@ -813,7 +813,7 @@ const scenarios = [
       {
         key: "증상양상",
         sbarCategory: "A",
-        keywords: ["두드러기", "가려움", "발진"],
+        keywords: ["두드러기", "가려움", "발진", "urticaria", "rash", "pruritus", "itching"],
         hint: "피부 반응 양상",
         followUpQuestion: "어떤 증상이 있나요?",
         rationale: "피부 반응의 범위와 양상은 중증도 판단의 기초 정보입니다."
@@ -821,7 +821,7 @@ const scenarios = [
       {
         key: "전신증상동반여부",
         sbarCategory: "A",
-        keywords: ["호흡곤란", "부종", "부어", "호흡곤란 없", "부종 없", "활력징후 안정"],
+        keywords: ["호흡곤란", "부종", "부어", "호흡곤란 없", "부종 없", "활력징후 안정", "dyspnea", "edema", "angioedema"],
         hint: "호흡곤란·부종 등 전신 반응 동반 여부",
         followUpQuestion: "호흡곤란이나 얼굴·입술 부종은 없으세요?",
         rationale: "호흡기·순환기 증상 동반 여부가 아나필락시스 여부를 가르는 핵심 감별점입니다."
@@ -886,8 +886,8 @@ const scenarios = [
         key: "구토양상",
         sbarCategory: "S",
         keywordGroups: [
-          ["구토", "토했"],
-          ["1회", "한 번", "한 차례"]
+          ["구토", "토했", "vomiting", "emesis"],
+          ["1회", "한 번", "한 차례", "once"]
         ],
         hint: "구토 횟수 및 양상",
         followUpQuestion: "구토는 몇 번 하셨고 어떤 양상이었어요?",
@@ -896,7 +896,7 @@ const scenarios = [
       {
         key: "진통제사용여부",
         sbarCategory: "B",
-        keywords: ["펜타닐", "PCA", "마약성"],
+        keywords: ["펜타닐", "PCA", "마약성", "fentanyl", "opioid"],
         hint: "마약성 진통제 사용 여부",
         followUpQuestion: "마약성 진통제 쓰고 계신가요?",
         rationale: "마약성 진통제는 오심·구토의 흔한 원인이므로 원인 파악에 필요합니다."
@@ -904,7 +904,7 @@ const scenarios = [
       {
         key: "복부증상",
         sbarCategory: "A",
-        keywords: ["복부 팽만", "복부 통증", "배 아픔", "팽만 없"],
+        keywords: ["복부 팽만", "복부 통증", "배 아픔", "팽만 없", "distension", "abdominal pain"],
         hint: "복부 팽만·통증 동반 여부",
         followUpQuestion: "복부 팽만감이나 통증은 없으세요?",
         rationale: "복부 소견 동반 여부가 단순 약물 부작용인지 다른 합병증인지 감별에 필요합니다."
@@ -912,7 +912,7 @@ const scenarios = [
       {
         key: "식이섭취상태",
         sbarCategory: "B",
-        keywords: ["금식", "안 먹", "물만", "식사 못"],
+        keywords: ["금식", "안 먹", "물만", "식사 못", "NPO"],
         hint: "최근 식이 섭취 상태",
         followUpQuestion: "오늘 식사는 좀 하셨어요?",
         rationale: "식이 섭취 여부는 항구토제 투여 방식(경구·주사) 결정에 참고가 됩니다."
@@ -920,7 +920,7 @@ const scenarios = [
       {
         key: "요청사항",
         sbarCategory: "R",
-        keywords: ["처방", "항구토제", "확인 부탁", "지시"],
+        keywords: ["처방", "항구토제", "확인 부탁", "지시", "antiemetic"],
         hint: "항구토제 등 처치 지시 요청",
         followUpQuestion: "항구토제 처방 확인 부탁드려도 될까요?",
         rationale: "구체적 처치 방향 확인 요청이 있어야 의사가 신속히 지시할 수 있습니다."
@@ -977,7 +977,7 @@ const scenarios = [
         key: "설사양상",
         sbarCategory: "S",
         keywordGroups: [
-          ["물설사", "묽은 변", "수양성"],
+          ["물설사", "묽은 변", "수양성", "diarrhea"],
           ["5회", "다섯 번"]
         ],
         hint: "물설사 횟수와 양상",
@@ -995,7 +995,7 @@ const scenarios = [
       {
         key: "저칼륨",
         sbarCategory: "B",
-        keywords: ["저칼륨", "K 3.1", "칼륨 3.1", "포타슘 낮"],
+        keywords: ["저칼륨", "K 3.1", "칼륨 3.1", "포타슘 낮", "K+ 3.1", "K+3.1", "hypokalemia"],
         hint: "혈중 칼륨 저하(K+ 3.1)",
         followUpQuestion: "칼륨 수치는 어떻게 되세요?",
         rationale: "이뇨제에 설사가 겹치면 저칼륨이 악화되어 부정맥 위험이 커집니다."
@@ -1081,7 +1081,7 @@ const scenarios = [
       {
         key: "의식수준변화",
         sbarCategory: "A",
-        keywords: ["졸림", "졸려", "기면", "명료했으나", "의식 저하", "의식저하"],
+        keywords: ["졸림", "졸려", "기면", "명료했으나", "의식 저하", "의식저하", "drowsy", "drowsiness", "lethargic", "lethargy", "stuporous", "stupor", "semi-comatose", "semicomatose", "semi comatose", "comatose", "alert하", "alert 하", "alert했", "alert 했"],
         hint: "의식 수준 변화 여부",
         followUpQuestion: "지금 의식이 어떻게 변한 건가요? 원래 상태랑 비교해서 알려주세요.",
         rationale: "명료했던 의식이 저하되는 추세는 두개내압 상승을 의심할 수 있는 중요한 변화입니다."
@@ -1089,7 +1089,7 @@ const scenarios = [
       {
         key: "신경학적변화양상",
         sbarCategory: "A",
-        keywords: ["위약", "마비", "어눌", "구음", "편측"],
+        keywords: ["위약", "마비", "어눌", "구음", "편측", "weakness", "hemiparesis", "dysarthria", "slurred"],
         hint: "편측 위약·구음장애 등 증상",
         followUpQuestion: "어느 쪽에 위약감이 있고, 말투는 어떤가요?",
         rationale: "편측 위약과 구음장애는 국소 신경학적 이상을 시사하는 응급 신호입니다."
@@ -1108,7 +1108,7 @@ const scenarios = [
       {
         key: "항응고제복용여부",
         sbarCategory: "B",
-        keywords: ["와파린", "항응고", "INR"],
+        keywords: ["와파린", "항응고", "INR", "warfarin", "coumadin"],
         hint: "항응고제 복용 및 INR 수치",
         followUpQuestion: "항응고제 복용 여부와 INR 수치는요?",
         rationale: "항응고제 복용 환자는 초기 CT가 정상이어도 시간이 지나며 지연성 출혈이 발생할 수 있어 반드시 확인해야 합니다."
@@ -1184,7 +1184,7 @@ const scenarios = [
         key: "배액량변화",
         sbarCategory: "S",
         keywordGroups: [
-          ["배액", "배액량"],
+          ["배액", "배액량", "JP", "drain"],
           ["320", "선홍색", "빨간 피"]
         ],
         hint: "배액량 변화 및 색깔",
@@ -1221,7 +1221,7 @@ const scenarios = [
       {
         key: "관찰기간",
         sbarCategory: "S",
-        keywords: ["4시간", "네 시간", "4시간 동안"],
+        keywords: ["4시간", "네 시간", "4시간 동안", "4 hours", "4hrs"],
         hint: "변화가 관찰된 시간 범위",
         followUpQuestion: "이 변화가 언제부터 언제까지 관찰된 거예요?",
         rationale: "짧은 시간 내 급격한 변화라는 점이 응급도를 판단하는 데 중요합니다."
@@ -1293,7 +1293,7 @@ const scenarios = [
       {
         key: "FAST증상",
         sbarCategory: "A",
-        keywords: ["편마비", "얼굴 처짐", "위약", "어눌", "구음"],
+        keywords: ["편마비", "얼굴 처짐", "위약", "어눌", "구음", "facial droop", "hemiparesis", "dysarthria", "slurred", "weakness", "MMT"],
         hint: "얼굴 처짐, 편측 위약, 언어 이상(FAST)",
         followUpQuestion: "얼굴 처짐, 팔다리 위약감, 언어 이상 각각 어떤가요?",
         rationale: "FAST(안면·팔·언어·시간) 사정은 뇌졸중 초기 선별의 표준 항목으로, 세 가지를 모두 확인해야 합니다."
@@ -1301,7 +1301,7 @@ const scenarios = [
       {
         key: "혈당확인",
         sbarCategory: "A",
-        keywords: ["혈당 128", "BST 128", "128mg"],
+        keywords: ["혈당 128", "BST 128", "128mg", "BS 128"],
         hint: "저혈당 여부 확인(뇌졸중 유사 증상 감별)",
         followUpQuestion: "혈당은 확인하셨어요?",
         rationale: "저혈당도 편마비 등 뇌졸중과 유사한 증상을 유발할 수 있어, 감별을 위해 반드시 먼저 확인해야 합니다."
@@ -1310,7 +1310,7 @@ const scenarios = [
         key: "항응고제복용여부",
         sbarCategory: "B",
         keywordGroups: [
-          ["항응고제", "와파린", "아스피린"],
+          ["항응고제", "와파린", "아스피린", "warfarin", "aspirin", "anticoagulant"],
           ["미복용", "안 먹", "복용 안"]
         ],
         hint: "항응고제 복용 여부",
@@ -1387,7 +1387,7 @@ const scenarios = [
       {
         key: "혈당수치",
         sbarCategory: "S",
-        keywords: ["혈당 28", "28mg", "BST 28"],
+        keywords: ["혈당 28", "28mg", "BST 28", "BS 28"],
         hint: "구체적 혈당 수치",
         followUpQuestion: "혈당 수치가 정확히 몇이었어요?",
         rationale: "수치가 매우 낮을수록 응급도가 다르므로, 정확한 수치 보고가 응급 처치 결정에 필수입니다."
@@ -1395,7 +1395,7 @@ const scenarios = [
       {
         key: "의식상태",
         sbarCategory: "A",
-        keywords: ["무반응", "반응 없", "자극에 반응 없", "의식소실"],
+        keywords: ["무반응", "반응 없", "자극에 반응 없", "의식소실", "unresponsive", "comatose", "stuporous", "stupor", "unconscious", "no response"],
         hint: "의식 수준(자극 반응 여부)",
         followUpQuestion: "지금 의식 상태가 어떠세요? 자극에 반응하나요?",
         rationale: "의식소실 동반 저혈당은 경구 섭취가 불가능한 응급 상황으로, 즉시 정맥 포도당 투여가 필요합니다."
@@ -1403,7 +1403,7 @@ const scenarios = [
       {
         key: "경구섭취가능여부",
         sbarCategory: "A",
-        keywords: ["섭취 불가", "못 삼킴", "경구 불가", "먹일 수 없"],
+        keywords: ["섭취 불가", "못 삼킴", "경구 불가", "먹일 수 없", "NPO"],
         hint: "경구 섭취 가능 여부",
         followUpQuestion: "경구로 뭔가 드실 수 있는 상태인가요?",
         rationale: "의식저하로 경구 섭취가 불가능하면 반드시 정맥 내 포도당 투여로 전환해야 합니다."
@@ -1412,7 +1412,7 @@ const scenarios = [
         key: "인슐린투약여부",
         sbarCategory: "B",
         keywordGroups: [
-          ["인슐린", "란투스", "글라진"],
+          ["인슐린", "란투스", "글라진", "insulin", "Lantus", "glargine"],
           ["20U", "20단위", "저녁", "취침 전"]
         ],
         hint: "인슐린 투약 시각 및 용량",
@@ -1491,7 +1491,7 @@ const scenarios = [
         sbarCategory: "B",
         keywordGroups: [
           ["요로감염", "UTI", "소변 감염"],
-          ["항생제 사용 중", "항생제 투여 중"]
+          ["항생제 사용 중", "항생제 투여 중", "antibiotics"]
         ],
         hint: "감염원(요로감염) 및 항생제 치료 여부",
         followUpQuestion: "원래 어떤 감염으로 치료 중이셨어요?",
@@ -1501,9 +1501,9 @@ const scenarios = [
         key: "활력징후변화",
         sbarCategory: "A",
         keywordGroups: [
-          ["82", "저혈압"],
-          ["128", "빈맥"],
-          ["39.5", "고열"]
+          ["82", "저혈압", "hypotension"],
+          ["128", "빈맥", "tachycardia"],
+          ["39.5", "고열", "febrile"]
         ],
         hint: "이전 대비 혈압·맥박·체온 변화",
         followUpQuestion: "이전이랑 비교해서 혈압, 맥박, 체온 어떻게 변했어요?",
@@ -1512,7 +1512,7 @@ const scenarios = [
       {
         key: "의식변화",
         sbarCategory: "A",
-        keywords: ["혼미", "기면", "지연 반응", "축 처짐", "의식 혼미"],
+        keywords: ["혼미", "기면", "지연 반응", "축 처짐", "의식 혼미", "drowsy", "drowsiness", "lethargic", "lethargy", "stuporous", "stupor", "comatose", "delayed response"],
         hint: "의식 수준 변화",
         followUpQuestion: "의식 상태는 어떠세요?",
         rationale: "의식 변화는 패혈증으로 인한 뇌 관류 저하를 시사하는 중요한 악화 신호입니다."
@@ -1529,8 +1529,8 @@ const scenarios = [
         key: "소변량감소",
         sbarCategory: "A",
         keywordGroups: [
-          ["소변", "소변량", "urine output"],
-          ["감소", "줄었", "거의 없", "핍뇨"]
+          ["소변", "소변량", "urine output", "oliguria"],
+          ["감소", "줄었", "거의 없", "핍뇨", "oliguria", "decreased urine output"]
         ],
         hint: "최근 소변량 감소 여부",
         followUpQuestion: "최근 소변량은 어때요?",
