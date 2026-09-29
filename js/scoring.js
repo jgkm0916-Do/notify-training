@@ -77,16 +77,6 @@ function normalizeNotifyText(text) {
   t = t.replace(/₂/g, "2");
   t = t.replace(/ℓ/g, "l");
 
-  // 산소 장치: nasal prong/cannula, 비강캐뉼라, N-P/N/P/NP/NC → np
-  t = t.replace(/nasal\s*prongs?/g, "np");
-  t = t.replace(/nasal\s*cannulas?/g, "np");
-  t = t.replace(/비강\s*캐뉼라/g, "np");
-  t = t.replace(/비강\s*카테터/g, "np");
-  t = t.replace(/코줄/g, "np");
-  t = t.replace(/\bnc\b/g, "np");
-  t = t.replace(/\bn[\s\-./]*p\b/g, "np");
-  t = t.replace(/n[\-./]\s*p/g, "np");
-
   // 유량 2L 변형 → 2l
   t = t.replace(/분당\s*2\s*리터/g, "2l");
   t = t.replace(/2\s*l\s*\/\s*min/g, "2l");
@@ -345,9 +335,12 @@ function buildScn03OxygenFollowUp(oxygenItem, alreadyProbed) {
 function buildScn06VitalFollowUp(vitalItem) {
   const sat = Array.isArray(vitalItem?.groupSatisfied)
     ? vitalItem.groupSatisfied
-    : [false, false];
-  const preOk = Boolean(sat[0]);
-  const curOk = Boolean(sat[1]);
+    : [false, false, false, false];
+  // 0·1 수혈 전 혈압·체온, 2·3 현재 혈압·체온. 예전 2그룹 데이터도 전/후로 본다.
+  const preOk =
+    sat.length >= 4 ? Boolean(sat[0]) && Boolean(sat[1]) : Boolean(sat[0]);
+  const curOk =
+    sat.length >= 4 ? Boolean(sat[2]) && Boolean(sat[3]) : Boolean(sat[1]);
   if (preOk && curOk) return null;
   if (curOk && !preOk) return "수혈 전 바이탈은 어땠어요?";
   if (preOk && !curOk) return "지금 바이탈은요?";
