@@ -275,16 +275,95 @@
       }
     }
 
+    /*
+      최종 평가는 채팅 스크롤(#callScroll) 밖에 둔다.
+      접힌 바·펼친 패널·다시 보기 바가 스크롤을 따라가지 않고
+      카카오 바 바로 아래, 메시지 위에 고정된다.
+    */
+    .feedback-dock {
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      background: #fff;
+    }
+
+    .feedback-dock:not(:has(.feedback-checklist:not([hidden]))):not(:has(.feedback-reopen-bar:not([hidden]))) {
+      display: none;
+    }
+
     .feedback-checklist {
       margin: 0;
       padding: 0;
       background: #fff;
-      border-top: 1px solid var(--border, #e5e5e5);
+      border-bottom: 1px solid var(--border, #e5e5e5);
       font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
     }
 
     .feedback-checklist[hidden] {
       display: none;
+    }
+
+    .feedback-checklist__bar {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      width: 100%;
+      min-height: 2.25rem;
+      margin: 0;
+      padding: 0.3rem 0.75rem;
+      border: none;
+      background: #fff;
+      color: #191919;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.2;
+      text-align: left;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .feedback-checklist__bar:hover {
+      background: #f7f8fa;
+    }
+
+    .feedback-checklist__bar-label {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .feedback-checklist__chevron {
+      flex-shrink: 0;
+      font-size: 0.68rem;
+      line-height: 1;
+      transition: transform 0.15s ease;
+    }
+
+    .feedback-checklist:not(.is-collapsed) .feedback-checklist__chevron {
+      transform: rotate(180deg);
+    }
+
+    .feedback-checklist__detail {
+      min-height: 0;
+      max-height: 70dvh;
+      overflow: hidden;
+      opacity: 1;
+      transition: max-height 0.15s ease, opacity 0.15s ease;
+    }
+
+    .feedback-checklist.is-collapsed .feedback-checklist__detail {
+      max-height: 0;
+      opacity: 0;
+      pointer-events: none;
     }
 
     .feedback-checklist__header {
@@ -340,17 +419,14 @@
       border-top: 1px solid var(--border, #e5e5e5);
     }
 
-    .feedback-checklist.is-collapsed .feedback-checklist__body {
-      display: none;
-    }
-
     .feedback-reopen-bar {
       flex-shrink: 0;
       display: flex;
-      justify-content: flex-end;
-      padding: 0.45rem 0.75rem;
+      align-items: center;
+      min-height: 2.25rem;
+      padding: 0.2rem 0.75rem;
       background: #fff;
-      border-top: 1px solid var(--border, #e5e5e5);
+      border-bottom: 1px solid var(--border, #e5e5e5);
     }
 
     .feedback-reopen-bar[hidden] {
@@ -564,12 +640,14 @@
 
       <section class="call-section" id="callSection" hidden>
         <div class="kakao-bar" id="kakaoBar">의사</div>
+        <div class="feedback-dock" id="feedbackDock">
+          <div id="feedbackSlot"></div>
+          <div class="feedback-reopen-bar" id="feedbackReopenBar" hidden>
+            <button type="button" class="feedback-reopen" id="feedbackReopenBtn">결과 다시 보기</button>
+          </div>
+        </div>
         <div class="call-scroll" id="callScroll">
           <div class="call-chat" id="chatBody"></div>
-          <div id="feedbackSlot"></div>
-        </div>
-        <div class="feedback-reopen-bar" id="feedbackReopenBar" hidden>
-          <button type="button" class="feedback-reopen" id="feedbackReopenBtn">결과 다시 보기</button>
         </div>
         <form class="notify-composer" id="notifyComposer" autocomplete="off">
           <textarea
@@ -586,7 +664,7 @@
 
   <script src="js/data.js?v=20260911"></script>
   <script src="js/scoring.js?v=20260911"></script>
-  <script src="js/chat-engine.js?v=20260911"></script>
+  <script src="js/chat-engine.js?v=20260929"></script>
   <script>
     let session = null;
     let callStarted = false;
@@ -644,14 +722,25 @@
       }
     }
 
-    function toggleFeedbackPanel(btn) {
+    function toggleFeedbackPanel() {
       const panel = document.getElementById("feedbackPanel");
       if (!panel) return;
 
       const collapsed = panel.classList.toggle("is-collapsed");
-      btn.textContent = collapsed ? "결과 펼치기" : "결과 접기";
-      btn.setAttribute("aria-expanded", String(!collapsed));
-      scrollCallToBottom();
+      const expanded = !collapsed;
+      const detail = panel.querySelector(".feedback-checklist__detail");
+      if (detail) {
+        detail.hidden = false;
+        detail.setAttribute("aria-hidden", String(collapsed));
+        if (collapsed) detail.setAttribute("inert", "");
+        else detail.removeAttribute("inert");
+      }
+      panel.querySelectorAll("[data-feedback-action='toggle']").forEach((el) => {
+        el.setAttribute("aria-expanded", String(expanded));
+        if (el.classList.contains("feedback-checklist__btn")) {
+          el.textContent = collapsed ? "결과 펼치기" : "결과 접기";
+        }
+      });
     }
 
     function setFeedbackVisible(visible) {
@@ -659,7 +748,6 @@
       const bar = document.getElementById("feedbackReopenBar");
       if (panel) panel.hidden = !visible;
       if (bar) bar.hidden = visible;
-      scrollCallToBottom();
     }
 
     function scrollCallToBottom() {

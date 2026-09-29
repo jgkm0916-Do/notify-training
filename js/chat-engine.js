@@ -680,8 +680,13 @@ function renderNotifyFeedback(grade, container, options = {}) {
   const lead = options.lead || "보낸 노티를 항목별로 살펴본 결과입니다.";
   const comparison = options.comparison || "";
 
-  const requiredItems = (grade.checklist || []).filter((i) => i.required !== false);
-  const optionalItems = (grade.checklist || []).filter((i) => i.required === false);
+  const checklist = Array.isArray(grade.checklist) ? grade.checklist : [];
+  const hitCount = checklist.filter((item) => item.included).length;
+  const totalCount = checklist.length;
+  const barText = `${title} ${hitCount}/${totalCount} 맞음`;
+
+  const requiredItems = checklist.filter((i) => i.required !== false);
+  const optionalItems = checklist.filter((i) => i.required === false);
   const hitItems = requiredItems.filter((i) => i.included);
   const missItems = requiredItems.filter((i) => !i.included);
   const optionalFeedback =
@@ -718,6 +723,17 @@ function renderNotifyFeedback(grade, container, options = {}) {
 
   container.innerHTML = `
     <div class="feedback-checklist" id="feedbackPanel">
+      <button
+        type="button"
+        class="feedback-checklist__bar"
+        data-feedback-action="toggle"
+        aria-expanded="true"
+        aria-controls="feedbackPanelBody"
+      >
+        <span class="feedback-checklist__bar-label">${escapeHtml(barText)}</span>
+        <span class="feedback-checklist__chevron" aria-hidden="true">▼</span>
+      </button>
+      <div class="feedback-checklist__detail">
       <div class="feedback-checklist__header">
         <div class="feedback-checklist__summary">${escapeHtml(title)}</div>
         <div class="feedback-checklist__controls">
@@ -773,10 +789,14 @@ function renderNotifyFeedback(grade, container, options = {}) {
             : ""
         }
       </div>
+      </div>
     </div>
   `;
 
-  const scroller = container.closest(".call-scroll");
+  const callSection = container.closest(".call-section");
+  const scroller =
+    (callSection && callSection.querySelector(".call-scroll")) ||
+    (typeof container.closest === "function" && container.closest(".call-scroll"));
   if (scroller) {
     scrollChatToBottom(scroller);
   } else {
