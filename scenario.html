@@ -183,6 +183,32 @@
       letter-spacing: -0.01em;
     }
 
+    .call-section__header {
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .chat-toggle {
+      position: absolute;
+      right: 0.55rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      background: #fff;
+      color: #555;
+      border-radius: 999px;
+      padding: 0.28rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chat-toggle:hover {
+      background: #f7f8fa;
+    }
+
     .call-scroll {
       flex: 1;
       min-height: 0;
@@ -190,6 +216,20 @@
       -webkit-overflow-scrolling: touch;
       display: flex;
       flex-direction: column;
+    }
+
+    .call-section.is-collapsed .call-scroll,
+    .call-section.is-collapsed .notify-composer {
+      display: none;
+    }
+
+    .scenario-prep--calling .call-section.is-collapsed {
+      flex: 0 0 auto;
+    }
+
+    .scenario-prep--calling:has(.call-section.is-collapsed) .chart-dock:not(.is-collapsed) {
+      flex: 1 1 auto;
+      max-height: none;
     }
 
     .call-chat {
@@ -639,7 +679,18 @@
       </section>
 
       <section class="call-section" id="callSection" hidden>
-        <div class="kakao-bar" id="kakaoBar">의사</div>
+        <div class="call-section__header">
+          <div class="kakao-bar" id="kakaoBar">의사</div>
+          <button
+            type="button"
+            class="chat-toggle"
+            id="chatToggleBtn"
+            aria-expanded="true"
+            aria-controls="callScroll"
+          >
+            대화 접기
+          </button>
+        </div>
         <div class="feedback-dock" id="feedbackDock">
           <div id="feedbackSlot"></div>
           <div class="feedback-reopen-bar" id="feedbackReopenBar" hidden>
@@ -689,6 +740,11 @@
         chartToggleBtn.addEventListener("click", toggleChartDock);
       }
 
+      const chatToggleBtn = document.getElementById("chatToggleBtn");
+      if (chatToggleBtn) {
+        chatToggleBtn.addEventListener("click", toggleChatDock);
+      }
+
       // 결과 패널은 채점 후 생성되므로 상위 요소에서 위임 처리
       const callSection = document.getElementById("callSection");
       if (callSection) {
@@ -708,6 +764,16 @@
 
       const collapsed = dock.classList.toggle("is-collapsed");
       btn.textContent = collapsed ? "차트 펼치기" : "차트 접기";
+      btn.setAttribute("aria-expanded", String(!collapsed));
+    }
+
+    function toggleChatDock() {
+      const dock = document.getElementById("callSection");
+      const btn = document.getElementById("chatToggleBtn");
+      if (!dock || !btn) return;
+
+      const collapsed = dock.classList.toggle("is-collapsed");
+      btn.textContent = collapsed ? "대화 펼치기" : "대화 접기";
       btn.setAttribute("aria-expanded", String(!collapsed));
     }
 
