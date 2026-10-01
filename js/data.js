@@ -483,7 +483,7 @@ const scenarios = [
       {
         key: "혈당수치",
         sbarCategory: "S",
-        keywords: ["45mg", "혈당 45", "45 mg", "BST 45", "BS 45"],
+        keywords: ["45", "45mg", "혈당 45", "45 mg", "BST 45", "BS 45"],
         hint: "구체적 혈당 수치가 핵심 정보입니다.",
         followUpQuestion: "혈당 수치가 정확히 몇이었어요?",
         rationale: "'저혈당'이라는 표현만으로는 심각도를 판단할 수 없습니다. 정확한 수치가 있어야 의사가 응급도를 판단할 수 있습니다."
@@ -1398,7 +1398,7 @@ const scenarios = [
       {
         key: "혈당수치",
         sbarCategory: "S",
-        keywords: ["혈당 28", "28mg", "BST 28", "BS 28"],
+        keywords: ["28", "혈당 28", "28mg", "BST 28", "BS 28"],
         hint: "구체적 혈당 수치",
         followUpQuestion: "혈당 수치가 정확히 몇이었어요?",
         rationale: "수치가 매우 낮을수록 응급도가 다르므로, 정확한 수치 보고가 응급 처치 결정에 필수입니다."
@@ -1406,7 +1406,7 @@ const scenarios = [
       {
         key: "의식상태",
         sbarCategory: "A",
-        keywords: ["무반응", "반응 없", "자극에 반응 없", "의식소실", "unresponsive", "comatose", "stuporous", "stupor", "unconscious", "no response"],
+        keywords: ["무반응", "반응 없", "자극에 반응 없", "의식소실", "의식이 없", "의식 없", "unresponsive", "comatose", "stuporous", "stupor", "unconscious", "no response"],
         hint: "의식 수준(자극 반응 여부)",
         followUpQuestion: "지금 의식 상태가 어떠세요? 자극에 반응하나요?",
         rationale: "의식소실 동반 저혈당은 경구 섭취가 불가능한 응급 상황으로, 즉시 정맥 포도당 투여가 필요합니다."

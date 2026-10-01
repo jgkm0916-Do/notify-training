@@ -97,6 +97,42 @@ function normalizeKeyword(kw) {
   return normalizeNotifyText(kw);
 }
 
+function escapeRegExp(s) {
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * 정수·소수 키워드는 앞뒤가 숫자이거나 콜론이면 맞지 않는다.
+ * 12:28, 18.5, 28.5, K 3.15 안의 짧은 숫자는 제외한다.
+ * 28나왔고, 혈당28, 8.5입니다, K 3.1 은 맞는다.
+ */
+function keywordInText(normalizedText, keyword) {
+  const kw = normalizeKeyword(keyword);
+  if (!kw) return false;
+  if (/^\d+$/.test(kw)) {
+    const re = new RegExp(`(?<![\\d:：])${escapeRegExp(kw)}(?![:：\\d])`);
+    return re.test(normalizedText);
+  }
+  if (/\d+\.\d+/.test(kw)) {
+    return decimalBoundedPattern(kw).test(normalizedText);
+  }
+  return normalizedText.includes(kw);
+}
+
+function decimalBoundedPattern(kw) {
+  const parts = [];
+  const numberRe = /\d+\.\d+/g;
+  let last = 0;
+  let match;
+  while ((match = numberRe.exec(kw))) {
+    parts.push(escapeRegExp(kw.slice(last, match.index)));
+    parts.push(`(?<![\\d:：])${escapeRegExp(match[0])}(?![:：\\d])`);
+    last = match.index + match[0].length;
+  }
+  parts.push(escapeRegExp(kw.slice(last)));
+  return new RegExp(parts.join(""));
+}
+
 /**
  * 압축 V/S "BP-HR-RR-BT SpO2 N%" 한 세트를 찾는다.
  * 없으면 null. 여러 세트면 첫 세트만 반환한다.
@@ -299,16 +335,14 @@ function gradeNotifyText(text, requiredElements, options) {
     if (Array.isArray(el.keywordGroups) && el.keywordGroups.length > 0) {
       const groupHits = el.keywordGroups.map((group) => {
         const list = Array.isArray(group) ? group : [];
-        return list.filter((kw) => normalized.includes(normalizeKeyword(kw)));
+        return list.filter((kw) => keywordInText(normalized, kw));
       });
       groupSatisfied = groupHits.map((hits) => hits.length > 0);
       included = groupSatisfied.every(Boolean);
       matchedKeywords = groupHits.flat();
     } else {
       const keywords = el.keywords || [];
-      matchedKeywords = keywords.filter((kw) =>
-        normalized.includes(normalizeKeyword(kw))
-      );
+      matchedKeywords = keywords.filter((kw) => keywordInText(normalized, kw));
       included = matchedKeywords.length > 0;
     }
 
