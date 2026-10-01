@@ -109,6 +109,7 @@ const scenarios = [
           ["128/76", "128", "76"],
           ["88", "HR 88"]
         ],
+        expectedVitals: { sbp: 128, dbp: 76, hr: 88, rr: 18, bt: 36.7, spo2: 97 },
         hint: "측정한 활력징후 수치(BP, HR 등)를 포함하세요.",
         rationale: "구체 수치는 쇼크·이차 손상 여부를 객관적으로 전달하는 필수 평가입니다."
       },
@@ -191,6 +192,7 @@ const scenarios = [
           ["150/95", "150/90", "150"],
           ["102", "HR 102", "맥박 102"]
         ],
+        expectedVitals: { sbp: 150, dbp: 95, hr: 102, rr: 22, bt: 36.8, spo2: 95 },
         hint: "구체적 수치가 없으면 상태 평가가 전달되지 않습니다.",
         rationale: "혈압·심박 수치는 혈역학 불안정 여부를 보여 주어 처치 강도 결정에 필요합니다."
       },
@@ -284,6 +286,7 @@ const scenarios = [
           ["37.0"],
           ["88%"]
         ],
+        expectedVitals: { sbp: 130, dbp: 80, hr: 118, rr: 30, bt: 37.0, spo2: 88 },
         hint: "BP·HR·RR·BT·SpO₂ 전체 활력징후",
         followUpQuestion: "지금 바이탈하고 산소포화도는 어떻게 돼요?",
         rationale: "호흡곤란 시 혈압·맥박·호흡수·체온·산소포화도를 함께 전달해야 전신 상태와 저산소 정도를 판단할 수 있습니다."
@@ -391,6 +394,7 @@ const scenarios = [
           ["100/60", "혈압 100/60"],
           ["맥박 110", "HR 110", "심박 110"]
         ],
+        expectedVitals: { sbp: 100, dbp: 60, hr: 110, rr: 24, bt: 39.2, spo2: 96 },
         hint: "체온 포함 전체 활력징후",
         followUpQuestion: "체온이랑 혈압, 맥박은 어떠세요?",
         rationale: "고체온 시 빈맥 동반 여부가 패혈증 초기 징후일 수 있어, 체온만 보고하면 전신 상태 판단이 늦어질 수 있습니다."
@@ -630,6 +634,8 @@ const scenarios = [
           ["105/70", "105／70"],
           ["38.0", "38도"]
         ],
+        beforeVitals: { sbp: 120, dbp: 80, hr: 78, rr: 16, bt: 36.8, spo2: 98 },
+        afterVitals: { sbp: 105, dbp: 70, hr: 105, rr: 22, bt: 38.0, spo2: 96 },
         hint: "수혈 전·현재 활력징후를 수치로 비교해 전달하세요.",
         passHint:
           "수혈 전 BP 120/80·BT 36.8 → 현재 BP 105/70·BT 38.0(상승)·HR 105 등 변화를 비교해 전달했습니다.",
@@ -1007,6 +1013,7 @@ const scenarios = [
           ["어지러움", "어지럽", "저혈압", "BP 100", "혈압 떨어"],
           ["102", "빈맥", "맥박 102"]
         ],
+        expectedVitals: { sbp: 100, dbp: 62, hr: 102, rr: 18, bt: 37.0, spo2: 97 },
         hint: "어지러움·저혈압, 빈맥",
         followUpQuestion: "어지러움이랑 혈압, 맥박은 어떠세요?",
         rationale: "어지러움과 저혈압 경향에 빈맥이 있으면 탈수로 순환 혈액량이 줄어든 신호입니다."
@@ -1120,6 +1127,7 @@ const scenarios = [
           ["BP", "혈압", "152"],
           ["HR", "맥박", "서맥", "58"]
         ],
+        expectedVitals: { sbp: 152, dbp: 88, hr: 58, rr: 14, bt: 36.5, spo2: 97 },
         hint: "혈압, 맥박(서맥 여부 포함)",
         followUpQuestion: "혈압이랑 맥박은 어떠세요?",
         rationale: "고혈압과 서맥이 함께 나타나는 것은 두개내압 상승을 시사하는 대표적 신호(쿠싱 반응)입니다."
@@ -1198,6 +1206,8 @@ const scenarios = [
           ["96/60", "혈압 떨어"],
           ["118", "맥박 상승"]
         ],
+        beforeVitals: { sbp: 118, dbp: 76, hr: 84, rr: 16, bt: 36.8, spo2: 98 },
+        afterVitals: { sbp: 96, dbp: 60, hr: 118, rr: 20, bt: 36.9, spo2: 96 },
         hint: "이전 대비 혈압·맥박 변화",
         followUpQuestion: "이전이랑 비교해서 혈압, 맥박 어떻게 변했어요?",
         rationale: "혈압 하강과 빈맥이 함께 나타나는 추세는 출혈로 인한 순환 혈액량 감소를 시사합니다."
@@ -1324,6 +1334,7 @@ const scenarios = [
           ["BP", "혈압", "178"],
           ["HR", "맥박", "불규칙"]
         ],
+        expectedVitals: { sbp: 178, dbp: 98, hr: 96, rr: 18, bt: 36.7, spo2: 96 },
         hint: "혈압, 맥박(불규칙 리듬 포함)",
         followUpQuestion: "혈압이랑 맥박은 어떠세요?",
         rationale: "심방세동에 의한 불규칙한 맥박은 색전성 뇌졸중의 원인이 될 수 있어 중요한 정보입니다."
@@ -1426,6 +1437,7 @@ const scenarios = [
           ["108/70", "혈압 108", "90/60", "혈압 90"],
           ["122", "빈맥"]
         ],
+        expectedVitals: { sbp: 108, dbp: 70, hr: 122, rr: 20, bt: 36.2, spo2: 96 },
         hint: "혈압, 맥박",
         followUpQuestion: "혈압이랑 맥박은 어떠세요?",
         rationale: "빈맥은 저혈당에 대한 신체의 대상 반응(카테콜아민 분비)을 반영하는 중요한 지표입니다."
@@ -1505,6 +1517,8 @@ const scenarios = [
           ["128", "빈맥", "tachycardia"],
           ["39.5", "고열", "febrile"]
         ],
+        beforeVitals: { sbp: 118, dbp: 74, hr: 88, rr: 18, bt: 37.8, spo2: 97 },
+        afterVitals: { sbp: 82, dbp: 54, hr: 128, rr: 26, bt: 39.5, spo2: 93 },
         hint: "이전 대비 혈압·맥박·체온 변화",
         followUpQuestion: "이전이랑 비교해서 혈압, 맥박, 체온 어떻게 변했어요?",
         rationale: "저혈압, 빈맥, 고열이 동시에 나타나는 것은 패혈성 쇼크의 전형적 신호로, 셋 중 하나만 봐서는 놓칠 수 있습니다."

@@ -97,6 +97,110 @@ function normalizeKeyword(kw) {
   return normalizeNotifyText(kw);
 }
 
+/**
+ * 압축 V/S "BP-HR-RR-BT SpO2 N%" 한 세트를 찾는다.
+ * 없으면 null. 여러 세트면 첫 세트만 반환한다.
+ */
+function parseCompressedVitals(text) {
+  const sets = parseAllCompressedVitals(text);
+  return sets.length ? sets[0] : null;
+}
+
+function parseAllCompressedVitals(text) {
+  const normalized = normalizeNotifyText(text);
+  const re =
+    /(?<!\d)(\d{2,3})\s*[/／]\s*(\d{2,3})\s*[-–—−]\s*(\d{2,3})\s*[-–—−]\s*(\d{1,2})\s*[-–—−]\s*(\d{2}(?:\.\d{1,2})?)(?:\s*spo2\s*:?\s*(\d{2,3})\s*%?)?/gi;
+  const sets = [];
+  for (const match of normalized.matchAll(re)) {
+    sets.push({
+      sbp: Number(match[1]),
+      dbp: Number(match[2]),
+      hr: Number(match[3]),
+      rr: Number(match[4]),
+      bt: Number(match[5]),
+      spo2: match[6] != null && match[6] !== "" ? Number(match[6]) : null
+    });
+  }
+  return sets;
+}
+
+function vitalsExactlyMatch(parsed, expected) {
+  if (!parsed || !expected) return false;
+  const keys = ["sbp", "dbp", "hr", "rr", "bt", "spo2"];
+  for (const key of keys) {
+    if (expected[key] == null || expected[key] === "") continue;
+    if (parsed[key] == null) return false;
+    if (Number(parsed[key]) !== Number(expected[key])) return false;
+  }
+  return true;
+}
+
+/** 수혈·변화 시나리오에서 키워드 그룹이 전/후 중 어디인지 */
+function vitalSideGroupIndexes(el, groupCount) {
+  const all = Array.from({ length: groupCount }, (_, i) => i);
+  if (el.key === "수혈전후활력징후") {
+    if (groupCount >= 4) return { before: [0, 1], after: [2, 3] };
+    return { before: [0], after: groupCount > 1 ? [1] : [] };
+  }
+  // 활력징후변화 키워드 그룹은 현재(후) 수치만 본다
+  return { before: [], after: all };
+}
+
+/**
+ * 키워드 그룹이 비었을 때만 압축 표기로 그룹을 채운다.
+ * 이미 맞은 그룹은 끄지 않는다.
+ */
+function applyCompressedVitalMatch(el, normalized, included, groupSatisfied) {
+  const groupCount = Array.isArray(el.keywordGroups) ? el.keywordGroups.length : 0;
+  const groups = Array.isArray(groupSatisfied)
+    ? groupSatisfied.slice()
+    : Array.from({ length: groupCount }, () => false);
+  const sets = parseAllCompressedVitals(normalized);
+  if (!sets.length) return { included, groupSatisfied: groups };
+
+  if (el.beforeVitals && el.afterVitals) {
+    const sides = vitalSideGroupIndexes(el, groups.length);
+    const mark = (indexes) => {
+      indexes.forEach((i) => {
+        if (i >= 0 && i < groups.length) groups[i] = true;
+      });
+    };
+    const sideDone = (indexes) =>
+      indexes.length > 0 && indexes.every((i) => groups[i]);
+
+    if (sets.length >= 2) {
+      if (vitalsExactlyMatch(sets[0], el.beforeVitals)) mark(sides.before);
+      if (vitalsExactlyMatch(sets[1], el.afterVitals)) mark(sides.after);
+    } else {
+      const beforeOk = vitalsExactlyMatch(sets[0], el.beforeVitals);
+      const afterOk = vitalsExactlyMatch(sets[0], el.afterVitals);
+      if (beforeOk && !afterOk) {
+        mark(sides.before);
+      } else if (afterOk && !beforeOk) {
+        mark(sides.after);
+      } else if (beforeOk && afterOk) {
+        // 전후 수치가 같을 때는 이미 노티된 쪽의 반대편으로 본다
+        if (sideDone(sides.before) && !sideDone(sides.after)) mark(sides.after);
+        else if (sideDone(sides.after) && !sideDone(sides.before)) mark(sides.before);
+        else if (sideDone(sides.before)) mark(sides.after);
+        else mark(sides.before);
+      }
+    }
+
+    const all = groups.length > 0 && groups.every(Boolean);
+    return { included: included || all, groupSatisfied: groups };
+  }
+
+  if (el.expectedVitals && sets.some((set) => vitalsExactlyMatch(set, el.expectedVitals))) {
+    return {
+      included: true,
+      groupSatisfied: groups.map(() => true)
+    };
+  }
+
+  return { included, groupSatisfied: groups };
+}
+
 function isElementRequired(el) {
   if (!el) return true;
   if (el.required === false) return false;
@@ -206,6 +310,17 @@ function gradeNotifyText(text, requiredElements, options) {
         normalized.includes(normalizeKeyword(kw))
       );
       included = matchedKeywords.length > 0;
+    }
+
+    if (el.expectedVitals || (el.beforeVitals && el.afterVitals)) {
+      const supplemented = applyCompressedVitalMatch(
+        el,
+        normalized,
+        included,
+        groupSatisfied
+      );
+      included = supplemented.included;
+      groupSatisfied = supplemented.groupSatisfied;
     }
 
     if (forceIncludedKeys.has(el.key) && el.allowAffirmativeConfirmation === true) {
